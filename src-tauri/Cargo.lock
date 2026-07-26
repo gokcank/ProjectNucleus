@@ -2850,6 +2850,7 @@ dependencies = [
  "tauri-plugin-opener",
  "tauri-plugin-store",
  "url",
+ "zbus",
 ]
 
 [[package]]

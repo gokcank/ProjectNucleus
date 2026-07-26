@@ -130,3 +130,4 @@ Do not add these speculatively. Add a widget that needs the capability first, th
 | Stopwatch | `src/features/widgets/stopwatch/stopwatch-widget.tsx` | Same drift-free ticking pattern as Timer, counting up instead of down |
 | Screenshot | `src/features/widgets/screenshot/screenshot-widget.tsx` | A privileged action delegated to the desktop (XDG portal) via an async Rust command; distinguishes user cancellation from failure |
 | Volume | `src/features/widgets/volume/volume-widget.tsx` | Two-way system control: reads on mount and on `visibilitychange` instead of polling, because each read costs a process spawn |
+| Bluetooth | `src/features/widgets/bluetooth/bluetooth-widget.tsx` | Talks to a system D-Bus service (BlueZ) directly from Rust; models "no adapter present" as a state rather than an error |

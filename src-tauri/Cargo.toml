@@ -30,4 +30,5 @@ sysinfo = "0.33"
 tauri-plugin-clipboard-manager = "2.3.2"
 ashpd = { version = "0.13.13", features = ["screenshot"] }
 url = "2.5.8"
+zbus = "5"
 

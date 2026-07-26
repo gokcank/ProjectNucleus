@@ -1,3 +1,4 @@
+import { bluetoothWidget } from "./bluetooth/bluetooth-widget";
 import { calculatorWidget } from "./calculator/calculator-widget";
 import { clipboardWidget } from "./clipboard/clipboard-widget";
 import { clockWidget } from "./clock/clock-widget";
@@ -27,6 +28,7 @@ export function registerBuiltinWidgets() {
     stopwatchWidget,
     screenshotWidget,
     volumeWidget,
+    bluetoothWidget,
   ].forEach(registerWidget);
 }
 
