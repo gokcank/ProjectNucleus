@@ -12,6 +12,9 @@ dist
 dist-ssr
 *.local
 
+# Local scratch notes (manual verification checklist, not part of the product)
+scratch_list.md
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
