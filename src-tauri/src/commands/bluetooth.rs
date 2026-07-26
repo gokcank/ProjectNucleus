@@ -1,4 +1,5 @@
 use std::collections::HashMap;
+use std::time::Duration;
 
 use serde::Serialize;
 use zbus::fdo::ObjectManagerProxy;
@@ -165,6 +166,12 @@ pub async fn set_bluetooth_powered(powered: bool) -> Result<BluetoothStatus, Str
     Ok(collect_status(&managed_objects(&connection).await?))
 }
 
+/// A device that has gone to standby usually misses the first connection
+/// attempt and answers the next one. Retrying once here means the user does not
+/// have to notice the difference and press the button again.
+const CONNECT_ATTEMPTS: u32 = 2;
+const RETRY_DELAY: Duration = Duration::from_millis(1500);
+
 /// Connecting can take several seconds while the device is woken up, so this
 /// stays awaited rather than firing and returning a stale state.
 #[tauri::command]
@@ -186,12 +193,24 @@ pub async fn set_device_connected(
         .await
         .map_err(|err| format!("Could not reach the device: {err}"))?;
 
-    let result = if connected {
-        device.connect().await
-    } else {
-        device.disconnect().await
-    };
-    result.map_err(|err| format!("Could not change device connection: {err}"))?;
+    if !connected {
+        device
+            .disconnect()
+            .await
+            .map_err(|err| format!("Could not disconnect device: {err}"))?;
+        return Ok(collect_status(&managed_objects(&connection).await?));
+    }
 
-    Ok(collect_status(&managed_objects(&connection).await?))
+    let mut last_error = String::new();
+    for attempt in 0..CONNECT_ATTEMPTS {
+        match device.connect().await {
+            Ok(()) => return Ok(collect_status(&managed_objects(&connection).await?)),
+            Err(err) => last_error = err.to_string(),
+        }
+        if attempt + 1 < CONNECT_ATTEMPTS {
+            tokio::time::sleep(RETRY_DELAY).await;
+        }
+    }
+
+    Err(format!("Could not connect to device: {last_error}"))
 }
