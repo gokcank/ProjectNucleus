@@ -13,8 +13,13 @@
     "windows": [
       {
         "title": "Project Nucleus",
-        "width": 800,
-        "height": 600
+        "width": 480,
+        "height": 600,
+        "decorations": false,
+        "transparent": true,
+        "resizable": false,
+        "center": true,
+        "alwaysOnTop": true
       }
     ],
     "security": {

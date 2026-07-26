@@ -1,4 +1,5 @@
 import { Component, type ErrorInfo, type ReactNode } from "react";
+import { Panel } from "../layouts/panel";
 import { logError } from "../services/logger-service";
 
 interface Props {
@@ -27,23 +28,25 @@ export class ErrorBoundary extends Component<Props, State> {
   render() {
     if (this.state.hasError) {
       return (
-        <main className="flex h-screen items-center justify-center bg-neutral-100 dark:bg-neutral-900">
-          <div className="text-center">
-            <h1 className="text-lg font-semibold text-neutral-900 dark:text-neutral-100">
-              Something went wrong
-            </h1>
-            <p className="mt-2 text-sm text-neutral-500 dark:text-neutral-400">
-              The error has been logged. You can try continuing below.
-            </p>
-            <button
-              type="button"
-              onClick={this.handleReload}
-              className="mt-6 rounded-lg bg-neutral-900 px-3 py-1.5 text-sm text-neutral-100 dark:bg-neutral-100 dark:text-neutral-900"
-            >
-              Try again
-            </button>
-          </div>
-        </main>
+        <Panel>
+          <main className="flex h-full items-center justify-center">
+            <div className="text-center">
+              <h1 className="text-lg font-semibold text-neutral-900 dark:text-neutral-100">
+                Something went wrong
+              </h1>
+              <p className="mt-2 text-sm text-neutral-500 dark:text-neutral-400">
+                The error has been logged. You can try continuing below.
+              </p>
+              <button
+                type="button"
+                onClick={this.handleReload}
+                className="mt-6 rounded-lg bg-neutral-900 px-3 py-1.5 text-sm text-neutral-100 dark:bg-neutral-100 dark:text-neutral-900"
+              >
+                Try again
+              </button>
+            </div>
+          </main>
+        </Panel>
       );
     }
 

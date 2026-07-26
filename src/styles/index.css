@@ -1,3 +1,43 @@
 @import "tailwindcss";
 
 @custom-variant dark (&:where(.dark, .dark *));
+
+/* The window itself is transparent; the visible surface is the panel element. */
+@layer base {
+  html,
+  body,
+  #root {
+    height: 100%;
+    background: transparent;
+  }
+}
+
+@keyframes panel-in {
+  from {
+    opacity: 0;
+    transform: scale(0.98) translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes panel-out {
+  from {
+    opacity: 1;
+    transform: none;
+  }
+  to {
+    opacity: 0;
+    transform: scale(0.98) translateY(4px);
+  }
+}
+
+.panel-enter {
+  animation: panel-in 200ms ease-out;
+}
+
+.panel-exit {
+  animation: panel-out 150ms ease-out forwards;
+}
