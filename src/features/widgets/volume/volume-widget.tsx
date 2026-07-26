@@ -1,5 +1,5 @@
 import { Volume2, VolumeX } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { logWarn } from "../../../services/logger-service";
 import {
   getVolumeStatus,
@@ -9,9 +9,18 @@ import {
 } from "../../../services/audio-service";
 import type { WidgetDefinition } from "../types";
 
+/** Collapses a fast slider drag into one `wpctl` call instead of one per pixel. */
+const SLIDE_DEBOUNCE_MS = 120;
+
 function VolumeContent() {
   const [status, setStatus] = useState<VolumeStatus | null>(null);
   const [unavailable, setUnavailable] = useState(false);
+  const slideTimeoutRef = useRef<number>(undefined);
+  // Guards against out-of-order responses: two overlapping `wpctl` calls can
+  // finish in either order, so only the reply to the most recent call may
+  // update state -- otherwise a stale response can overwrite a newer one and
+  // leave the displayed value out of sync with the real system volume.
+  const latestRequestId = useRef(0);
 
   // Reads once on mount and again whenever the panel becomes visible.
   // Deliberately not polled: each read spawns a `wpctl` process, which is far
@@ -37,21 +46,30 @@ function VolumeContent() {
     return () => {
       cancelled = true;
       document.removeEventListener("visibilitychange", refresh);
+      window.clearTimeout(slideTimeoutRef.current);
     };
   }, []);
 
   const apply = (action: Promise<VolumeStatus>) => {
-    action.then(setStatus).catch((err: unknown) => {
-      logWarn(`Volume change failed: ${String(err)}`);
-      setUnavailable(true);
-    });
+    const requestId = ++latestRequestId.current;
+    action
+      .then((next) => {
+        if (requestId === latestRequestId.current) setStatus(next);
+      })
+      .catch((err: unknown) => {
+        logWarn(`Volume change failed: ${String(err)}`);
+        setUnavailable(true);
+      });
   };
 
   const handleSlide = (event: React.ChangeEvent<HTMLInputElement>) => {
     const percent = Number(event.target.value);
-    // Show the new position immediately; the command response confirms it.
+    // Show the new position immediately; the debounced command below confirms it.
     setStatus((prev) => (prev ? { ...prev, percent } : prev));
-    apply(setVolume(percent));
+    window.clearTimeout(slideTimeoutRef.current);
+    slideTimeoutRef.current = window.setTimeout(() => {
+      apply(setVolume(percent));
+    }, SLIDE_DEBOUNCE_MS);
   };
 
   if (unavailable) {
