@@ -12,7 +12,8 @@ import {
   SortableContext,
   sortableKeyboardCoordinates,
 } from "@dnd-kit/sortable";
-import { LayoutGrid, Search, Settings as SettingsIcon } from "lucide-react";
+import { LayoutGrid, Search, SearchX, Settings as SettingsIcon } from "lucide-react";
+import { useState } from "react";
 import { getWidget, type WidgetDefinition } from "../widgets";
 import { SortableWidget } from "./sortable-widget";
 import type { DashboardLayout } from "./use-dashboard-layout";
@@ -40,8 +41,24 @@ function EmptyState() {
   );
 }
 
+function NoMatches({ query }: { query: string }) {
+  return (
+    <div className="flex h-full flex-col items-center justify-center text-center">
+      <SearchX
+        className="h-8 w-8 text-neutral-400 dark:text-neutral-600"
+        strokeWidth={1.5}
+        aria-hidden
+      />
+      <p className="mt-3 text-sm font-medium text-neutral-600 dark:text-neutral-300">
+        Nothing matches “{query}”
+      </p>
+    </div>
+  );
+}
+
 export function Dashboard({ layout: dashboardLayout, onOpenSettings }: DashboardProps) {
   const { layout, toggleWide, moveCard } = dashboardLayout;
+  const [query, setQuery] = useState("");
 
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 4 } }),
@@ -54,13 +71,17 @@ export function Dashboard({ layout: dashboardLayout, onOpenSettings }: Dashboard
     }
   };
 
+  const trimmedQuery = query.trim();
+  const searching = trimmedQuery !== "";
+
   const entries = layout
     .filter((entry) => !entry.hidden)
     .map((entry) => ({ entry, definition: getWidget(entry.id) }))
     .filter(
       (item): item is { entry: (typeof layout)[number]; definition: WidgetDefinition } =>
         item.definition !== undefined,
-    );
+    )
+    .filter((item) => item.definition.title.toLowerCase().includes(trimmedQuery.toLowerCase()));
 
   return (
     <div className="flex h-full flex-col">
@@ -74,6 +95,8 @@ export function Dashboard({ layout: dashboardLayout, onOpenSettings }: Dashboard
           />
           <input
             type="search"
+            value={query}
+            onChange={(event) => setQuery(event.target.value)}
             aria-label="Search cards and widgets"
             placeholder="Search…"
             className="w-full rounded-[10px] border border-black/10 bg-black/5 py-1.5 pr-3 pl-9 text-sm text-neutral-900 placeholder:text-neutral-400 focus:ring-2 focus:ring-neutral-400 focus:outline-none dark:border-white/10 dark:bg-white/5 dark:text-neutral-100 dark:placeholder:text-neutral-500 dark:focus:ring-neutral-600"
@@ -91,7 +114,11 @@ export function Dashboard({ layout: dashboardLayout, onOpenSettings }: Dashboard
 
       <div className="flex-1 overflow-y-auto p-4">
         {entries.length === 0 ? (
-          <EmptyState />
+          searching ? (
+            <NoMatches query={trimmedQuery} />
+          ) : (
+            <EmptyState />
+          )
         ) : (
           <DndContext
             sensors={sensors}
