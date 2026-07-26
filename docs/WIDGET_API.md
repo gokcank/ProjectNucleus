@@ -131,3 +131,6 @@ Do not add these speculatively. Add a widget that needs the capability first, th
 | Screenshot | `src/features/widgets/screenshot/screenshot-widget.tsx` | A privileged action delegated to the desktop (XDG portal) via an async Rust command; distinguishes user cancellation from failure |
 | Volume | `src/features/widgets/volume/volume-widget.tsx` | Two-way system control: reads on mount and on `visibilitychange` instead of polling, because each read costs a process spawn |
 | Bluetooth | `src/features/widgets/bluetooth/bluetooth-widget.tsx` | Talks to a system D-Bus service (BlueZ) directly from Rust; models "no adapter present" as a state rather than an error |
+| Night Light | `src/features/widgets/night-light/night-light-widget.tsx` | Reads and writes a desktop setting through `gsettings`; parses GVariant literals in Rust |
+| Power Profile | `src/features/widgets/power-profile/power-profile-widget.tsx` | Offers only the profiles the daemon advertises, and validates the chosen one against that list before applying it |
+| Power | `src/features/widgets/power/power-widget.tsx` | Destructive actions behind an explicit confirmation step; only offers what logind reports as permitted |

@@ -3,7 +3,10 @@ import { calculatorWidget } from "./calculator/calculator-widget";
 import { clipboardWidget } from "./clipboard/clipboard-widget";
 import { clockWidget } from "./clock/clock-widget";
 import { cpuWidget } from "./cpu/cpu-widget";
+import { nightLightWidget } from "./night-light/night-light-widget";
 import { notesWidget } from "./notes/notes-widget";
+import { powerProfileWidget } from "./power-profile/power-profile-widget";
+import { powerWidget } from "./power/power-widget";
 import { ramWidget } from "./ram/ram-widget";
 import { registerWidget } from "./registry";
 import { screenshotWidget } from "./screenshot/screenshot-widget";
@@ -29,6 +32,9 @@ export function registerBuiltinWidgets() {
     screenshotWidget,
     volumeWidget,
     bluetoothWidget,
+    nightLightWidget,
+    powerProfileWidget,
+    powerWidget,
   ].forEach(registerWidget);
 }
 

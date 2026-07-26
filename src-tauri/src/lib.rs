@@ -63,7 +63,14 @@ pub fn run() {
             commands::audio::toggle_mute,
             commands::bluetooth::bluetooth_status,
             commands::bluetooth::set_bluetooth_powered,
-            commands::bluetooth::set_device_connected
+            commands::bluetooth::set_device_connected,
+            commands::night_light::night_light_status,
+            commands::night_light::set_night_light_enabled,
+            commands::night_light::set_night_light_temperature,
+            commands::power::power_capabilities,
+            commands::power::run_power_action,
+            commands::power::power_profile_status,
+            commands::power::set_power_profile
         ])
         .plugin(tauri_plugin_opener::init())
         .plugin(tauri_plugin_store::Builder::new().build())
