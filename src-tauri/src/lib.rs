@@ -1,8 +1,12 @@
+mod commands;
+
 use tauri::menu::{Menu, MenuItem};
 use tauri::tray::TrayIconBuilder;
 use tauri::Manager;
 use tauri_plugin_global_shortcut::{GlobalShortcutExt, ShortcutState};
 use tauri_plugin_log::{Target, TargetKind};
+
+use commands::system::SystemMonitor;
 
 const PANEL_SHORTCUT: &str = "ctrl+alt+n";
 
@@ -49,6 +53,11 @@ pub fn run() {
     }));
 
     tauri::Builder::default()
+        .manage(SystemMonitor::new())
+        .invoke_handler(tauri::generate_handler![
+            commands::system::cpu_status,
+            commands::system::memory_status
+        ])
         .plugin(tauri_plugin_opener::init())
         .plugin(tauri_plugin_store::Builder::new().build())
         .plugin(tauri_plugin_global_shortcut::Builder::new().build())

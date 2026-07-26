@@ -1,12 +1,16 @@
 import { LayoutGrid, Search } from "lucide-react";
 import type { ReactNode } from "react";
 import { ClockCard } from "../cards/clock-card";
+import { CpuCard } from "../cards/cpu-card";
+import { RamCard } from "../cards/ram-card";
 import { useTheme } from "../../hooks/use-theme";
 
 const THEMES = ["light", "dark", "system"] as const;
 
 const cards: { id: string; wide?: boolean; content: ReactNode }[] = [
   { id: "clock", wide: true, content: <ClockCard /> },
+  { id: "cpu", content: <CpuCard /> },
+  { id: "ram", content: <RamCard /> },
 ];
 
 function EmptyState() {
