@@ -1,54 +1,54 @@
 import { useEffect, useState } from "react";
 import { logWarn } from "../../services/logger-service";
 import { getSetting, setSetting } from "../../services/settings-service";
+import { getWidget, listWidgets } from "../widgets";
 
-export interface CardLayoutEntry {
+export interface WidgetLayoutEntry {
   id: string;
   wide: boolean;
 }
 
 const SETTING_KEY = "dashboard.layout";
 
-export const DEFAULT_LAYOUT: CardLayoutEntry[] = [
-  { id: "clock", wide: true },
-  { id: "cpu", wide: false },
-  { id: "ram", wide: false },
-];
+function defaultLayout(): WidgetLayoutEntry[] {
+  return listWidgets().map((widget) => ({ id: widget.id, wide: widget.defaultWide ?? false }));
+}
 
-function isEntry(value: unknown): value is CardLayoutEntry {
+function isEntry(value: unknown): value is WidgetLayoutEntry {
   return (
     typeof value === "object" &&
     value !== null &&
-    typeof (value as CardLayoutEntry).id === "string" &&
-    typeof (value as CardLayoutEntry).wide === "boolean"
+    typeof (value as WidgetLayoutEntry).id === "string" &&
+    typeof (value as WidgetLayoutEntry).wide === "boolean"
   );
 }
 
 /**
  * Restores a stored layout while staying resilient to app changes:
- * unknown cards are dropped, newly introduced cards are appended
- * with their default placement.
+ * unregistered widgets are dropped, newly introduced widgets are
+ * appended with their default placement.
  */
-function reconcile(stored: unknown): CardLayoutEntry[] {
-  if (!Array.isArray(stored)) return DEFAULT_LAYOUT;
+function reconcile(stored: unknown): WidgetLayoutEntry[] {
+  const defaults = defaultLayout();
+  if (!Array.isArray(stored)) return defaults;
 
   const known = stored
     .filter(isEntry)
     .filter(
       (entry, index, all) =>
-        DEFAULT_LAYOUT.some((def) => def.id === entry.id) &&
+        getWidget(entry.id) !== undefined &&
         all.findIndex((other) => other.id === entry.id) === index,
     );
-  const missing = DEFAULT_LAYOUT.filter((def) => !known.some((entry) => entry.id === def.id));
+  const missing = defaults.filter((def) => !known.some((entry) => entry.id === def.id));
   return [...known, ...missing];
 }
 
 export function useDashboardLayout() {
-  const [layout, setLayout] = useState<CardLayoutEntry[]>(DEFAULT_LAYOUT);
+  const [layout, setLayout] = useState<WidgetLayoutEntry[]>(defaultLayout);
 
   useEffect(() => {
     let cancelled = false;
-    getSetting<CardLayoutEntry[]>(SETTING_KEY, DEFAULT_LAYOUT)
+    getSetting<WidgetLayoutEntry[]>(SETTING_KEY, defaultLayout())
       .then((stored) => {
         if (!cancelled) setLayout(reconcile(stored));
       })
@@ -60,7 +60,7 @@ export function useDashboardLayout() {
     };
   }, []);
 
-  const persist = (next: CardLayoutEntry[]) => {
+  const persist = (next: WidgetLayoutEntry[]) => {
     setLayout(next);
     setSetting(SETTING_KEY, next).catch((err: unknown) => {
       logWarn(`Failed to persist dashboard layout: ${String(err)}`);

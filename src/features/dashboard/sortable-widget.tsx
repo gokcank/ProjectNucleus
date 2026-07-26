@@ -1,24 +1,26 @@
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { GripVertical, Maximize2, Minimize2 } from "lucide-react";
-import type { ReactNode } from "react";
-import type { CardLayoutEntry } from "./use-dashboard-layout";
+import { Card } from "../../components/card/card";
+import type { WidgetDefinition } from "../widgets";
+import type { WidgetLayoutEntry } from "./use-dashboard-layout";
 
-interface SortableCardProps {
-  entry: CardLayoutEntry;
+interface SortableWidgetProps {
+  entry: WidgetLayoutEntry;
+  definition: WidgetDefinition;
   onToggleWide: (id: string) => void;
-  render: (actions: ReactNode) => ReactNode;
 }
 
 const actionButtonClass =
   "rounded-md p-1 text-neutral-400 transition-colors hover:bg-black/5 hover:text-neutral-600 dark:text-neutral-500 dark:hover:bg-white/5 dark:hover:text-neutral-300";
 
-export function SortableCard({ entry, onToggleWide, render }: SortableCardProps) {
+export function SortableWidget({ entry, definition, onToggleWide }: SortableWidgetProps) {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
     id: entry.id,
   });
 
   const ResizeIcon = entry.wide ? Minimize2 : Maximize2;
+  const Content = definition.component;
 
   const actions = (
     <>
@@ -48,7 +50,9 @@ export function SortableCard({ entry, onToggleWide, render }: SortableCardProps)
       style={{ transform: CSS.Transform.toString(transform), transition }}
       className={`${entry.wide ? "col-span-2" : ""} ${isDragging ? "z-10 opacity-80" : ""}`}
     >
-      {render(actions)}
+      <Card icon={definition.icon} title={definition.title} actions={actions}>
+        <Content />
+      </Card>
     </div>
   );
 }

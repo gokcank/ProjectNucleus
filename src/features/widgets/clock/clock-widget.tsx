@@ -1,6 +1,6 @@
 import { Clock } from "lucide-react";
-import { useEffect, useState, type ReactNode } from "react";
-import { Card } from "../../components/card/card";
+import { useEffect, useState } from "react";
+import type { WidgetDefinition } from "../types";
 
 const timeFormat = new Intl.DateTimeFormat(undefined, {
   hour: "2-digit",
@@ -14,7 +14,7 @@ const dateFormat = new Intl.DateTimeFormat(undefined, {
   month: "long",
 });
 
-export function ClockCard({ actions }: { actions?: ReactNode }) {
+function ClockContent() {
   const [now, setNow] = useState(() => new Date());
 
   useEffect(() => {
@@ -23,13 +23,21 @@ export function ClockCard({ actions }: { actions?: ReactNode }) {
   }, []);
 
   return (
-    <Card icon={Clock} title="Clock" actions={actions}>
+    <>
       <p className="mt-2 text-2xl font-semibold tabular-nums text-neutral-900 dark:text-neutral-100">
         {timeFormat.format(now)}
       </p>
       <p className="mt-0.5 text-xs text-neutral-500 dark:text-neutral-400">
         {dateFormat.format(now)}
       </p>
-    </Card>
+    </>
   );
 }
+
+export const clockWidget: WidgetDefinition = {
+  id: "clock",
+  title: "Clock",
+  icon: Clock,
+  defaultWide: true,
+  component: ClockContent,
+};

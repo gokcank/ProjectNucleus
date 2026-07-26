@@ -23,4 +23,12 @@ export default tseslint.config(
       "react-refresh/only-export-components": ["warn", { allowConstantExport: true }],
     },
   },
+  {
+    // Widget files intentionally export a definition object next to their
+    // component; they trade fast-refresh for a one-file-per-widget API.
+    files: ["**/*-widget.tsx"],
+    rules: {
+      "react-refresh/only-export-components": "off",
+    },
+  },
 );

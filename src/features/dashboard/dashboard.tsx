@@ -13,21 +13,12 @@ import {
   sortableKeyboardCoordinates,
 } from "@dnd-kit/sortable";
 import { LayoutGrid, Search } from "lucide-react";
-import type { ReactNode } from "react";
-import { ClockCard } from "../cards/clock-card";
-import { CpuCard } from "../cards/cpu-card";
-import { RamCard } from "../cards/ram-card";
 import { useTheme } from "../../hooks/use-theme";
-import { SortableCard } from "./sortable-card";
+import { getWidget, type WidgetDefinition } from "../widgets";
+import { SortableWidget } from "./sortable-widget";
 import { useDashboardLayout } from "./use-dashboard-layout";
 
 const THEMES = ["light", "dark", "system"] as const;
-
-const CARD_RENDERERS: Record<string, (actions: ReactNode) => ReactNode> = {
-  clock: (actions) => <ClockCard actions={actions} />,
-  cpu: (actions) => <CpuCard actions={actions} />,
-  ram: (actions) => <RamCard actions={actions} />,
-};
 
 function EmptyState() {
   return (
@@ -62,7 +53,12 @@ export function Dashboard() {
     }
   };
 
-  const entries = layout.filter((entry) => entry.id in CARD_RENDERERS);
+  const entries = layout
+    .map((entry) => ({ entry, definition: getWidget(entry.id) }))
+    .filter(
+      (item): item is { entry: (typeof layout)[number]; definition: WidgetDefinition } =>
+        item.definition !== undefined,
+    );
 
   return (
     <div className="flex h-full flex-col">
@@ -93,16 +89,16 @@ export function Dashboard() {
             onDragEnd={handleDragEnd}
           >
             <SortableContext
-              items={entries.map((entry) => entry.id)}
+              items={entries.map((item) => item.entry.id)}
               strategy={rectSortingStrategy}
             >
               <div className="grid grid-cols-2 gap-3">
-                {entries.map((entry) => (
-                  <SortableCard
-                    key={entry.id}
-                    entry={entry}
+                {entries.map((item) => (
+                  <SortableWidget
+                    key={item.entry.id}
+                    entry={item.entry}
+                    definition={item.definition}
                     onToggleWide={toggleWide}
-                    render={CARD_RENDERERS[entry.id]}
                   />
                 ))}
               </div>
