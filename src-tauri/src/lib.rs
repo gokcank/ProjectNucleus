@@ -56,7 +56,8 @@ pub fn run() {
         .manage(SystemMonitor::new())
         .invoke_handler(tauri::generate_handler![
             commands::system::cpu_status,
-            commands::system::memory_status
+            commands::system::memory_status,
+            commands::screenshot::take_screenshot
         ])
         .plugin(tauri_plugin_opener::init())
         .plugin(tauri_plugin_store::Builder::new().build())

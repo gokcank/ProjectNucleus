@@ -5,6 +5,7 @@ import { cpuWidget } from "./cpu/cpu-widget";
 import { notesWidget } from "./notes/notes-widget";
 import { ramWidget } from "./ram/ram-widget";
 import { registerWidget } from "./registry";
+import { screenshotWidget } from "./screenshot/screenshot-widget";
 import { stopwatchWidget } from "./stopwatch/stopwatch-widget";
 import { timerWidget } from "./timer/timer-widget";
 
@@ -23,6 +24,7 @@ export function registerBuiltinWidgets() {
     notesWidget,
     timerWidget,
     stopwatchWidget,
+    screenshotWidget,
   ].forEach(registerWidget);
 }
 
