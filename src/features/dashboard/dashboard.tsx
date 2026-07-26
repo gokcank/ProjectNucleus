@@ -1,9 +1,24 @@
-import { LayoutGrid, Maximize2, Minimize2, Search } from "lucide-react";
+import {
+  closestCenter,
+  DndContext,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  type DragEndEvent,
+} from "@dnd-kit/core";
+import {
+  rectSortingStrategy,
+  SortableContext,
+  sortableKeyboardCoordinates,
+} from "@dnd-kit/sortable";
+import { LayoutGrid, Search } from "lucide-react";
 import type { ReactNode } from "react";
 import { ClockCard } from "../cards/clock-card";
 import { CpuCard } from "../cards/cpu-card";
 import { RamCard } from "../cards/ram-card";
 import { useTheme } from "../../hooks/use-theme";
+import { SortableCard } from "./sortable-card";
 import { useDashboardLayout } from "./use-dashboard-layout";
 
 const THEMES = ["light", "dark", "system"] as const;
@@ -34,7 +49,18 @@ function EmptyState() {
 
 export function Dashboard() {
   const { theme, setTheme } = useTheme();
-  const { layout, toggleWide } = useDashboardLayout();
+  const { layout, toggleWide, moveCard } = useDashboardLayout();
+
+  const sensors = useSensors(
+    useSensor(PointerSensor, { activationConstraint: { distance: 4 } }),
+    useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates }),
+  );
+
+  const handleDragEnd = ({ active, over }: DragEndEvent) => {
+    if (over && active.id !== over.id) {
+      moveCard(String(active.id), String(over.id));
+    }
+  };
 
   const entries = layout.filter((entry) => entry.id in CARD_RENDERERS);
 
@@ -61,26 +87,27 @@ export function Dashboard() {
         {entries.length === 0 ? (
           <EmptyState />
         ) : (
-          <div className="grid grid-cols-2 gap-3">
-            {entries.map((entry) => {
-              const ResizeIcon = entry.wide ? Minimize2 : Maximize2;
-              const actions = (
-                <button
-                  type="button"
-                  onClick={() => toggleWide(entry.id)}
-                  aria-label={entry.wide ? "Shrink card" : "Expand card"}
-                  className="rounded-md p-1 text-neutral-400 transition-colors hover:bg-black/5 hover:text-neutral-600 dark:text-neutral-500 dark:hover:bg-white/5 dark:hover:text-neutral-300"
-                >
-                  <ResizeIcon className="h-3.5 w-3.5" strokeWidth={2} aria-hidden />
-                </button>
-              );
-              return (
-                <div key={entry.id} className={entry.wide ? "col-span-2" : undefined}>
-                  {CARD_RENDERERS[entry.id](actions)}
-                </div>
-              );
-            })}
-          </div>
+          <DndContext
+            sensors={sensors}
+            collisionDetection={closestCenter}
+            onDragEnd={handleDragEnd}
+          >
+            <SortableContext
+              items={entries.map((entry) => entry.id)}
+              strategy={rectSortingStrategy}
+            >
+              <div className="grid grid-cols-2 gap-3">
+                {entries.map((entry) => (
+                  <SortableCard
+                    key={entry.id}
+                    entry={entry}
+                    onToggleWide={toggleWide}
+                    render={CARD_RENDERERS[entry.id]}
+                  />
+                ))}
+              </div>
+            </SortableContext>
+          </DndContext>
         )}
       </div>
 
