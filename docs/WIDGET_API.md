@@ -123,3 +123,5 @@ Do not add these speculatively. Add a widget that needs the capability first, th
 | Clock | `src/features/widgets/clock/clock-widget.tsx` | Local timer state, a widget-owned setting (`showSeconds`) |
 | CPU | `src/features/widgets/cpu/cpu-widget.tsx` | Polling a Rust command via the Service Layer, shared `usePolling` hook |
 | RAM | `src/features/widgets/ram/ram-widget.tsx` | Same polling pattern, formatted derived values |
+| Calculator | `src/features/widgets/calculator/calculator-widget.tsx` | Pure UI-independent state-transition logic (`calculator-logic.ts`) |
+| Clipboard | `src/features/widgets/clipboard/clipboard-widget.tsx` | Polling a Tauri plugin (not a custom Rust command); in-memory-only history, deliberately not persisted since clipboard content may be sensitive |

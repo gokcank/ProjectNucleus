@@ -1,4 +1,5 @@
 import { calculatorWidget } from "./calculator/calculator-widget";
+import { clipboardWidget } from "./clipboard/clipboard-widget";
 import { clockWidget } from "./clock/clock-widget";
 import { cpuWidget } from "./cpu/cpu-widget";
 import { ramWidget } from "./ram/ram-widget";
@@ -10,7 +11,7 @@ let registered = false;
 export function registerBuiltinWidgets() {
   if (registered) return;
   registered = true;
-  [clockWidget, cpuWidget, ramWidget, calculatorWidget].forEach(registerWidget);
+  [clockWidget, cpuWidget, ramWidget, calculatorWidget, clipboardWidget].forEach(registerWidget);
 }
 
 export { getWidget, listWidgets, registerWidget } from "./registry";
