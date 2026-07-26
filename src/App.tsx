@@ -11,8 +11,16 @@ function App() {
   // someone opened Settings.
   const layout = useDashboardLayout();
 
+  // From Settings, Escape steps back to the dashboard rather than dismissing
+  // the whole panel.
+  const handleEscape = () => {
+    if (!showSettings) return false;
+    setShowSettings(false);
+    return true;
+  };
+
   return (
-    <Panel>
+    <Panel onEscape={handleEscape}>
       <div className={showSettings ? "hidden" : "h-full"}>
         <Dashboard layout={layout} onOpenSettings={() => setShowSettings(true)} />
       </div>

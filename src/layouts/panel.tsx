@@ -4,10 +4,25 @@ import { logWarn } from "../services/logger-service";
 
 const EXIT_ANIMATION_MS = 150;
 
-export function Panel({ children }: { children: ReactNode }) {
+interface PanelProps {
+  children: ReactNode;
+  /**
+   * Called before Escape closes the panel. Return true if the view dealt with
+   * Escape itself (stepping back out of a sub-view, say) to keep the panel open.
+   */
+  onEscape?: () => boolean;
+}
+
+export function Panel({ children, onEscape }: PanelProps) {
   const [exiting, setExiting] = useState(false);
-  const [openCount, setOpenCount] = useState(0);
   const hideTimer = useRef<number | undefined>(undefined);
+  const surface = useRef<HTMLDivElement>(null);
+  // Held in a ref so the listener below can stay registered for the panel's
+  // lifetime instead of being torn down whenever the handler identity changes.
+  const escapeHandler = useRef(onEscape);
+  useEffect(() => {
+    escapeHandler.current = onEscape;
+  }, [onEscape]);
 
   useEffect(() => {
     let appWindow: ReturnType<typeof getCurrentWindow>;
@@ -38,7 +53,9 @@ export function Panel({ children }: { children: ReactNode }) {
     };
 
     const onKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "Escape") close();
+      if (event.key !== "Escape") return;
+      if (escapeHandler.current?.()) return;
+      close();
     };
     window.addEventListener("keydown", onKeyDown);
 
@@ -46,9 +63,17 @@ export function Panel({ children }: { children: ReactNode }) {
     appWindow
       .onFocusChanged(({ payload: focused }) => {
         if (focused) {
-          // Re-entering the panel (including show after hide): replay the enter animation.
+          // Re-entering the panel (including show after hide): replay the enter
+          // animation. Restarting it in place rather than remounting matters --
+          // remounting would wipe every widget's state, resetting a running
+          // timer or a half-typed note each time the panel is summoned.
           cancelClose();
-          setOpenCount((count) => count + 1);
+          const element = surface.current;
+          if (element) {
+            element.style.animation = "none";
+            element.getBoundingClientRect(); // force a reflow so it can start over
+            element.style.animation = "";
+          }
         } else {
           close();
         }
@@ -73,7 +98,7 @@ export function Panel({ children }: { children: ReactNode }) {
   return (
     <div className="h-screen w-screen p-6">
       <div
-        key={openCount}
+        ref={surface}
         className={`${exiting ? "panel-exit" : "panel-enter"} h-full w-full overflow-hidden rounded-3xl border border-black/10 bg-white/95 shadow-xl dark:border-white/10 dark:bg-neutral-900/95`}
       >
         {children}
