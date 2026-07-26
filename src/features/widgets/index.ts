@@ -5,6 +5,8 @@ import { cpuWidget } from "./cpu/cpu-widget";
 import { notesWidget } from "./notes/notes-widget";
 import { ramWidget } from "./ram/ram-widget";
 import { registerWidget } from "./registry";
+import { stopwatchWidget } from "./stopwatch/stopwatch-widget";
+import { timerWidget } from "./timer/timer-widget";
 
 let registered = false;
 
@@ -12,9 +14,16 @@ let registered = false;
 export function registerBuiltinWidgets() {
   if (registered) return;
   registered = true;
-  [clockWidget, cpuWidget, ramWidget, calculatorWidget, clipboardWidget, notesWidget].forEach(
-    registerWidget,
-  );
+  [
+    clockWidget,
+    cpuWidget,
+    ramWidget,
+    calculatorWidget,
+    clipboardWidget,
+    notesWidget,
+    timerWidget,
+    stopwatchWidget,
+  ].forEach(registerWidget);
 }
 
 export { getWidget, listWidgets, registerWidget } from "./registry";

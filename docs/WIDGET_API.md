@@ -126,3 +126,5 @@ Do not add these speculatively. Add a widget that needs the capability first, th
 | Calculator | `src/features/widgets/calculator/calculator-widget.tsx` | Pure UI-independent state-transition logic (`calculator-logic.ts`) |
 | Clipboard | `src/features/widgets/clipboard/clipboard-widget.tsx` | Polling a Tauri plugin (not a custom Rust command); in-memory-only history, deliberately not persisted since clipboard content may be sensitive |
 | Notes | `src/features/widgets/notes/notes-widget.tsx` | Debounced writes straight through the Settings Service; bypasses `useWidgetSetting` since that hook always persists immediately |
+| Timer | `src/features/widgets/timer/timer-widget.tsx` | Pure countdown logic (`timer-logic.ts`); drift-free ticking via `Date.now()` deltas instead of assuming fixed interval steps |
+| Stopwatch | `src/features/widgets/stopwatch/stopwatch-widget.tsx` | Same drift-free ticking pattern as Timer, counting up instead of down |
