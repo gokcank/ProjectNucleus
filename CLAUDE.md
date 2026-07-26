@@ -7,3 +7,4 @@
 @docs/CONTRIBUTING.md
 
 Yeni bir doküman veya ADR yalnızca gerçek bir geliştirme sırasında ihtiyaç doğarsa kullanıcıya danışılarak eklenir.
+Yapılması önerilen her işlem için ayrıca @docs/AI_MODEL dosyasından model ve efor da önerilir.
