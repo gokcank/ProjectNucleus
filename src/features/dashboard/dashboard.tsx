@@ -1,17 +1,18 @@
-import { LayoutGrid, Search } from "lucide-react";
+import { LayoutGrid, Maximize2, Minimize2, Search } from "lucide-react";
 import type { ReactNode } from "react";
 import { ClockCard } from "../cards/clock-card";
 import { CpuCard } from "../cards/cpu-card";
 import { RamCard } from "../cards/ram-card";
 import { useTheme } from "../../hooks/use-theme";
+import { useDashboardLayout } from "./use-dashboard-layout";
 
 const THEMES = ["light", "dark", "system"] as const;
 
-const cards: { id: string; wide?: boolean; content: ReactNode }[] = [
-  { id: "clock", wide: true, content: <ClockCard /> },
-  { id: "cpu", content: <CpuCard /> },
-  { id: "ram", content: <RamCard /> },
-];
+const CARD_RENDERERS: Record<string, (actions: ReactNode) => ReactNode> = {
+  clock: (actions) => <ClockCard actions={actions} />,
+  cpu: (actions) => <CpuCard actions={actions} />,
+  ram: (actions) => <RamCard actions={actions} />,
+};
 
 function EmptyState() {
   return (
@@ -33,6 +34,9 @@ function EmptyState() {
 
 export function Dashboard() {
   const { theme, setTheme } = useTheme();
+  const { layout, toggleWide } = useDashboardLayout();
+
+  const entries = layout.filter((entry) => entry.id in CARD_RENDERERS);
 
   return (
     <div className="flex h-full flex-col">
@@ -54,15 +58,28 @@ export function Dashboard() {
       </header>
 
       <div className="flex-1 overflow-y-auto p-4">
-        {cards.length === 0 ? (
+        {entries.length === 0 ? (
           <EmptyState />
         ) : (
           <div className="grid grid-cols-2 gap-3">
-            {cards.map((card) => (
-              <div key={card.id} className={card.wide ? "col-span-2" : undefined}>
-                {card.content}
-              </div>
-            ))}
+            {entries.map((entry) => {
+              const ResizeIcon = entry.wide ? Minimize2 : Maximize2;
+              const actions = (
+                <button
+                  type="button"
+                  onClick={() => toggleWide(entry.id)}
+                  aria-label={entry.wide ? "Shrink card" : "Expand card"}
+                  className="rounded-md p-1 text-neutral-400 transition-colors hover:bg-black/5 hover:text-neutral-600 dark:text-neutral-500 dark:hover:bg-white/5 dark:hover:text-neutral-300"
+                >
+                  <ResizeIcon className="h-3.5 w-3.5" strokeWidth={2} aria-hidden />
+                </button>
+              );
+              return (
+                <div key={entry.id} className={entry.wide ? "col-span-2" : undefined}>
+                  {CARD_RENDERERS[entry.id](actions)}
+                </div>
+              );
+            })}
           </div>
         )}
       </div>
