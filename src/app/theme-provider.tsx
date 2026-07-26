@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState, type ReactNode } from "react";
+import { logWarn } from "../services/logger-service";
 import { getSetting, setSetting } from "../services/settings-service";
 import { ThemeContext, type Theme } from "./theme-context";
 
@@ -26,8 +27,8 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
       .then((stored) => {
         if (!cancelled && isTheme(stored)) setThemeState(stored);
       })
-      .catch(() => {
-        // No Tauri runtime available (e.g. browser preview) — keep the default.
+      .catch((err: unknown) => {
+        logWarn(`Failed to load theme setting, falling back to system: ${String(err)}`);
       });
     return () => {
       cancelled = true;
@@ -47,8 +48,8 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
 
   const setTheme = (next: Theme) => {
     setThemeState(next);
-    setSetting(SETTING_KEY, next).catch(() => {
-      // No Tauri runtime available (e.g. browser preview) — theme still applies for this session.
+    setSetting(SETTING_KEY, next).catch((err: unknown) => {
+      logWarn(`Failed to persist theme setting: ${String(err)}`);
     });
   };
 
