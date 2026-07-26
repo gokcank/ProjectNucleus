@@ -129,3 +129,4 @@ Do not add these speculatively. Add a widget that needs the capability first, th
 | Timer | `src/features/widgets/timer/timer-widget.tsx` | Pure countdown logic (`timer-logic.ts`); drift-free ticking via `Date.now()` deltas instead of assuming fixed interval steps |
 | Stopwatch | `src/features/widgets/stopwatch/stopwatch-widget.tsx` | Same drift-free ticking pattern as Timer, counting up instead of down |
 | Screenshot | `src/features/widgets/screenshot/screenshot-widget.tsx` | A privileged action delegated to the desktop (XDG portal) via an async Rust command; distinguishes user cancellation from failure |
+| Volume | `src/features/widgets/volume/volume-widget.tsx` | Two-way system control: reads on mount and on `visibilitychange` instead of polling, because each read costs a process spawn |

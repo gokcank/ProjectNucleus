@@ -57,7 +57,10 @@ pub fn run() {
         .invoke_handler(tauri::generate_handler![
             commands::system::cpu_status,
             commands::system::memory_status,
-            commands::screenshot::take_screenshot
+            commands::screenshot::take_screenshot,
+            commands::audio::volume_status,
+            commands::audio::set_volume,
+            commands::audio::toggle_mute
         ])
         .plugin(tauri_plugin_opener::init())
         .plugin(tauri_plugin_store::Builder::new().build())

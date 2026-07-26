@@ -8,6 +8,7 @@ import { registerWidget } from "./registry";
 import { screenshotWidget } from "./screenshot/screenshot-widget";
 import { stopwatchWidget } from "./stopwatch/stopwatch-widget";
 import { timerWidget } from "./timer/timer-widget";
+import { volumeWidget } from "./volume/volume-widget";
 
 let registered = false;
 
@@ -25,6 +26,7 @@ export function registerBuiltinWidgets() {
     timerWidget,
     stopwatchWidget,
     screenshotWidget,
+    volumeWidget,
   ].forEach(registerWidget);
 }
 
