@@ -125,3 +125,4 @@ Do not add these speculatively. Add a widget that needs the capability first, th
 | RAM | `src/features/widgets/ram/ram-widget.tsx` | Same polling pattern, formatted derived values |
 | Calculator | `src/features/widgets/calculator/calculator-widget.tsx` | Pure UI-independent state-transition logic (`calculator-logic.ts`) |
 | Clipboard | `src/features/widgets/clipboard/clipboard-widget.tsx` | Polling a Tauri plugin (not a custom Rust command); in-memory-only history, deliberately not persisted since clipboard content may be sensitive |
+| Notes | `src/features/widgets/notes/notes-widget.tsx` | Debounced writes straight through the Settings Service; bypasses `useWidgetSetting` since that hook always persists immediately |
