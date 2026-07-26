@@ -1,7 +1,12 @@
 import { useEffect, useMemo, useState, type ReactNode } from "react";
+import { getSetting, setSetting } from "../services/settings-service";
 import { ThemeContext, type Theme } from "./theme-context";
 
-const STORAGE_KEY = "nucleus-theme";
+const SETTING_KEY = "theme";
+
+function isTheme(value: unknown): value is Theme {
+  return value === "light" || value === "dark" || value === "system";
+}
 
 function getSystemTheme(): "light" | "dark" {
   return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
@@ -13,10 +18,21 @@ function applyTheme(theme: Theme) {
 }
 
 export function ThemeProvider({ children }: { children: ReactNode }) {
-  const [theme, setThemeState] = useState<Theme>(() => {
-    const stored = localStorage.getItem(STORAGE_KEY);
-    return stored === "light" || stored === "dark" || stored === "system" ? stored : "system";
-  });
+  const [theme, setThemeState] = useState<Theme>("system");
+
+  useEffect(() => {
+    let cancelled = false;
+    getSetting<Theme>(SETTING_KEY, "system")
+      .then((stored) => {
+        if (!cancelled && isTheme(stored)) setThemeState(stored);
+      })
+      .catch(() => {
+        // No Tauri runtime available (e.g. browser preview) — keep the default.
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   useEffect(() => {
     applyTheme(theme);
@@ -30,8 +46,10 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
   }, [theme]);
 
   const setTheme = (next: Theme) => {
-    localStorage.setItem(STORAGE_KEY, next);
     setThemeState(next);
+    setSetting(SETTING_KEY, next).catch(() => {
+      // No Tauri runtime available (e.g. browser preview) — theme still applies for this session.
+    });
   };
 
   const value = useMemo(() => ({ theme, setTheme }), [theme]);
