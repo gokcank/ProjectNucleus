@@ -1,11 +1,13 @@
 import { LayoutGrid, Search } from "lucide-react";
 import type { ReactNode } from "react";
+import { ClockCard } from "../cards/clock-card";
 import { useTheme } from "../../hooks/use-theme";
 
 const THEMES = ["light", "dark", "system"] as const;
 
-// Real cards arrive in Phase 3 — until then the dashboard shows its empty state.
-const cards: { id: string; content: ReactNode }[] = [];
+const cards: { id: string; wide?: boolean; content: ReactNode }[] = [
+  { id: "clock", wide: true, content: <ClockCard /> },
+];
 
 function EmptyState() {
   return (
@@ -53,7 +55,9 @@ export function Dashboard() {
         ) : (
           <div className="grid grid-cols-2 gap-3">
             {cards.map((card) => (
-              <div key={card.id}>{card.content}</div>
+              <div key={card.id} className={card.wide ? "col-span-2" : undefined}>
+                {card.content}
+              </div>
             ))}
           </div>
         )}
