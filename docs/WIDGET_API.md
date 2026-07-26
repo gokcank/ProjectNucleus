@@ -62,7 +62,7 @@ The dashboard never imports a widget component directly. It only calls `getWidge
 
 There is no mount/unmount hook beyond what React itself provides. A widget's `component` is a normal React component — use `useEffect` for setup/teardown (timers, subscriptions) exactly as the built-in widgets do.
 
-There is currently no "widget disabled by user" state — every registered widget is eligible to appear in the layout. Per-widget enable/disable is expected to arrive alongside the Settings screen (Phase 6+) and will be documented here when it lands.
+A widget can be switched off by the user from the Settings screen. A hidden widget keeps its entry in the stored layout — its position and size survive being switched off and back on — but the dashboard does not render it, so its component is unmounted and its timers and subscriptions stop. Widgets need no code to support this; visibility is entirely the host's concern.
 
 ---
 
@@ -70,7 +70,7 @@ There is currently no "widget disabled by user" state — every registered widge
 
 The dashboard (`src/features/dashboard/use-dashboard-layout.ts`) owns *where* a widget sits, not the widget itself:
 
-- Order and size (`wide: boolean`) are persisted to `settings.json` under the key `dashboard.layout`, via the Settings Service (`docs/ARCHITECTURE.md` → Service Layer).
+- Order, size (`wide: boolean`) and visibility (`hidden: boolean`) are persisted to `settings.json` under the key `dashboard.layout`, via the Settings Service (`docs/ARCHITECTURE.md` → Service Layer).
 - On load, stored entries referencing an unregistered widget are dropped; newly registered widgets not yet in the stored layout are appended with their `defaultWide`. This keeps the layout resilient across app updates without a migration step.
 - Users reorder widgets via the drag handle and resize via the expand/shrink action, both rendered by the host — a widget cannot opt out of being reordered or resized.
 
@@ -109,7 +109,7 @@ Per ADR-006 (Delay the Widget Engine) and the "build concrete examples first" pr
 - A public/third-party widget SDK (Phase 11).
 - Per-widget permission or sandboxing model.
 - Inter-widget communication.
-- Widget-level enable/disable toggle.
+- A per-widget settings surface (widgets still expose their own inline controls).
 - Async or lazy widget loading.
 
 Do not add these speculatively. Add a widget that needs the capability first, then extend this document to match.

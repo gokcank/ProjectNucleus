@@ -12,13 +12,15 @@ import {
   SortableContext,
   sortableKeyboardCoordinates,
 } from "@dnd-kit/sortable";
-import { LayoutGrid, Search } from "lucide-react";
-import { useTheme } from "../../hooks/use-theme";
+import { LayoutGrid, Search, Settings as SettingsIcon } from "lucide-react";
 import { getWidget, type WidgetDefinition } from "../widgets";
 import { SortableWidget } from "./sortable-widget";
-import { useDashboardLayout } from "./use-dashboard-layout";
+import type { DashboardLayout } from "./use-dashboard-layout";
 
-const THEMES = ["light", "dark", "system"] as const;
+interface DashboardProps {
+  layout: DashboardLayout;
+  onOpenSettings: () => void;
+}
 
 function EmptyState() {
   return (
@@ -32,15 +34,14 @@ function EmptyState() {
         No cards yet
       </p>
       <p className="mt-1 text-xs text-neutral-500 dark:text-neutral-400">
-        Cards will appear here in upcoming releases.
+        Turn widgets on in Settings to fill the dashboard.
       </p>
     </div>
   );
 }
 
-export function Dashboard() {
-  const { theme, setTheme } = useTheme();
-  const { layout, toggleWide, moveCard } = useDashboardLayout();
+export function Dashboard({ layout: dashboardLayout, onOpenSettings }: DashboardProps) {
+  const { layout, toggleWide, moveCard } = dashboardLayout;
 
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 4 } }),
@@ -54,6 +55,7 @@ export function Dashboard() {
   };
 
   const entries = layout
+    .filter((entry) => !entry.hidden)
     .map((entry) => ({ entry, definition: getWidget(entry.id) }))
     .filter(
       (item): item is { entry: (typeof layout)[number]; definition: WidgetDefinition } =>
@@ -77,6 +79,14 @@ export function Dashboard() {
             className="w-full rounded-[10px] border border-black/10 bg-black/5 py-1.5 pr-3 pl-9 text-sm text-neutral-900 placeholder:text-neutral-400 focus:ring-2 focus:ring-neutral-400 focus:outline-none dark:border-white/10 dark:bg-white/5 dark:text-neutral-100 dark:placeholder:text-neutral-500 dark:focus:ring-neutral-600"
           />
         </div>
+        <button
+          type="button"
+          onClick={onOpenSettings}
+          aria-label="Open settings"
+          className="flex h-8 w-8 shrink-0 items-center justify-center rounded-[10px] text-neutral-600 hover:bg-black/5 dark:text-neutral-300 dark:hover:bg-white/5"
+        >
+          <SettingsIcon size={16} />
+        </button>
       </header>
 
       <div className="flex-1 overflow-y-auto p-4">
@@ -106,24 +116,6 @@ export function Dashboard() {
           </DndContext>
         )}
       </div>
-
-      <footer className="flex items-center justify-center gap-2 border-t border-black/5 px-4 py-2 dark:border-white/5">
-        {THEMES.map((option) => (
-          <button
-            key={option}
-            type="button"
-            onClick={() => setTheme(option)}
-            aria-pressed={theme === option}
-            className={`rounded-[10px] px-2.5 py-1 text-xs capitalize transition-colors ${
-              theme === option
-                ? "bg-neutral-900 text-neutral-100 dark:bg-neutral-100 dark:text-neutral-900"
-                : "text-neutral-500 hover:bg-black/5 dark:text-neutral-400 dark:hover:bg-white/5"
-            }`}
-          >
-            {option}
-          </button>
-        ))}
-      </footer>
     </div>
   );
 }

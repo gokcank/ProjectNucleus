@@ -6,20 +6,31 @@ import { getWidget, listWidgets } from "../widgets";
 export interface WidgetLayoutEntry {
   id: string;
   wide: boolean;
+  /** Hidden widgets stay in the layout, keeping their place and size for when
+   * they are switched back on in Settings. */
+  hidden: boolean;
 }
 
 const SETTING_KEY = "dashboard.layout";
 
 function defaultLayout(): WidgetLayoutEntry[] {
-  return listWidgets().map((widget) => ({ id: widget.id, wide: widget.defaultWide ?? false }));
+  return listWidgets().map((widget) => ({
+    id: widget.id,
+    wide: widget.defaultWide ?? false,
+    hidden: false,
+  }));
 }
 
-function isEntry(value: unknown): value is WidgetLayoutEntry {
+/**
+ * `hidden` is checked loosely on purpose: layouts stored before Settings
+ * existed have no such field, and must not be discarded because of it.
+ */
+function isEntry(value: unknown): value is { id: string; wide: boolean; hidden?: unknown } {
   return (
     typeof value === "object" &&
     value !== null &&
-    typeof (value as WidgetLayoutEntry).id === "string" &&
-    typeof (value as WidgetLayoutEntry).wide === "boolean"
+    typeof (value as { id?: unknown }).id === "string" &&
+    typeof (value as { wide?: unknown }).wide === "boolean"
   );
 }
 
@@ -38,7 +49,9 @@ function reconcile(stored: unknown): WidgetLayoutEntry[] {
       (entry, index, all) =>
         getWidget(entry.id) !== undefined &&
         all.findIndex((other) => other.id === entry.id) === index,
-    );
+    )
+    .map((entry) => ({ id: entry.id, wide: entry.wide, hidden: entry.hidden === true }));
+
   const missing = defaults.filter((def) => !known.some((entry) => entry.id === def.id));
   return [...known, ...missing];
 }
@@ -71,6 +84,10 @@ export function useDashboardLayout() {
     persist(layout.map((entry) => (entry.id === id ? { ...entry, wide: !entry.wide } : entry)));
   };
 
+  const toggleHidden = (id: string) => {
+    persist(layout.map((entry) => (entry.id === id ? { ...entry, hidden: !entry.hidden } : entry)));
+  };
+
   const moveCard = (fromId: string, toId: string) => {
     const fromIndex = layout.findIndex((entry) => entry.id === fromId);
     const toIndex = layout.findIndex((entry) => entry.id === toId);
@@ -81,5 +98,7 @@ export function useDashboardLayout() {
     persist(next);
   };
 
-  return { layout, toggleWide, moveCard };
+  return { layout, toggleWide, toggleHidden, moveCard };
 }
+
+export type DashboardLayout = ReturnType<typeof useDashboardLayout>;
