@@ -14,7 +14,6 @@ Güncel modellerde düşünme (thinking) ayrı bir açma/kapama ayarı değildir
 
 | Model | Kullanılabilir Efor Seviyeleri |
 |-------|-------------------------------|
-| Fable 5 | Low → Medium → High → Extra High → Max → Ultracode (xHigh + Workflows) |
 | Opus 5 | Low → Medium → High → Extra High → Max → Ultracode (xHigh + Workflows) |
 | Sonnet 5 | Low → Medium → High → Extra High → Max → Ultracode (xHigh + Workflows) |
 | Haiku 4.5 | Efor ayarı yok |
@@ -23,18 +22,19 @@ Genel ilkeler:
 
 - **Extra High (xHigh):** Kodlama ve ajan tipi işler için önerilen üst seviye; Claude Code'un zor işlerdeki varsayılanı.
 - **Max:** Maliyet yerine doğruluğun öncelikli olduğu nadir durumlar.
-- **Low / Medium:** Fable 5'te düşük seviyeler bile çok güçlüdür; rutin işlerde gerçek tasarruf kolu budur.
+- **Low / Medium:** Rutin işlerde gerçek tasarruf kolu.
 
 ---
 
 # Model Hiyerarşisi
 
-Yetenek sırası (yukarıdan aşağıya): **Fable 5 → Opus 5 → Sonnet 5 → Haiku 4.5**
+Yetenek sırası (yukarıdan aşağıya): **Opus 5 → Sonnet 5 → Haiku 4.5**
 
-- **Fable 5** en yetenekli modeldir; Opus'un üzerindeki Mythos sınıfı kademede yer alır.
-- **Opus 5**, Fable'ın maliyetine değmeyen ama Sonnet'e fazla gelen işler için orta-üst kademedir.
+- **Opus 5** en yetenekli ve öncelikli modeldir; mimari kararlar ve zor işler için varsayılan.
 - **Sonnet 5** hız/kalite dengesi; küçük ve orta işlerin varsayılanıdır.
 - **Haiku 4.5** en hızlı ve en ucuz seçenektir; basit mekanik işler için uygundur.
+
+> Not: Fable 5 kredi/erişim kısıtları nedeniyle şu an kullanılmıyor. Erişim geri gelirse bu doküman yeniden gözden geçirilir.
 
 ---
 
@@ -42,17 +42,16 @@ Yetenek sırası (yukarıdan aşağıya): **Fable 5 → Opus 5 → Sonnet 5 → 
 
 | Senaryo | Model | Efor | Neden |
 |---------|-------|------|-------|
-| Projeyi ilk kez başlatma | Fable 5 | Medium | Dokümantasyonu analiz eder, proje bağlamını oluşturur. |
-| Dokümanları okuma ve özetleme | Fable 5 | Medium | Dokümanlar arasındaki ilişkiyi daha iyi kurar. |
-| Yeni faza başlama (Roadmap) | Fable 5 | Medium | Faz kapsamını doğru yorumlar, ileriye sıçramaz. |
-| Mimari kararlar | Fable 5 | High / xHigh | Alternatifleri değerlendirir ve gerekçelendirir. |
-| Tauri + Rust geliştirme | Fable 5 | Medium – High | Backend ve frontend arasındaki ilişkiyi korur. |
-| React / UI geliştirme | Fable 5 | Medium | UI Guidelines'a daha tutarlı uyar. |
-| Büyük refactor | Fable 5 | High / xHigh | Mevcut mimariyi bozmadan düzenleme yapma olasılığı artar. |
-| Kod inceleme (Code Review) | Fable 5 | High / xHigh | Kod kalitesi ve mimari uyumu değerlendirir. |
-| Performans optimizasyonu | Fable 5 | High / xHigh | Darboğazları analiz etmek için ek muhakeme faydalıdır. |
-| Yeni widget tasarımı (Phase 5+) | Fable 5 | High / xHigh | API ve mimari kararlar içerir. |
-| Fable gerekmeyen orta ağırlıkta işler | Opus 5 | High | Fable maliyetine değmeyen ama Sonnet'e fazla gelen işler. |
+| Projeyi ilk kez başlatma | Opus 5 | Medium | Dokümantasyonu analiz eder, proje bağlamını oluşturur. |
+| Dokümanları okuma ve özetleme | Opus 5 | Medium | Dokümanlar arasındaki ilişkiyi daha iyi kurar. |
+| Yeni faza başlama (Roadmap) | Opus 5 | Medium | Faz kapsamını doğru yorumlar, ileriye sıçramaz. |
+| Mimari kararlar | Opus 5 | High / Extra High | Alternatifleri değerlendirir ve gerekçelendirir. |
+| Tauri + Rust geliştirme | Opus 5 | Medium – High | Backend ve frontend arasındaki ilişkiyi korur. |
+| React / UI geliştirme | Opus 5 | Medium | UI Guidelines'a daha tutarlı uyar. |
+| Büyük refactor | Opus 5 | High / Extra High | Mevcut mimariyi bozmadan düzenleme yapma olasılığı artar. |
+| Kod inceleme (Code Review) | Opus 5 | High / Extra High | Kod kalitesi ve mimari uyumu değerlendirir. |
+| Performans optimizasyonu | Opus 5 | High / Extra High | Darboğazları analiz etmek için ek muhakeme faydalıdır. |
+| Yeni widget tasarımı (Phase 5+) | Opus 5 | High / Extra High | API ve mimari kararlar içerir. |
 | Küçük özellik ekleme | Sonnet 5 | Medium | Hızlı ve yeterli. |
 | Basit UI düzenlemeleri | Sonnet 5 | Low | Derin analiz gerektirmez. |
 | Küçük bug düzeltmeleri | Sonnet 5 | Low | En hızlı seçenek. |
@@ -63,7 +62,6 @@ Yetenek sırası (yukarıdan aşağıya): **Fable 5 → Opus 5 → Sonnet 5 → 
 
 # Notlar
 
-- Fable 5'te düşünme her zaman açıktır ve kapatılamaz; derinliği efor seviyesi belirler.
-- Sonnet 5'te de varsayılan davranış uyarlanabilir düşünmedir; düşünmeyi kapatmak yerine düşük efor seçmek önerilir.
-- Maliyet oranı (girdi/çıktı, milyon jeton başına): Fable 5 → 10$/50$ · Opus 5 → 5$/25$ · Sonnet 5 → 3$/15$ · Haiku 4.5 → 1$/5$.
+- Sonnet 5'te varsayılan davranış uyarlanabilir düşünmedir; düşünmeyi kapatmak yerine düşük efor seçmek önerilir.
+- Maliyet oranı (girdi/çıktı, milyon jeton başına): Opus 5 → 5$/25$ · Sonnet 5 → 3$/15$ · Haiku 4.5 → 1$/5$.
 - Model ve efor seçimi bir öneridir; iş beklenenden zor çıkarsa seviye yükseltilmeli, kolay çıkarsa düşürülmelidir.

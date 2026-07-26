@@ -13,4 +13,5 @@ export function registerBuiltinWidgets() {
 }
 
 export { getWidget, listWidgets, registerWidget } from "./registry";
+export { useWidgetSetting } from "./use-widget-setting";
 export type { WidgetDefinition } from "./types";
