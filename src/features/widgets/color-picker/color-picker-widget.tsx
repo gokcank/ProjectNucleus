@@ -69,7 +69,7 @@ function ColorPickerContent() {
 
       {error && <p className="mt-2 text-[11px] text-red-600 dark:text-red-400">{error}</p>}
 
-      {color && !error && (
+      {color && (
         <button
           type="button"
           onClick={copyHex}
