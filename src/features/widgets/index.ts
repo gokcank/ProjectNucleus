@@ -14,6 +14,7 @@ import { registerWidget } from "./registry";
 import { screenshotWidget } from "./screenshot/screenshot-widget";
 import { stopwatchWidget } from "./stopwatch/stopwatch-widget";
 import { timerWidget } from "./timer/timer-widget";
+import { todoWidget } from "./todo/todo-widget";
 import { volumeWidget } from "./volume/volume-widget";
 
 let registered = false;
@@ -39,6 +40,7 @@ export function registerBuiltinWidgets() {
     powerWidget,
     colorPickerWidget,
     quickLinksWidget,
+    todoWidget,
   ].forEach(registerWidget);
 }
 
