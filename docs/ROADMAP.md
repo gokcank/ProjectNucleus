@@ -351,6 +351,8 @@ Potential future enhancements:
 - GNOME Shell integration
 - Wayland-specific enhancements
 - Mobile companion application
+- Additional system status widgets (GPU, disk usage, network speed) — only if
+  a real need arises; not planned as a pre-built catalog (ADR-005/006)
 
 These ideas are exploratory and not committed.
 
