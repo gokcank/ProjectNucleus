@@ -70,7 +70,8 @@ pub fn run() {
             commands::power::power_capabilities,
             commands::power::run_power_action,
             commands::power::power_profile_status,
-            commands::power::set_power_profile
+            commands::power::set_power_profile,
+            commands::color_picker::pick_color
         ])
         .plugin(tauri_plugin_opener::init())
         .plugin(tauri_plugin_store::Builder::new().build())

@@ -2,6 +2,7 @@ import { bluetoothWidget } from "./bluetooth/bluetooth-widget";
 import { calculatorWidget } from "./calculator/calculator-widget";
 import { clipboardWidget } from "./clipboard/clipboard-widget";
 import { clockWidget } from "./clock/clock-widget";
+import { colorPickerWidget } from "./color-picker/color-picker-widget";
 import { cpuWidget } from "./cpu/cpu-widget";
 import { nightLightWidget } from "./night-light/night-light-widget";
 import { notesWidget } from "./notes/notes-widget";
@@ -35,6 +36,7 @@ export function registerBuiltinWidgets() {
     nightLightWidget,
     powerProfileWidget,
     powerWidget,
+    colorPickerWidget,
   ].forEach(registerWidget);
 }
 
