@@ -80,6 +80,9 @@ function ColorPickerContent() {
 export const colorPickerWidget: WidgetDefinition = {
   id: "colorPicker",
   title: "Color",
+  // The header is a quarter of the dashboard wide, so "Color Picker" does not
+  // fit there — but that is what people type when looking for this.
+  keywords: ["picker", "eyedropper", "hex"],
   icon: Pipette,
   quarterWidth: true,
   component: ColorPickerContent,

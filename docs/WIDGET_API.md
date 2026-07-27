@@ -24,6 +24,7 @@ A widget is a plain object matching `WidgetDefinition` (`src/features/widgets/ty
 |---|---|---|---|
 | `id` | `string` | Yes | Unique, stable identifier. Also used as the layout persistence key — never change it once shipped. |
 | `title` | `string` | Yes | Shown in the card header. |
+| `keywords` | `string[]` | No | Extra terms the dashboard search matches besides the title. For widgets people look for under a name that will not fit in the header — Color registers `picker`, since "Color Picker" would be truncated in a quarter-width card. Do not restate words already in the title. |
 | `icon` | `LucideIcon` | Yes | Per `docs/UI_GUIDELINES.md`, Lucide only. |
 | `defaultWide` | `boolean` | No | Whether the widget spans full dashboard width the first time it's placed. Defaults to `false`. |
 | `compact` | `boolean` | No | Renders as a single row — icon, title and content share the header line instead of content sitting below it. For status widgets that reduce to one value, paired with `InlineMeter` (`src/components/card/inline-meter.tsx`). Defaults to `false`. |
@@ -104,6 +105,8 @@ Storage key shape: `widget.<widgetId>.<key>`, persisted through the same Setting
 
 `listWidgets()` returns every registered widget. This is what the dashboard search (`docs/ROADMAP.md` → Phase 2 search scope) will query once search actually filters — today it is also how the dashboard enumerates what to render.
 
+Dashboard search matches a widget's `title` and its `keywords`, so a widget whose common name is longer than its header can still be found by it.
+
 ---
 
 # What Is Deliberately Not Here Yet
@@ -138,6 +141,6 @@ Do not add these speculatively. Add a widget that needs the capability first, th
 | Night Light | `src/features/widgets/night-light/night-light-widget.tsx` | Reads and writes a desktop setting through `gsettings`; parses GVariant literals in Rust |
 | Power Profile | `src/features/widgets/power-profile/power-profile-widget.tsx` | Offers only the profiles the daemon advertises, and validates the chosen one against that list before applying it |
 | Power | `src/features/widgets/power/power-widget.tsx` | Destructive actions behind an explicit confirmation step; only offers what logind reports as permitted |
-| Color Picker | `src/features/widgets/color-picker/color-picker-widget.tsx` | Another XDG portal action (same technique as Screenshot); `quarterWidth: true` since there's nothing to show at a larger size |
+| Color Picker | `src/features/widgets/color-picker/color-picker-widget.tsx` | Another XDG portal action (same technique as Screenshot); `quarterWidth: true` since there's nothing to show at a larger size; `keywords` so search finds it under its longer common name |
 | Quick Links | `src/features/widgets/quick-links/quick-links-widget.tsx` | An array stored via `useWidgetSetting` (not just a single value) — add/remove are discrete clicks, so no debounce is needed |
 | Todo | `src/features/widgets/todo/todo-widget.tsx` | Same array-via-`useWidgetSetting` pattern as Quick Links, applied to a checklist |

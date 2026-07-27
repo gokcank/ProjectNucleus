@@ -66,6 +66,7 @@ export function SortableWidget({ entry, definition, onToggleWide }: SortableWidg
         title={definition.title}
         actions={actions}
         inline={definition.compact}
+        narrow={definition.quarterWidth}
       >
         <Content wide={entry.wide} />
       </Card>

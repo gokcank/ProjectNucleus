@@ -6,6 +6,12 @@ export interface WidgetDefinition {
   id: string;
   /** Human-readable name shown in the card header and used by discovery. */
   title: string;
+  /**
+   * Extra terms the dashboard search should match besides the title, for
+   * widgets people look for under a name that will not fit in the header
+   * (e.g. Color, which users search for as "picker").
+   */
+  keywords?: string[];
   icon: LucideIcon;
   /** Whether the widget spans the full dashboard width by default. */
   defaultWide?: boolean;

@@ -23,6 +23,13 @@ interface DashboardProps {
   onOpenSettings: () => void;
 }
 
+/** Matches the card's own name plus any extra terms it registered. */
+function matchesQuery(definition: WidgetDefinition, query: string): boolean {
+  const needle = query.toLowerCase();
+  if (definition.title.toLowerCase().includes(needle)) return true;
+  return (definition.keywords ?? []).some((keyword) => keyword.toLowerCase().includes(needle));
+}
+
 function EmptyState() {
   return (
     <div className="flex h-full flex-col items-center justify-center text-center">
@@ -81,7 +88,7 @@ export function Dashboard({ layout: dashboardLayout, onOpenSettings }: Dashboard
       (item): item is { entry: (typeof layout)[number]; definition: WidgetDefinition } =>
         item.definition !== undefined,
     )
-    .filter((item) => item.definition.title.toLowerCase().includes(trimmedQuery.toLowerCase()));
+    .filter((item) => matchesQuery(item.definition, trimmedQuery));
 
   return (
     <div className="flex h-full flex-col">
