@@ -25,7 +25,7 @@ function foldCpu(previous: CpuState | null, status: CpuStatus): CpuState {
 }
 
 function CpuContent() {
-  const state = usePolling<CpuStatus, CpuState | null>(
+  const [state] = usePolling<CpuStatus, CpuState | null>(
     getCpuStatus,
     POLL_INTERVAL_MS,
     "CPU status",

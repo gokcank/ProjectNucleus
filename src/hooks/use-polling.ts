@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import type { Dispatch, SetStateAction } from "react";
 import { logWarn } from "../services/logger-service";
 
 /**
@@ -12,6 +13,10 @@ import { logWarn } from "../services/logger-service";
  *
  * `initialState` is read once on mount; later changes are ignored.
  * `fetcher` must be referentially stable (e.g. a module-level function).
+ *
+ * Returns a `[state, setState]` pair like `useState`, so a caller that also
+ * needs to change the state outside of a poll tick (e.g. Clipboard's "Clear
+ * history" button) can do so directly.
  */
 export function usePolling<TFetched, TState>(
   fetcher: () => Promise<TFetched>,
@@ -19,7 +24,7 @@ export function usePolling<TFetched, TState>(
   label: string,
   fold: (previous: TState, next: TFetched) => TState,
   initialState: TState,
-): TState {
+): [TState, Dispatch<SetStateAction<TState>>] {
   const [state, setState] = useState<TState>(initialState);
 
   // `fold` is usually written inline at the call site, so it is not
@@ -53,5 +58,5 @@ export function usePolling<TFetched, TState>(
     };
   }, [fetcher, intervalMs, label]);
 
-  return state;
+  return [state, setState];
 }

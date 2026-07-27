@@ -1,5 +1,5 @@
 import { ClipboardList, Copy } from "lucide-react";
-import { useEffect, useState } from "react";
+import { usePolling } from "../../../hooks/use-polling";
 import { logWarn } from "../../../services/logger-service";
 import { getClipboardText, setClipboardText } from "../../../services/clipboard-service";
 import type { WidgetDefinition } from "../types";
@@ -8,32 +8,13 @@ import { addEntry, clearHistory, INITIAL_HISTORY } from "./clipboard-logic";
 const POLL_INTERVAL_MS = 1500;
 
 function ClipboardContent() {
-  const [history, setHistory] = useState(INITIAL_HISTORY);
-
-  // Polls the system clipboard directly rather than via `usePolling`: each tick needs to fold
-  // the new value into history (via addEntry), not just replace a single "latest value" state.
-  useEffect(() => {
-    let active = true;
-
-    const tick = () => {
-      if (document.hidden) return;
-      getClipboardText()
-        .then((text) => {
-          if (active) setHistory((prev) => addEntry(prev, text));
-        })
-        .catch((err: unknown) => {
-          logWarn(`Clipboard unavailable, polling stopped: ${String(err)}`);
-          window.clearInterval(intervalId);
-        });
-    };
-
-    tick();
-    const intervalId = window.setInterval(tick, POLL_INTERVAL_MS);
-    return () => {
-      active = false;
-      window.clearInterval(intervalId);
-    };
-  }, []);
+  const [history, setHistory] = usePolling(
+    getClipboardText,
+    POLL_INTERVAL_MS,
+    "Clipboard",
+    addEntry,
+    INITIAL_HISTORY,
+  );
 
   const handleCopy = (text: string) => {
     setClipboardText(text).catch((err: unknown) => {

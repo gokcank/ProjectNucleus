@@ -33,7 +33,7 @@ function foldRam(previous: RamState | null, memory: MemoryStatus): RamState {
 }
 
 function RamContent({ wide }: { wide: boolean }) {
-  const state = usePolling<MemoryStatus, RamState | null>(
+  const [state] = usePolling<MemoryStatus, RamState | null>(
     getMemoryStatus,
     POLL_INTERVAL_MS,
     "Memory status",
