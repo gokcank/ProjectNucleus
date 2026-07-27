@@ -27,6 +27,7 @@ A widget is a plain object matching `WidgetDefinition` (`src/features/widgets/ty
 | `icon` | `LucideIcon` | Yes | Per `docs/UI_GUIDELINES.md`, Lucide only. |
 | `defaultWide` | `boolean` | No | Whether the widget spans full dashboard width the first time it's placed. Defaults to `false`. |
 | `compact` | `boolean` | No | Renders as a single row — icon, title and content share the header line instead of content sitting below it. For status widgets that reduce to one value, paired with `InlineMeter` (`src/components/card/inline-meter.tsx`). Defaults to `false`. |
+| `quarterWidth` | `boolean` | No | Fixes the card at a quarter of the dashboard's width (out of its 4-column grid) so several fit in one row. Not user-resizable — no expand/shrink action is shown. Reserve for widgets genuinely that small (see Color Picker); most widgets should use the default half/full toggle instead. Defaults to `false`. |
 | `component` | `ComponentType<{ wide: boolean }>` | Yes | Renders content only — no surface, no border, no header. The host supplies those. Receives `wide`, so a widget can show more detail when it has the room (see RAM). |
 
 Convention: one folder per widget under `src/features/widgets/<id>/`, one file `<id>-widget.tsx` exporting the definition as `<id>Widget`.

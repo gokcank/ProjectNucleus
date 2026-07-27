@@ -129,7 +129,7 @@ export function Dashboard({ layout: dashboardLayout, onOpenSettings }: Dashboard
               items={entries.map((item) => item.entry.id)}
               strategy={rectSortingStrategy}
             >
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-4 gap-3">
                 {entries.map((item) => (
                   <SortableWidget
                     key={item.entry.id}

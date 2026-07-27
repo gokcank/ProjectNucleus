@@ -24,14 +24,16 @@ export function SortableWidget({ entry, definition, onToggleWide }: SortableWidg
 
   const actions = (
     <>
-      <button
-        type="button"
-        onClick={() => onToggleWide(entry.id)}
-        aria-label={entry.wide ? "Shrink card" : "Expand card"}
-        className={actionButtonClass}
-      >
-        <ResizeIcon className="h-3.5 w-3.5" strokeWidth={2} aria-hidden />
-      </button>
+      {!definition.quarterWidth && (
+        <button
+          type="button"
+          onClick={() => onToggleWide(entry.id)}
+          aria-label={entry.wide ? "Shrink card" : "Expand card"}
+          className={actionButtonClass}
+        >
+          <ResizeIcon className="h-3.5 w-3.5" strokeWidth={2} aria-hidden />
+        </button>
+      )}
       <button
         type="button"
         aria-label="Reorder card"
@@ -44,11 +46,20 @@ export function SortableWidget({ entry, definition, onToggleWide }: SortableWidg
     </>
   );
 
+  // Column span out of the dashboard's 4-column grid: a quarter-width widget
+  // is fixed at 1, everything else keeps the existing half/full toggle
+  // (2 or 4) exactly as before -- the grid grew, not the widgets.
+  const spanClass = definition.quarterWidth
+    ? "col-span-1"
+    : entry.wide
+      ? "col-span-4"
+      : "col-span-2";
+
   return (
     <div
       ref={setNodeRef}
       style={{ transform: CSS.Transform.toString(transform), transition }}
-      className={`${entry.wide ? "col-span-2" : ""} ${isDragging ? "z-10 opacity-80" : ""}`}
+      className={`${spanClass} ${isDragging ? "z-10 opacity-80" : ""}`}
     >
       <Card
         icon={definition.icon}

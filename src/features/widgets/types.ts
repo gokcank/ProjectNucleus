@@ -16,6 +16,14 @@ export interface WidgetDefinition {
    */
   compact?: boolean;
   /**
+   * Fixes the card at a quarter of the dashboard's width, letting several
+   * sit in one row. Not user-resizable — there is nothing extra to show at
+   * a larger size, so no expand/shrink action is rendered. Reserve this for
+   * widgets that are genuinely that small (see Color Picker); most widgets
+   * should use the normal half/full toggle instead.
+   */
+  quarterWidth?: boolean;
+  /**
    * Renders the card content only. The card chrome (surface, header,
    * actions) is owned by the dashboard host. Receives whether the widget is
    * currently placed wide, for widgets that show extra detail with the
