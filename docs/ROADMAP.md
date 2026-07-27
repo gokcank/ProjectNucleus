@@ -25,9 +25,9 @@ Every phase must produce a stable, usable application.
 | Item | Status |
 |------|--------|
 | Project | 🚧 In Development |
-| Current Phase | Phase 0 — Foundation |
+| Current Phase | Phase 8 — Utility Widgets (in progress) |
 | Public Release | Not Yet |
-| Widget Engine | Planned |
+| Widget Engine | Complete |
 | Plugin SDK | Planned |
 
 ---
@@ -204,6 +204,8 @@ Examples
 - Notes
 - Timer
 - Stopwatch
+- Quick Links
+- Todo
 - Pomodoro
 - Calendar
 
