@@ -96,6 +96,8 @@ const [showSeconds, setShowSeconds] = useWidgetSetting("clock", "showSeconds", t
 
 Storage key shape: `widget.<widgetId>.<key>`, persisted through the same Settings Service as dashboard layout and theme. There is no widget-specific settings UI yet — widgets expose their own inline controls (see the Clock widget's seconds toggle) until a dedicated per-widget settings surface exists.
 
+`T` isn't limited to primitives — Quick Links and Todo each store an array of records this way (e.g. `useWidgetSetting<QuickLink[]>("quickLinks", "items", [], isQuickLinkList)`). This fits because their edits (add/remove) are discrete clicks; a widget with rapid-fire edits (continuous typing, a drag) should debounce writes directly through the Settings Service instead, like Notes and Volume do — `useWidgetSetting` always persists immediately.
+
 ---
 
 # Discovery
@@ -136,3 +138,6 @@ Do not add these speculatively. Add a widget that needs the capability first, th
 | Night Light | `src/features/widgets/night-light/night-light-widget.tsx` | Reads and writes a desktop setting through `gsettings`; parses GVariant literals in Rust |
 | Power Profile | `src/features/widgets/power-profile/power-profile-widget.tsx` | Offers only the profiles the daemon advertises, and validates the chosen one against that list before applying it |
 | Power | `src/features/widgets/power/power-widget.tsx` | Destructive actions behind an explicit confirmation step; only offers what logind reports as permitted |
+| Color Picker | `src/features/widgets/color-picker/color-picker-widget.tsx` | Another XDG portal action (same technique as Screenshot); `quarterWidth: true` since there's nothing to show at a larger size |
+| Quick Links | `src/features/widgets/quick-links/quick-links-widget.tsx` | An array stored via `useWidgetSetting` (not just a single value) — add/remove are discrete clicks, so no debounce is needed |
+| Todo | `src/features/widgets/todo/todo-widget.tsx` | Same array-via-`useWidgetSetting` pattern as Quick Links, applied to a checklist |
