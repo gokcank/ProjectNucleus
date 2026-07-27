@@ -1,9 +1,30 @@
+import { getCurrentWindow } from "@tauri-apps/api/window";
 import { Pipette } from "lucide-react";
 import { useState } from "react";
 import { setClipboardText } from "../../../services/clipboard-service";
 import { pickColor, type PickedColor } from "../../../services/color-picker-service";
 import { logWarn } from "../../../services/logger-service";
 import type { WidgetDefinition } from "../types";
+
+/**
+ * Opening the portal takes focus away from Nucleus, which the panel answers by
+ * hiding itself. The picked colour is the whole point of this widget, so bring
+ * the panel back once there is one to show.
+ */
+function restorePanel() {
+  let appWindow: ReturnType<typeof getCurrentWindow>;
+  try {
+    appWindow = getCurrentWindow();
+  } catch {
+    return; // No Tauri runtime (e.g. browser preview) — nothing to restore.
+  }
+  appWindow
+    .show()
+    .then(() => appWindow.setFocus())
+    .catch((err: unknown) => {
+      logWarn(`Could not bring the panel back after picking a color: ${String(err)}`);
+    });
+}
 
 function ColorPickerContent() {
   const [color, setColor] = useState<PickedColor | null>(null);
@@ -16,7 +37,9 @@ function ColorPickerContent() {
     pickColor()
       .then((result) => {
         // `null` means the user dismissed the desktop's color-picker dialog.
-        if (result) setColor(result);
+        if (!result) return;
+        setColor(result);
+        restorePanel();
       })
       .catch((err: unknown) => {
         logWarn(`Color pick failed: ${String(err)}`);
