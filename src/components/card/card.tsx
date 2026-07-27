@@ -20,7 +20,7 @@ export function Card({ icon: Icon, title, actions, inline, children }: CardProps
       <div className="flex items-center gap-2 text-neutral-500 dark:text-neutral-400">
         <Icon className="h-4 w-4 shrink-0" strokeWidth={2} aria-hidden />
         <span className="shrink-0 text-xs font-medium">{title}</span>
-        {inline ? <div className="flex flex-1 items-center">{children}</div> : null}
+        {inline ? <div className="flex flex-1 items-center gap-2">{children}</div> : null}
         {actions ? (
           <div className={`flex shrink-0 items-center gap-1 ${inline ? "" : "ml-auto"}`}>
             {actions}

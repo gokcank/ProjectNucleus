@@ -27,7 +27,7 @@ A widget is a plain object matching `WidgetDefinition` (`src/features/widgets/ty
 | `icon` | `LucideIcon` | Yes | Per `docs/UI_GUIDELINES.md`, Lucide only. |
 | `defaultWide` | `boolean` | No | Whether the widget spans full dashboard width the first time it's placed. Defaults to `false`. |
 | `compact` | `boolean` | No | Renders as a single row — icon, title and content share the header line instead of content sitting below it. For status widgets that reduce to one value, paired with `InlineMeter` (`src/components/card/inline-meter.tsx`). Defaults to `false`. |
-| `component` | `ComponentType` | Yes | Renders content only — no surface, no border, no header. The host supplies those. |
+| `component` | `ComponentType<{ wide: boolean }>` | Yes | Renders content only — no surface, no border, no header. The host supplies those. Receives `wide`, so a widget can show more detail when it has the room (see RAM). |
 
 Convention: one folder per widget under `src/features/widgets/<id>/`, one file `<id>-widget.tsx` exporting the definition as `<id>Widget`.
 
@@ -123,7 +123,7 @@ Do not add these speculatively. Add a widget that needs the capability first, th
 |---|---|---|
 | Clock | `src/features/widgets/clock/clock-widget.tsx` | Local timer state, a widget-owned setting (`showSeconds`) |
 | CPU | `src/features/widgets/cpu/cpu-widget.tsx` | Polling a Rust command via the Service Layer, shared `usePolling` hook, `compact` layout |
-| RAM | `src/features/widgets/ram/ram-widget.tsx` | Same polling pattern; `compact` layout with exact byte counts moved to a hover tooltip |
+| RAM | `src/features/widgets/ram/ram-widget.tsx` | Same polling pattern; `compact` layout, exact byte counts as a hover tooltip when narrow and as visible text when `wide` |
 | Calculator | `src/features/widgets/calculator/calculator-widget.tsx` | Pure UI-independent state-transition logic (`calculator-logic.ts`) |
 | Clipboard | `src/features/widgets/clipboard/clipboard-widget.tsx` | Polling a Tauri plugin (not a custom Rust command); in-memory-only history, deliberately not persisted since clipboard content may be sensitive |
 | Notes | `src/features/widgets/notes/notes-widget.tsx` | Debounced writes straight through the Settings Service; bypasses `useWidgetSetting` since that hook always persists immediately |

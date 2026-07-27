@@ -11,7 +11,7 @@ function formatGib(bytes: number): string {
   return `${(bytes / BYTES_PER_GIB).toFixed(1)} GiB`;
 }
 
-function RamContent() {
+function RamContent({ wide }: { wide: boolean }) {
   const memory = usePolling(getMemoryStatus, POLL_INTERVAL_MS, "Memory status");
 
   const usedPercent =
@@ -22,7 +22,16 @@ function RamContent() {
       ? undefined
       : `${formatGib(memory.usedBytes)} / ${formatGib(memory.totalBytes)}`;
 
-  return <InlineMeter percent={usedPercent} detail={detail} />;
+  return (
+    <>
+      <InlineMeter percent={usedPercent} detail={detail} />
+      {wide && detail && (
+        <span className="shrink-0 text-xs whitespace-nowrap tabular-nums text-neutral-500 dark:text-neutral-400">
+          {detail}
+        </span>
+      )}
+    </>
+  );
 }
 
 export const ramWidget: WidgetDefinition = {

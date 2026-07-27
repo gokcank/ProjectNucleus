@@ -17,7 +17,9 @@ export interface WidgetDefinition {
   compact?: boolean;
   /**
    * Renders the card content only. The card chrome (surface, header,
-   * actions) is owned by the dashboard host.
+   * actions) is owned by the dashboard host. Receives whether the widget is
+   * currently placed wide, for widgets that show extra detail with the
+   * extra room (e.g. RAM's exact byte counts).
    */
-  component: ComponentType;
+  component: ComponentType<{ wide: boolean }>;
 }
