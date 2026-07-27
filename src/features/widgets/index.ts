@@ -8,6 +8,7 @@ import { nightLightWidget } from "./night-light/night-light-widget";
 import { notesWidget } from "./notes/notes-widget";
 import { powerProfileWidget } from "./power-profile/power-profile-widget";
 import { powerWidget } from "./power/power-widget";
+import { quickLinksWidget } from "./quick-links/quick-links-widget";
 import { ramWidget } from "./ram/ram-widget";
 import { registerWidget } from "./registry";
 import { screenshotWidget } from "./screenshot/screenshot-widget";
@@ -37,6 +38,7 @@ export function registerBuiltinWidgets() {
     powerProfileWidget,
     powerWidget,
     colorPickerWidget,
+    quickLinksWidget,
   ].forEach(registerWidget);
 }
 
