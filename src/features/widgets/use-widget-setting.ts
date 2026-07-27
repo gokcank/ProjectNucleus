@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { logWarn } from "../../services/logger-service";
 import { getSetting, setSetting } from "../../services/settings-service";
 
@@ -20,11 +20,17 @@ export function useWidgetSetting<T>(
   const [value, setValue] = useState<T>(fallback);
   const settingKey = `widget.${widgetId}.${key}`;
 
+  // Guards against the load below overwriting a change the user already
+  // made while it was in flight — without it, editing a list (Todo, Quick
+  // Links) right after opening the panel could have the edit clobbered by
+  // the stale value the load resolves with a moment later.
+  const hasUpdatedRef = useRef(false);
+
   useEffect(() => {
     let cancelled = false;
     getSetting<unknown>(settingKey, fallback)
       .then((stored) => {
-        if (!cancelled && isValid(stored)) setValue(stored);
+        if (!cancelled && !hasUpdatedRef.current && isValid(stored)) setValue(stored);
       })
       .catch((err: unknown) => {
         logWarn(`Failed to load setting ${settingKey}: ${String(err)}`);
@@ -36,6 +42,7 @@ export function useWidgetSetting<T>(
   }, [settingKey]);
 
   const update = (next: T) => {
+    hasUpdatedRef.current = true;
     setValue(next);
     setSetting(settingKey, next).catch((err: unknown) => {
       logWarn(`Failed to persist setting ${settingKey}: ${String(err)}`);
