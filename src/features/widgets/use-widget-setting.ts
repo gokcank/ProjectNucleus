@@ -2,6 +2,9 @@ import { useEffect, useState } from "react";
 import { logWarn } from "../../services/logger-service";
 import { getSetting, setSetting } from "../../services/settings-service";
 
+/** Ready-made `isValid` guard for the common case of a boolean setting. */
+export const isBoolean = (value: unknown): value is boolean => typeof value === "boolean";
+
 /**
  * Persisted, widget-scoped setting. Stored under `widget.<widgetId>.<key>`
  * so widgets cannot collide with each other or with application settings.

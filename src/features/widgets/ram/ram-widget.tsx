@@ -6,9 +6,7 @@ import { usePolling } from "../../../hooks/use-polling";
 import type { MemoryStatus } from "../../../services/system-service";
 import { getMemoryStatus } from "../../../services/system-service";
 import type { WidgetDefinition } from "../types";
-import { useWidgetSetting } from "../use-widget-setting";
-
-const isBoolean = (value: unknown): value is boolean => typeof value === "boolean";
+import { isBoolean, useWidgetSetting } from "../use-widget-setting";
 
 const POLL_INTERVAL_MS = 2000;
 const HISTORY_LENGTH = 20;

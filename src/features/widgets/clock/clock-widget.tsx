@@ -1,7 +1,7 @@
 import { Clock } from "lucide-react";
 import { useEffect, useState } from "react";
 import type { WidgetDefinition } from "../types";
-import { useWidgetSetting } from "../use-widget-setting";
+import { isBoolean, useWidgetSetting } from "../use-widget-setting";
 
 const withSeconds = new Intl.DateTimeFormat(undefined, {
   hour: "2-digit",
@@ -19,8 +19,6 @@ const dateFormat = new Intl.DateTimeFormat(undefined, {
   day: "numeric",
   month: "long",
 });
-
-const isBoolean = (value: unknown): value is boolean => typeof value === "boolean";
 
 function ClockContent() {
   const [now, setNow] = useState(() => new Date());
