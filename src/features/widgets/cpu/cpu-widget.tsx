@@ -41,8 +41,11 @@ function CpuContent() {
       type="button"
       onClick={() => setSparkline(!sparkline)}
       aria-pressed={sparkline}
+      aria-label={sparkline ? "Hide CPU history" : "Show CPU history"}
       title={sparkline ? "Hide history" : "Show history"}
-      className="flex flex-1 items-center gap-2"
+      // The pseudo-element extends the click target to the 40px minimum
+      // without making the compact row itself any taller.
+      className="relative flex flex-1 items-center gap-2 before:absolute before:inset-x-0 before:-inset-y-2.5 before:content-['']"
     >
       {state && <StatusDot status={statusForPercent(state.percent)} />}
       <InlineMeter

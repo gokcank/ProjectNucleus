@@ -49,8 +49,12 @@ function RamContent({ wide }: { wide: boolean }) {
       type="button"
       onClick={() => setSparkline(!sparkline)}
       aria-pressed={sparkline}
-      title={sparkline ? "Hide history" : "Show history"}
-      className="flex flex-1 items-center gap-2"
+      aria-label={sparkline ? "Hide RAM history" : "Show RAM history"}
+      // No `title` here: the meter carries its own tooltip with the exact byte
+      // counts, which would shadow this one everywhere it matters anyway.
+      // The pseudo-element extends the click target to the 40px minimum
+      // without making the compact row itself any taller.
+      className="relative flex flex-1 items-center gap-2 before:absolute before:inset-x-0 before:-inset-y-2.5 before:content-['']"
     >
       {state && <StatusDot status={statusForPercent(state.percent)} />}
       <InlineMeter
