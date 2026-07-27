@@ -50,7 +50,12 @@ export function SortableWidget({ entry, definition, onToggleWide }: SortableWidg
       style={{ transform: CSS.Transform.toString(transform), transition }}
       className={`${entry.wide ? "col-span-2" : ""} ${isDragging ? "z-10 opacity-80" : ""}`}
     >
-      <Card icon={definition.icon} title={definition.title} actions={actions}>
+      <Card
+        icon={definition.icon}
+        title={definition.title}
+        actions={actions}
+        inline={definition.compact}
+      >
         <Content />
       </Card>
     </div>

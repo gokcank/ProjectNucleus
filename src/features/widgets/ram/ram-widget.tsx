@@ -1,5 +1,5 @@
 import { MemoryStick } from "lucide-react";
-import { UsageBar } from "../../../components/card/usage-bar";
+import { InlineMeter } from "../../../components/card/inline-meter";
 import { usePolling } from "../../../hooks/use-polling";
 import { getMemoryStatus } from "../../../services/system-service";
 import type { WidgetDefinition } from "../types";
@@ -17,22 +17,18 @@ function RamContent() {
   const usedPercent =
     memory === null || memory.totalBytes === 0 ? 0 : (memory.usedBytes / memory.totalBytes) * 100;
 
-  return (
-    <>
-      <p className="mt-2 text-2xl font-semibold tabular-nums text-neutral-900 dark:text-neutral-100">
-        {memory === null ? "—" : `${Math.round(usedPercent)}%`}
-      </p>
-      <p className="mt-0.5 text-xs text-neutral-500 dark:text-neutral-400">
-        {memory === null ? "" : `${formatGib(memory.usedBytes)} / ${formatGib(memory.totalBytes)}`}
-      </p>
-      <UsageBar percent={usedPercent} />
-    </>
-  );
+  const detail =
+    memory === null
+      ? undefined
+      : `${formatGib(memory.usedBytes)} / ${formatGib(memory.totalBytes)}`;
+
+  return <InlineMeter percent={usedPercent} detail={detail} />;
 }
 
 export const ramWidget: WidgetDefinition = {
   id: "ram",
   title: "RAM",
   icon: MemoryStick,
+  compact: true,
   component: RamContent,
 };

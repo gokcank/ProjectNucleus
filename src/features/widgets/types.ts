@@ -10,6 +10,12 @@ export interface WidgetDefinition {
   /** Whether the widget spans the full dashboard width by default. */
   defaultWide?: boolean;
   /**
+   * Renders as a single row (icon, title and content sharing the header
+   * line) instead of content stacked below the header. For status widgets
+   * that reduce to one value, like a meter.
+   */
+  compact?: boolean;
+  /**
    * Renders the card content only. The card chrome (surface, header,
    * actions) is owned by the dashboard host.
    */
