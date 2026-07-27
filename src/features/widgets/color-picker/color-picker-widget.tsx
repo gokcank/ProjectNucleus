@@ -1,10 +1,10 @@
 import { getCurrentWindow } from "@tauri-apps/api/window";
 import { Pipette } from "lucide-react";
-import { useState } from "react";
 import { setClipboardText } from "../../../services/clipboard-service";
 import { pickColor, type PickedColor } from "../../../services/color-picker-service";
 import { logWarn } from "../../../services/logger-service";
 import type { WidgetDefinition } from "../types";
+import { usePortalAction } from "../use-portal-action";
 
 /**
  * Opening the portal takes focus away from Nucleus, which the panel answers by
@@ -27,25 +27,12 @@ function restorePanel() {
 }
 
 function ColorPickerContent() {
-  const [color, setColor] = useState<PickedColor | null>(null);
-  const [picking, setPicking] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const { result: color, busy: picking, error, run } = usePortalAction<PickedColor>();
 
   const pick = () => {
-    setPicking(true);
-    setError(null);
-    pickColor()
-      .then((result) => {
-        // `null` means the user dismissed the desktop's color-picker dialog.
-        if (!result) return;
-        setColor(result);
-        restorePanel();
-      })
-      .catch((err: unknown) => {
-        logWarn(`Color pick failed: ${String(err)}`);
-        setError("Couldn't pick a color.");
-      })
-      .finally(() => setPicking(false));
+    run(pickColor, { logPrefix: "Color pick failed:", message: "Couldn't pick a color." }, () => {
+      restorePanel();
+    });
   };
 
   const copyHex = () => {

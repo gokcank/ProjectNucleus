@@ -1,5 +1,4 @@
 import { Camera, FolderOpen } from "lucide-react";
-import { useState } from "react";
 import { logWarn } from "../../../services/logger-service";
 import {
   revealScreenshot,
@@ -7,6 +6,7 @@ import {
   type SavedScreenshot,
 } from "../../../services/screenshot-service";
 import type { WidgetDefinition } from "../types";
+import { usePortalAction } from "../use-portal-action";
 
 /** Produces names like `nucleus-2026-07-26-18-45-12`, sorted chronologically by name. */
 function buildFileStem(): string {
@@ -24,23 +24,13 @@ function buildFileStem(): string {
 }
 
 function ScreenshotContent() {
-  const [saved, setSaved] = useState<SavedScreenshot | null>(null);
-  const [capturing, setCapturing] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const { result: saved, busy: capturing, error, run } = usePortalAction<SavedScreenshot>();
 
   const capture = () => {
-    setCapturing(true);
-    setError(null);
-    takeScreenshot(buildFileStem())
-      .then((result) => {
-        // `null` means the user dismissed the desktop's screenshot dialog.
-        if (result) setSaved(result);
-      })
-      .catch((err: unknown) => {
-        logWarn(`Screenshot failed: ${String(err)}`);
-        setError("Could not take a screenshot.");
-      })
-      .finally(() => setCapturing(false));
+    run(() => takeScreenshot(buildFileStem()), {
+      logPrefix: "Screenshot failed:",
+      message: "Could not take a screenshot.",
+    });
   };
 
   const reveal = () => {
