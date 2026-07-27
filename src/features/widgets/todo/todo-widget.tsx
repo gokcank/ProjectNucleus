@@ -1,5 +1,6 @@
 import { Check, ListTodo, Trash2 } from "lucide-react";
 import { useState } from "react";
+import { createId } from "../create-id";
 import type { WidgetDefinition } from "../types";
 import { useWidgetSetting } from "../use-widget-setting";
 
@@ -18,10 +19,6 @@ const isTodoItem = (value: unknown): value is TodoItem =>
 
 const isTodoList = (value: unknown): value is TodoItem[] =>
   Array.isArray(value) && value.every(isTodoItem);
-
-function createId(): string {
-  return `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
-}
 
 function TodoContent() {
   const [items, setItems] = useWidgetSetting<TodoItem[]>("todo", "items", [], isTodoList);
