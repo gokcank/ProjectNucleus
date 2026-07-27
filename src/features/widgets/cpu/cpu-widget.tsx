@@ -1,6 +1,8 @@
 import { Cpu } from "lucide-react";
 import { useEffect, useState } from "react";
 import { InlineMeter } from "../../../components/card/inline-meter";
+import { StatusDot } from "../../../components/card/status-dot";
+import { statusForPercent } from "../../../components/card/status";
 import { logWarn } from "../../../services/logger-service";
 import { getCpuStatus } from "../../../services/system-service";
 import type { WidgetDefinition } from "../types";
@@ -57,8 +59,9 @@ function CpuContent() {
       onClick={() => setSparkline(!sparkline)}
       aria-pressed={sparkline}
       title={sparkline ? "Hide history" : "Show history"}
-      className="flex flex-1 items-center"
+      className="flex flex-1 items-center gap-2"
     >
+      <StatusDot status={statusForPercent(state.percent)} />
       <InlineMeter percent={state.percent} history={sparkline ? state.history : undefined} />
     </button>
   );

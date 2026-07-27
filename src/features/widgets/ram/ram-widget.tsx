@@ -1,6 +1,8 @@
 import { MemoryStick } from "lucide-react";
 import { useEffect, useState } from "react";
 import { InlineMeter } from "../../../components/card/inline-meter";
+import { StatusDot } from "../../../components/card/status-dot";
+import { statusForPercent } from "../../../components/card/status";
 import { logWarn } from "../../../services/logger-service";
 import { getMemoryStatus } from "../../../services/system-service";
 import type { WidgetDefinition } from "../types";
@@ -68,6 +70,7 @@ function RamContent({ wide }: { wide: boolean }) {
       title={sparkline ? "Hide history" : "Show history"}
       className="flex flex-1 items-center gap-2"
     >
+      <StatusDot status={statusForPercent(state.percent)} />
       <InlineMeter
         percent={state.percent}
         detail={state.detail}
