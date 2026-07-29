@@ -9,6 +9,15 @@ use tauri_plugin_log::{Target, TargetKind};
 use commands::system::SystemMonitor;
 
 const PANEL_SHORTCUT: &str = "ctrl+alt+n";
+/// Gap kept from the screen edges when anchoring the panel to the top-right
+/// corner, in physical pixels.
+const SCREEN_EDGE_MARGIN: i32 = 12;
+/// Logical window width, mirroring `width` in tauri.conf.json. Anchoring runs
+/// while the window is still hidden (see `anchor_to_top_right`), before the
+/// platform has ever realized it, so its actual size can't be queried yet --
+/// `outer_size()` reads back (0, 0) at that point. The known config size,
+/// scaled for the monitor, stands in for it instead.
+const WINDOW_LOGICAL_WIDTH: f64 = 480.0;
 
 fn toggle_panel(app: &tauri::AppHandle) {
     let Some(window) = app.get_webview_window("main") else {
@@ -31,6 +40,31 @@ fn toggle_panel(app: &tauri::AppHandle) {
     };
     if let Err(err) = result {
         log::warn!("Failed to toggle panel: {err}");
+    }
+}
+
+/// Anchors the panel to the primary monitor's top-right corner. Run once at
+/// startup: the window is otherwise placed by the platform default, which is
+/// inconsistent and, per ADR-012, not the native placement a Linux tray
+/// utility is expected to use.
+fn anchor_to_top_right(window: &tauri::WebviewWindow) {
+    let Ok(Some(monitor)) = window.primary_monitor() else {
+        log::warn!("No primary monitor found; leaving the panel at its default position");
+        return;
+    };
+
+    let scale = monitor.scale_factor();
+    let window_width = (WINDOW_LOGICAL_WIDTH * scale).round() as i32;
+
+    let screen_pos = monitor.position();
+    let screen_size = monitor.size();
+    let x = screen_pos.x + screen_size.width as i32 - window_width - SCREEN_EDGE_MARGIN;
+    let y = screen_pos.y + SCREEN_EDGE_MARGIN;
+
+    if let Err(err) =
+        window.set_position(tauri::Position::Physical(tauri::PhysicalPosition { x, y }))
+    {
+        log::warn!("Failed to anchor the panel to the top-right corner: {err}");
     }
 }
 
@@ -106,6 +140,12 @@ pub fn run() {
         )
         .setup(|app| {
             log::info!("Project Nucleus starting up");
+
+            if let Some(window) = app.get_webview_window("main") {
+                anchor_to_top_right(&window);
+            } else {
+                log::warn!("Panel window not found during setup");
+            }
 
             match app
                 .global_shortcut()
