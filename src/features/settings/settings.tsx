@@ -54,7 +54,7 @@ export function Settings({ layout, onClose }: SettingsProps) {
                 type="button"
                 onClick={() => setTheme(option)}
                 aria-pressed={theme === option}
-                className={`h-10 flex-1 rounded-[10px] text-sm font-medium capitalize transition-colors focus:ring-2 focus:ring-neutral-400 focus:outline-none dark:focus:ring-neutral-600 ${
+                className={`h-10 flex-1 rounded-[10px] text-sm font-medium capitalize focus:ring-2 focus:ring-neutral-400 focus:outline-none dark:focus:ring-neutral-600 ${
                   theme === option
                     ? "bg-neutral-900 text-neutral-100 dark:bg-neutral-100 dark:text-neutral-900"
                     : "bg-black/5 text-neutral-900 hover:bg-black/10 dark:bg-white/5 dark:text-neutral-100 dark:hover:bg-white/10"
