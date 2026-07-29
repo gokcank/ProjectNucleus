@@ -18,9 +18,23 @@ function applyTheme(dark: boolean) {
   document.documentElement.classList.toggle("dark", dark);
 }
 
+/**
+ * Best-effort synchronous guess for the very first paint, before the
+ * accurate portal read (below) resolves and, from then on, takes over.
+ * WebKitGTK's guess can be wrong or stale, but a wrong first frame beats a
+ * guaranteed-wrong one (light) for the common case of a dark system.
+ */
+function initialSystemGuess(): boolean {
+  try {
+    return window.matchMedia("(prefers-color-scheme: dark)").matches;
+  } catch {
+    return false;
+  }
+}
+
 export function ThemeProvider({ children }: { children: ReactNode }) {
   const [theme, setThemeState] = useState<Theme>("system");
-  const [systemIsDark, setSystemIsDark] = useState(false);
+  const [systemIsDark, setSystemIsDark] = useState(initialSystemGuess);
 
   useEffect(() => {
     let cancelled = false;
