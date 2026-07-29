@@ -19,7 +19,15 @@ fn toggle_panel(app: &tauri::AppHandle) {
     let result = if visible {
         window.hide()
     } else {
-        window.show().and_then(|()| window.set_focus())
+        // Reasserting always-on-top on every show, not just at window
+        // creation, matters: some window managers (Mutter included) can drop
+        // or ignore that state across a hide/show cycle, which otherwise
+        // left the panel appearing behind whatever window already had focus
+        // (e.g. Firefox) instead of above it.
+        window
+            .show()
+            .and_then(|()| window.set_always_on_top(true))
+            .and_then(|()| window.set_focus())
     };
     if let Err(err) = result {
         log::warn!("Failed to toggle panel: {err}");
