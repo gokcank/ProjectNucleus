@@ -6,7 +6,7 @@ import {
   type SavedScreenshot,
 } from "../../../services/screenshot-service";
 import type { WidgetDefinition } from "../types";
-import { usePortalAction } from "../use-portal-action";
+import { useAsyncAction } from "../use-async-action";
 
 /** Produces names like `nucleus-2026-07-26-18-45-12`, sorted chronologically by name. */
 function buildFileStem(): string {
@@ -24,7 +24,7 @@ function buildFileStem(): string {
 }
 
 function ScreenshotContent() {
-  const { result: saved, busy: capturing, error, run } = usePortalAction<SavedScreenshot>();
+  const { result: saved, busy: capturing, error, run } = useAsyncAction<SavedScreenshot>();
 
   const capture = () => {
     run(() => takeScreenshot(buildFileStem()), {

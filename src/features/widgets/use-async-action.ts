@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { logWarn } from "../../services/logger-service";
 
-interface PortalFailure {
+interface ActionFailure {
   /** Prefix for the logged diagnostic, e.g. "Color pick failed:". */
   logPrefix: string;
   /** What the card shows the user, e.g. "Couldn't pick a color." */
@@ -9,22 +9,24 @@ interface PortalFailure {
 }
 
 /**
- * State for a widget that hands a job to an XDG desktop portal (Screenshot,
- * Color Picker). Those all share the same shape: a busy flag while the portal
- * dialog is up, a result that survives until a newer one replaces it, and an
+ * State for a widget action that runs on demand, can fail, and is worth
+ * retrying — a desktop portal handing back a screenshot or a color, or a
+ * lookup that goes out to the network. They share the same shape: a busy flag
+ * while it runs, a result that survives until a newer one replaces it, and an
  * error that does not erase the last good result.
  *
- * The action resolves to `null` when the user dismisses the portal dialog,
- * which is a normal outcome rather than a failure.
+ * The action resolves to `null` for a non-result that is not a failure either:
+ * the user dismissing a portal dialog, say. That leaves every piece of state
+ * as it was.
  */
-export function usePortalAction<T>() {
+export function useAsyncAction<T>() {
   const [result, setResult] = useState<T | null>(null);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const run = (
     action: () => Promise<T | null>,
-    failure: PortalFailure,
+    failure: ActionFailure,
     onSuccess?: (value: T) => void,
   ) => {
     setBusy(true);

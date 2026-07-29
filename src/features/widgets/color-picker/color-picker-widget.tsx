@@ -4,10 +4,10 @@ import { setClipboardText } from "../../../services/clipboard-service";
 import { pickColor, type PickedColor } from "../../../services/color-picker-service";
 import { logWarn } from "../../../services/logger-service";
 import type { WidgetDefinition } from "../types";
-import { usePortalAction } from "../use-portal-action";
+import { useAsyncAction } from "../use-async-action";
 
 function ColorPickerContent() {
-  const { result: color, busy: picking, error, run } = usePortalAction<PickedColor>();
+  const { result: color, busy: picking, error, run } = useAsyncAction<PickedColor>();
   const bringPanelToFront = useBringPanelToFront();
 
   const pick = () => {
