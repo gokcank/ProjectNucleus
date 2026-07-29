@@ -45,3 +45,22 @@
 .panel-exit {
   animation: panel-out 150ms ease-out forwards;
 }
+
+/* WebKitGTK's default scrollbar follows the GTK theme's own colors, which
+   don't match this app's palette. Restyle it in both themes instead. */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: rgb(0 0 0 / 15%);
+  border-radius: 9999px;
+}
+
+.dark ::-webkit-scrollbar-thumb {
+  background-color: rgb(255 255 255 / 15%);
+}
