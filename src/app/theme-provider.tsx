@@ -57,7 +57,14 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
       setSystemIsDark(event.payload === "dark");
     })
       .then((fn) => {
-        unlisten = fn;
+        // The effect may already have torn down by the time this resolves
+        // (React StrictMode's dev-only double-invoke does this on every
+        // mount): dispose immediately instead of leaking the listener.
+        if (cancelled) {
+          fn();
+        } else {
+          unlisten = fn;
+        }
       })
       .catch((err: unknown) => {
         logWarn(`Could not watch for system color scheme changes: ${String(err)}`);
