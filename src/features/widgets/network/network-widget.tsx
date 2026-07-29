@@ -23,7 +23,7 @@ function describe(status: NetworkStatus | null) {
   }
 }
 
-function NetworkContent({ wide }: { wide: boolean }) {
+function NetworkContent() {
   const [status, setStatus] = useState<NetworkStatus | null>(null);
   const { result: publicIp, busy: fetchingIp, error: ipError, run } = useAsyncAction<string>();
 
@@ -75,36 +75,32 @@ function NetworkContent({ wide }: { wide: boolean }) {
         </span>
       </div>
 
-      {wide && (
-        <dl className="mt-2 space-y-1 text-xs">
-          <div className="flex items-baseline gap-2">
-            <dt className="w-12 shrink-0 text-neutral-500 dark:text-neutral-400">Local</dt>
-            <dd className="min-w-0 flex-1 truncate tabular-nums text-neutral-700 dark:text-neutral-200">
-              {status?.localIp ?? "—"}
-            </dd>
-          </div>
-          <div className="flex items-baseline gap-2">
-            <dt className="w-12 shrink-0 text-neutral-500 dark:text-neutral-400">Public</dt>
-            <dd className="min-w-0 flex-1 truncate tabular-nums text-neutral-700 dark:text-neutral-200">
-              {publicIp ?? (fetchingIp ? "…" : "—")}
-            </dd>
-            <button
-              type="button"
-              onClick={lookUpPublicIp}
-              disabled={fetchingIp}
-              aria-label="Look up public address again"
-              title="Check again"
-              className="shrink-0 rounded-md p-1 text-neutral-400 hover:bg-black/5 hover:text-neutral-600 disabled:opacity-40 dark:hover:bg-white/5 dark:hover:text-neutral-300"
-            >
-              <RefreshCw size={12} className={fetchingIp ? "animate-spin" : undefined} />
-            </button>
-          </div>
-        </dl>
-      )}
+      <dl className="mt-2 space-y-1 text-xs">
+        <div className="flex items-baseline gap-2">
+          <dt className="w-12 shrink-0 text-neutral-500 dark:text-neutral-400">Local</dt>
+          <dd className="min-w-0 flex-1 truncate tabular-nums text-neutral-700 dark:text-neutral-200">
+            {status?.localIp ?? "—"}
+          </dd>
+        </div>
+        <div className="flex items-baseline gap-2">
+          <dt className="w-12 shrink-0 text-neutral-500 dark:text-neutral-400">Public</dt>
+          <dd className="min-w-0 flex-1 truncate tabular-nums text-neutral-700 dark:text-neutral-200">
+            {publicIp ?? (fetchingIp ? "…" : "—")}
+          </dd>
+          <button
+            type="button"
+            onClick={lookUpPublicIp}
+            disabled={fetchingIp}
+            aria-label="Look up public address again"
+            title="Check again"
+            className="shrink-0 rounded-md p-1 text-neutral-400 hover:bg-black/5 hover:text-neutral-600 disabled:opacity-40 dark:hover:bg-white/5 dark:hover:text-neutral-300"
+          >
+            <RefreshCw size={12} className={fetchingIp ? "animate-spin" : undefined} />
+          </button>
+        </div>
+      </dl>
 
-      {wide && ipError && (
-        <p className="mt-1.5 text-[11px] text-red-600 dark:text-red-400">{ipError}</p>
-      )}
+      {ipError && <p className="mt-1.5 text-[11px] text-red-600 dark:text-red-400">{ipError}</p>}
     </div>
   );
 }
