@@ -12,10 +12,14 @@
   }
 }
 
+/* No `scale()` here: without hardware-accelerated compositing (see the DRI3
+   warning this app logs on some systems), a non-1 CSS scale needs the content
+   to be resampled every frame, which reads as a brief blur during the
+   transition. translateY moves pixels without resampling them. */
 @keyframes panel-in {
   from {
     opacity: 0;
-    transform: scale(0.98) translateY(4px);
+    transform: translateY(4px);
   }
   to {
     opacity: 1;
@@ -30,7 +34,7 @@
   }
   to {
     opacity: 0;
-    transform: scale(0.98) translateY(4px);
+    transform: translateY(4px);
   }
 }
 
