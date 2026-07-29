@@ -1,37 +1,21 @@
-import { getCurrentWindow } from "@tauri-apps/api/window";
 import { Pipette } from "lucide-react";
+import { useBringPanelToFront } from "../../../hooks/use-bring-panel-to-front";
 import { setClipboardText } from "../../../services/clipboard-service";
 import { pickColor, type PickedColor } from "../../../services/color-picker-service";
 import { logWarn } from "../../../services/logger-service";
 import type { WidgetDefinition } from "../types";
 import { usePortalAction } from "../use-portal-action";
 
-/**
- * Opening the portal takes focus away from Nucleus, which the panel answers by
- * hiding itself. The picked colour is the whole point of this widget, so bring
- * the panel back once there is one to show.
- */
-function restorePanel() {
-  let appWindow: ReturnType<typeof getCurrentWindow>;
-  try {
-    appWindow = getCurrentWindow();
-  } catch {
-    return; // No Tauri runtime (e.g. browser preview) — nothing to restore.
-  }
-  appWindow
-    .show()
-    .then(() => appWindow.setFocus())
-    .catch((err: unknown) => {
-      logWarn(`Could not bring the panel back after picking a color: ${String(err)}`);
-    });
-}
-
 function ColorPickerContent() {
   const { result: color, busy: picking, error, run } = usePortalAction<PickedColor>();
+  const bringPanelToFront = useBringPanelToFront();
 
   const pick = () => {
+    // Opening the portal takes focus away from Nucleus, which the panel
+    // answers by hiding itself. The picked color is the whole point of this
+    // widget, so bring the panel back once there is one to show.
     run(pickColor, { logPrefix: "Color pick failed:", message: "Couldn't pick a color." }, () => {
-      restorePanel();
+      bringPanelToFront();
     });
   };
 

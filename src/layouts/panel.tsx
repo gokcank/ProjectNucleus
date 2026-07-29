@@ -1,6 +1,7 @@
 import { getCurrentWindow } from "@tauri-apps/api/window";
-import { useEffect, useRef, useState, type ReactNode } from "react";
+import { useCallback, useEffect, useRef, useState, type ReactNode } from "react";
 import { logWarn } from "../services/logger-service";
+import { PanelBringToFrontContext } from "./panel-context";
 
 const EXIT_ANIMATION_MS = 150;
 
@@ -24,6 +25,46 @@ export function Panel({ children, onEscape }: PanelProps) {
     escapeHandler.current = onEscape;
   }, [onEscape]);
 
+  const cancelClose = useCallback(() => {
+    if (hideTimer.current !== undefined) {
+      window.clearTimeout(hideTimer.current);
+      hideTimer.current = undefined;
+    }
+    setExiting(false);
+  }, []);
+
+  // Restarting the enter animation in place rather than remounting matters --
+  // remounting would wipe every widget's state, resetting a running timer or
+  // a half-typed note each time the panel is summoned.
+  const restartEnterAnimation = useCallback(() => {
+    const element = surface.current;
+    if (!element) return;
+    element.style.animation = "none";
+    element.getBoundingClientRect(); // force a reflow so it can start over
+    element.style.animation = "";
+  }, []);
+
+  // Exposed to widgets via context (see use-bring-panel-to-front.ts). Resets
+  // the panel's own closing state immediately, independent of whether the OS
+  // actually grants focus back to the window.
+  const bringToFront = useCallback(() => {
+    cancelClose();
+    restartEnterAnimation();
+
+    let appWindow: ReturnType<typeof getCurrentWindow>;
+    try {
+      appWindow = getCurrentWindow();
+    } catch {
+      return; // No Tauri runtime available (e.g. browser preview).
+    }
+    appWindow
+      .show()
+      .then(() => appWindow.setFocus())
+      .catch((err: unknown) => {
+        logWarn(`Failed to bring the panel to front: ${String(err)}`);
+      });
+  }, [cancelClose, restartEnterAnimation]);
+
   useEffect(() => {
     let appWindow: ReturnType<typeof getCurrentWindow>;
     try {
@@ -44,14 +85,6 @@ export function Panel({ children, onEscape }: PanelProps) {
       }, EXIT_ANIMATION_MS);
     };
 
-    const cancelClose = () => {
-      if (hideTimer.current !== undefined) {
-        window.clearTimeout(hideTimer.current);
-        hideTimer.current = undefined;
-      }
-      setExiting(false);
-    };
-
     const onKeyDown = (event: KeyboardEvent) => {
       if (event.key !== "Escape") return;
       if (escapeHandler.current?.()) return;
@@ -63,17 +96,8 @@ export function Panel({ children, onEscape }: PanelProps) {
     appWindow
       .onFocusChanged(({ payload: focused }) => {
         if (focused) {
-          // Re-entering the panel (including show after hide): replay the enter
-          // animation. Restarting it in place rather than remounting matters --
-          // remounting would wipe every widget's state, resetting a running
-          // timer or a half-typed note each time the panel is summoned.
           cancelClose();
-          const element = surface.current;
-          if (element) {
-            element.style.animation = "none";
-            element.getBoundingClientRect(); // force a reflow so it can start over
-            element.style.animation = "";
-          }
+          restartEnterAnimation();
         } else {
           close();
         }
@@ -93,7 +117,7 @@ export function Panel({ children, onEscape }: PanelProps) {
         hideTimer.current = undefined;
       }
     };
-  }, []);
+  }, [cancelClose, restartEnterAnimation]);
 
   return (
     <div className="h-screen w-screen p-6">
@@ -101,7 +125,9 @@ export function Panel({ children, onEscape }: PanelProps) {
         ref={surface}
         className={`${exiting ? "panel-exit" : "panel-enter"} h-full w-full overflow-hidden rounded-3xl border border-black/10 bg-white/95 shadow-xl dark:border-white/10 dark:bg-neutral-900/95`}
       >
-        {children}
+        <PanelBringToFrontContext.Provider value={bringToFront}>
+          {children}
+        </PanelBringToFrontContext.Provider>
       </div>
     </div>
   );
