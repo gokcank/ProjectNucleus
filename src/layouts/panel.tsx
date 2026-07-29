@@ -134,7 +134,7 @@ export function Panel({ children, onEscape }: PanelProps) {
     <div className="h-screen w-screen p-6">
       <div
         ref={surface}
-        className={`${exiting ? "panel-exit" : "panel-enter"} h-full w-full overflow-hidden rounded-3xl border border-black/10 bg-white/95 shadow-xl dark:border-white/10 dark:bg-neutral-900/95`}
+        className={`${exiting ? "panel-exit" : "panel-enter"} h-full w-full overflow-hidden rounded-3xl border border-black/10 bg-white/95 dark:border-white/10 dark:bg-neutral-900/95`}
       >
         <PanelBringToFrontContext.Provider value={bringToFront}>
           {children}
