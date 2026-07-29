@@ -2838,6 +2838,7 @@ name = "project-nucleus"
 version = "0.1.0"
 dependencies = [
  "ashpd",
+ "futures-util",
  "log",
  "serde",
  "serde_json",

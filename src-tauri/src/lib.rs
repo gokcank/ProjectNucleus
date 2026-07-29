@@ -73,7 +73,8 @@ pub fn run() {
             commands::power::set_power_profile,
             commands::color_picker::pick_color,
             commands::network::network_status,
-            commands::network::public_ip
+            commands::network::public_ip,
+            commands::appearance::color_scheme
         ])
         .plugin(tauri_plugin_opener::init())
         .plugin(tauri_plugin_store::Builder::new().build())
@@ -106,6 +107,8 @@ pub fn run() {
                 Ok(()) => log::info!("System tray initialized"),
                 Err(err) => log::warn!("System tray unavailable: {err}"),
             }
+
+            commands::appearance::watch_color_scheme(app.handle().clone());
 
             Ok(())
         })

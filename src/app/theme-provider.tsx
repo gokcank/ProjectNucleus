@@ -1,25 +1,26 @@
+import { invoke } from "@tauri-apps/api/core";
+import { listen } from "@tauri-apps/api/event";
 import { useEffect, useMemo, useState, type ReactNode } from "react";
 import { logWarn } from "../services/logger-service";
 import { getSetting, setSetting } from "../services/settings-service";
 import { ThemeContext, type Theme } from "./theme-context";
 
 const SETTING_KEY = "theme";
+const COLOR_SCHEME_CHANGED_EVENT = "color-scheme-changed";
+
+type ColorSchemeStatus = "dark" | "light" | "no-preference";
 
 function isTheme(value: unknown): value is Theme {
   return value === "light" || value === "dark" || value === "system";
 }
 
-function getSystemTheme(): "light" | "dark" {
-  return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
-}
-
-function applyTheme(theme: Theme) {
-  const resolved = theme === "system" ? getSystemTheme() : theme;
-  document.documentElement.classList.toggle("dark", resolved === "dark");
+function applyTheme(dark: boolean) {
+  document.documentElement.classList.toggle("dark", dark);
 }
 
 export function ThemeProvider({ children }: { children: ReactNode }) {
   const [theme, setThemeState] = useState<Theme>("system");
+  const [systemIsDark, setSystemIsDark] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
@@ -35,16 +36,42 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     };
   }, []);
 
+  // The system color scheme comes from the XDG Settings portal
+  // (org.freedesktop.portal.Settings, read via the Rust side) rather than the
+  // WebView's own `prefers-color-scheme` guess: WebKitGTK does not reliably
+  // read GNOME's actual setting, nor update it live when the user changes it
+  // while the app is running. The portal's change signal does both.
   useEffect(() => {
-    applyTheme(theme);
+    let cancelled = false;
 
-    if (theme !== "system") return;
+    invoke<ColorSchemeStatus>("color_scheme")
+      .then((status) => {
+        if (!cancelled) setSystemIsDark(status === "dark");
+      })
+      .catch((err: unknown) => {
+        logWarn(`Could not read the system color scheme: ${String(err)}`);
+      });
 
-    const media = window.matchMedia("(prefers-color-scheme: dark)");
-    const onChange = () => applyTheme("system");
-    media.addEventListener("change", onChange);
-    return () => media.removeEventListener("change", onChange);
-  }, [theme]);
+    let unlisten: (() => void) | undefined;
+    listen<ColorSchemeStatus>(COLOR_SCHEME_CHANGED_EVENT, (event) => {
+      setSystemIsDark(event.payload === "dark");
+    })
+      .then((fn) => {
+        unlisten = fn;
+      })
+      .catch((err: unknown) => {
+        logWarn(`Could not watch for system color scheme changes: ${String(err)}`);
+      });
+
+    return () => {
+      cancelled = true;
+      unlisten?.();
+    };
+  }, []);
+
+  useEffect(() => {
+    applyTheme(theme === "system" ? systemIsDark : theme === "dark");
+  }, [theme, systemIsDark]);
 
   const setTheme = (next: Theme) => {
     setThemeState(next);

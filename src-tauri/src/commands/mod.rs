@@ -1,3 +1,4 @@
+pub mod appearance;
 pub mod audio;
 pub mod bluetooth;
 pub mod color_picker;
