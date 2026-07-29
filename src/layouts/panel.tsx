@@ -79,9 +79,20 @@ export function Panel({ children, onEscape }: PanelProps) {
       setExiting(true);
       hideTimer.current = window.setTimeout(() => {
         hideTimer.current = undefined;
-        appWindow.hide().catch((err: unknown) => {
-          logWarn(`Failed to hide panel: ${String(err)}`);
-        });
+        appWindow
+          .hide()
+          .catch((err: unknown) => {
+            logWarn(`Failed to hide panel: ${String(err)}`);
+          })
+          // Clear the closing state once the window is out of sight, so the
+          // panel is ready to be shown again. Leaving it set would hold the
+          // exit animation at its final frame (fully transparent), and the
+          // next native show() -- the global shortcut or the tray menu, which
+          // both go straight to the window without touching this component --
+          // would reveal a window whose content is still invisible. Resetting
+          // only after hide() resolves keeps the closing animation from
+          // flashing back in on its last frame.
+          .finally(() => setExiting(false));
       }, EXIT_ANIMATION_MS);
     };
 
