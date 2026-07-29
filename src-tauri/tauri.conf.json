@@ -17,6 +17,7 @@
         "height": 600,
         "decorations": false,
         "transparent": true,
+        "backgroundColor": [0, 0, 0, 0],
         "resizable": false,
         "center": true,
         "alwaysOnTop": true,
