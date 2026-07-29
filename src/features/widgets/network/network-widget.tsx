@@ -65,40 +65,26 @@ function NetworkContent() {
   useEffect(lookUpPublicIp, []); // eslint-disable-line react-hooks/exhaustive-deps -- once on mount
 
   const { Icon, label } = describe(status);
+  const detail = `${label} — Local ${status?.localIp ?? "—"} · Public ${publicIp ?? (fetchingIp ? "…" : "—")}`;
 
   return (
     <div className="mt-2">
-      <div className="flex items-center gap-2">
+      <div className="flex items-center gap-2" title={detail}>
         <Icon className="h-4 w-4 shrink-0 text-neutral-500 dark:text-neutral-400" aria-hidden />
         <span className="min-w-0 flex-1 truncate text-sm font-medium text-neutral-900 dark:text-neutral-100">
           {label}
         </span>
+        <button
+          type="button"
+          onClick={lookUpPublicIp}
+          disabled={fetchingIp}
+          aria-label="Look up public address again"
+          title="Check again"
+          className="shrink-0 rounded-md p-1 text-neutral-400 hover:bg-black/5 hover:text-neutral-600 disabled:opacity-40 dark:hover:bg-white/5 dark:hover:text-neutral-300"
+        >
+          <RefreshCw size={12} className={fetchingIp ? "animate-spin" : undefined} />
+        </button>
       </div>
-
-      <dl className="mt-2 space-y-1 text-xs">
-        <div className="flex items-baseline gap-2">
-          <dt className="w-12 shrink-0 text-neutral-500 dark:text-neutral-400">Local</dt>
-          <dd className="min-w-0 flex-1 truncate tabular-nums text-neutral-700 dark:text-neutral-200">
-            {status?.localIp ?? "—"}
-          </dd>
-        </div>
-        <div className="flex items-baseline gap-2">
-          <dt className="w-12 shrink-0 text-neutral-500 dark:text-neutral-400">Public</dt>
-          <dd className="min-w-0 flex-1 truncate tabular-nums text-neutral-700 dark:text-neutral-200">
-            {publicIp ?? (fetchingIp ? "…" : "—")}
-          </dd>
-          <button
-            type="button"
-            onClick={lookUpPublicIp}
-            disabled={fetchingIp}
-            aria-label="Look up public address again"
-            title="Check again"
-            className="shrink-0 rounded-md p-1 text-neutral-400 hover:bg-black/5 hover:text-neutral-600 disabled:opacity-40 dark:hover:bg-white/5 dark:hover:text-neutral-300"
-          >
-            <RefreshCw size={12} className={fetchingIp ? "animate-spin" : undefined} />
-          </button>
-        </div>
-      </dl>
 
       {ipError && <p className="mt-1.5 text-[11px] text-red-600 dark:text-red-400">{ipError}</p>}
     </div>
@@ -107,8 +93,11 @@ function NetworkContent() {
 
 export const networkWidget: WidgetDefinition = {
   id: "network",
-  title: "Network",
-  keywords: ["ip", "wifi", "ethernet", "address", "connection"],
+  title: "Net",
+  // The header is a quarter of the dashboard wide, so "Network" itself
+  // truncates there -- but that is what people type when looking for this.
+  keywords: ["network", "ip", "wifi", "ethernet", "address", "connection"],
   icon: Wifi,
+  quarterWidth: true,
   component: NetworkContent,
 };
