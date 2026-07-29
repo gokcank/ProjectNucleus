@@ -76,6 +76,13 @@ pub fn run() {
             commands::network::public_ip,
             commands::appearance::color_scheme
         ])
+        // Injected before the page's own scripts so the first render already
+        // knows the system theme instead of guessing and correcting itself.
+        .plugin(
+            tauri::plugin::Builder::<tauri::Wry, ()>::new("appearance")
+                .js_init_script(commands::appearance::startup_init_script())
+                .build(),
+        )
         .plugin(tauri_plugin_opener::init())
         .plugin(tauri_plugin_store::Builder::new().build())
         .plugin(tauri_plugin_global_shortcut::Builder::new().build())

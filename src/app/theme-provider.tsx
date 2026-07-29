@@ -7,8 +7,16 @@ import { ThemeContext, type Theme } from "./theme-context";
 
 const SETTING_KEY = "theme";
 const COLOR_SCHEME_CHANGED_EVENT = "color-scheme-changed";
+const THEME_MIRROR_KEY = "nucleus:theme";
 
 type ColorSchemeStatus = "dark" | "light" | "no-preference";
+
+declare global {
+  interface Window {
+    /** Injected by the Rust side before any page script runs; see appearance.rs. */
+    __NUCLEUS_SYSTEM_DARK__?: boolean;
+  }
+}
 
 function isTheme(value: unknown): value is Theme {
   return value === "light" || value === "dark" || value === "system";
@@ -19,12 +27,19 @@ function applyTheme(dark: boolean) {
 }
 
 /**
- * Best-effort synchronous guess for the very first paint, before the
- * accurate portal read (below) resolves and, from then on, takes over.
- * WebKitGTK's guess can be wrong or stale, but a wrong first frame beats a
- * guaranteed-wrong one (light) for the common case of a dark system.
+ * The real system setting, read from the XDG Settings portal before the window
+ * was created and injected into the page (see `startup_init_script` in
+ * appearance.rs). Available synchronously on the very first render, so the
+ * first frame is already correct instead of guessing and correcting itself.
+ *
+ * Falls back to WebKitGTK's own media query only when the injected value is
+ * missing (portal unavailable or slow, or running outside Tauri) -- it does not
+ * reliably reflect GNOME's actual setting, hence the portal in the first place.
  */
-function initialSystemGuess(): boolean {
+function initialSystemIsDark(): boolean {
+  if (typeof window.__NUCLEUS_SYSTEM_DARK__ === "boolean") {
+    return window.__NUCLEUS_SYSTEM_DARK__;
+  }
   try {
     return window.matchMedia("(prefers-color-scheme: dark)").matches;
   } catch {
@@ -32,15 +47,47 @@ function initialSystemGuess(): boolean {
   }
 }
 
+/**
+ * The stored preference lives in the Tauri store, which can only be read
+ * asynchronously, so it is mirrored into localStorage as well. Without the
+ * mirror an explicit "light" choice on a dark system would render dark for the
+ * first frames before the store answered.
+ */
+function initialTheme(): Theme {
+  try {
+    const mirrored: unknown = window.localStorage.getItem(THEME_MIRROR_KEY);
+    if (isTheme(mirrored)) return mirrored;
+  } catch {
+    // Storage unavailable -- "system" is the right default anyway.
+  }
+  return "system";
+}
+
+function mirrorTheme(theme: Theme) {
+  try {
+    window.localStorage.setItem(THEME_MIRROR_KEY, theme);
+  } catch {
+    // Storage unavailable; the Tauri store remains the source of truth.
+  }
+}
+
+// Applied at module scope, before React renders anything, so no frame is ever
+// painted with the wrong theme.
+const INITIAL_THEME = initialTheme();
+const INITIAL_SYSTEM_IS_DARK = initialSystemIsDark();
+applyTheme(INITIAL_THEME === "system" ? INITIAL_SYSTEM_IS_DARK : INITIAL_THEME === "dark");
+
 export function ThemeProvider({ children }: { children: ReactNode }) {
-  const [theme, setThemeState] = useState<Theme>("system");
-  const [systemIsDark, setSystemIsDark] = useState(initialSystemGuess);
+  const [theme, setThemeState] = useState<Theme>(INITIAL_THEME);
+  const [systemIsDark, setSystemIsDark] = useState(INITIAL_SYSTEM_IS_DARK);
 
   useEffect(() => {
     let cancelled = false;
     getSetting<Theme>(SETTING_KEY, "system")
       .then((stored) => {
-        if (!cancelled && isTheme(stored)) setThemeState(stored);
+        if (!isTheme(stored)) return;
+        mirrorTheme(stored);
+        if (!cancelled) setThemeState(stored);
       })
       .catch((err: unknown) => {
         logWarn(`Failed to load theme setting, falling back to system: ${String(err)}`);
@@ -96,6 +143,7 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
 
   const setTheme = (next: Theme) => {
     setThemeState(next);
+    mirrorTheme(next);
     setSetting(SETTING_KEY, next).catch((err: unknown) => {
       logWarn(`Failed to persist theme setting: ${String(err)}`);
     });
