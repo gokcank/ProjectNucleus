@@ -132,9 +132,16 @@ export function Panel({ children, onEscape }: PanelProps) {
 
   return (
     <div className="h-screen w-screen p-6">
+      {/* The surface is fully opaque on purpose. At 95% the desktop wallpaper
+          bled through by 5%, so this surface drifted with whatever sat behind
+          it instead of staying flat; every card background and border is a
+          low-opacity layer over it, so each one carried a different amount of
+          that drift, and WebKit could not subpixel-antialias text on top of a
+          translucent layer, leaving color fringes around glyphs. Per ADR-009,
+          glass degrades to a solid surface when it costs readability. */}
       <div
         ref={surface}
-        className={`${exiting ? "panel-exit" : "panel-enter"} h-full w-full overflow-hidden rounded-3xl border border-black/10 bg-white/95 dark:border-white/10 dark:bg-neutral-900/95`}
+        className={`${exiting ? "panel-exit" : "panel-enter"} h-full w-full overflow-hidden rounded-3xl border border-black/10 bg-white dark:border-white/10 dark:bg-neutral-900`}
       >
         <PanelBringToFrontContext.Provider value={bringToFront}>
           {children}
