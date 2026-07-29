@@ -71,7 +71,9 @@ pub fn run() {
             commands::power::run_power_action,
             commands::power::power_profile_status,
             commands::power::set_power_profile,
-            commands::color_picker::pick_color
+            commands::color_picker::pick_color,
+            commands::network::network_status,
+            commands::network::public_ip
         ])
         .plugin(tauri_plugin_opener::init())
         .plugin(tauri_plugin_store::Builder::new().build())

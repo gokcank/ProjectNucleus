@@ -4,6 +4,7 @@ import { clipboardWidget } from "./clipboard/clipboard-widget";
 import { clockWidget } from "./clock/clock-widget";
 import { colorPickerWidget } from "./color-picker/color-picker-widget";
 import { cpuWidget } from "./cpu/cpu-widget";
+import { networkWidget } from "./network/network-widget";
 import { nightLightWidget } from "./night-light/night-light-widget";
 import { notesWidget } from "./notes/notes-widget";
 import { powerProfileWidget } from "./power-profile/power-profile-widget";
@@ -41,6 +42,7 @@ export function registerBuiltinWidgets() {
     colorPickerWidget,
     quickLinksWidget,
     todoWidget,
+    networkWidget,
   ].forEach(registerWidget);
 }
 

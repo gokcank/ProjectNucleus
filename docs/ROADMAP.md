@@ -25,7 +25,7 @@ Every phase must produce a stable, usable application.
 | Item | Status |
 |------|--------|
 | Project | 🚧 In Development |
-| Current Phase | Phase 8 — Utility Widgets (in progress) |
+| Current Phase | Phases 6–8 — Productivity, System & Utility Widgets (all three in progress in parallel; see each phase for exact status) |
 | Public Release | Not Yet |
 | Widget Engine | Complete |
 | Plugin SDK | Planned |
@@ -199,13 +199,13 @@ New functionality can be added without modifying the core dashboard.
 
 Examples
 
-- Clipboard
-- Calculator
-- Notes
-- Timer
-- Stopwatch
-- Quick Links
-- Todo
+- ✅ Clipboard
+- ✅ Calculator
+- ✅ Notes
+- ✅ Timer
+- ✅ Stopwatch
+- ✅ Quick Links
+- ✅ Todo
 - Pomodoro
 - Calendar
 
@@ -216,12 +216,13 @@ Examples
 Examples
 
 - Wi-Fi
-- Bluetooth
-- Volume
+- ✅ Bluetooth
+- ✅ Volume
 - Brightness
 - Battery
-- Night Light
-- Power Menu
+- ✅ Night Light
+- ✅ Power Menu
+- ✅ Power Profile *(not in the original example list — added once it shipped, per ADR-015)*
 
 ---
 
@@ -229,9 +230,9 @@ Examples
 
 Examples
 
-- Screenshot
+- ✅ Screenshot
 - Screen Recorder
-- Color Picker
+- ✅ Color Picker
 - QR Generator
 - QR Scanner
 - File Search
@@ -255,13 +256,13 @@ Examples
 
 Examples
 
-- Network Status
+- ✅ Network Status *(shipped together with IP Information as one "Network" widget — connection type, SSID, local and public address answer the same question)*
 - VPN
 - Hotspot
 - DNS
 - Ping
-- IP Information
-- Speed Test
+- ✅ IP Information *(see above)*
+- Speed Test *(deliberately deferred: a real bandwidth test needs either a new dependency or a 10-30s bandwidth-heavy run, neither of which fits the "quick glance" goal)*
 
 ---
 
