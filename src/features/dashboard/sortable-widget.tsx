@@ -12,7 +12,7 @@ interface SortableWidgetProps {
 }
 
 const actionButtonClass =
-  "rounded-md p-1 text-neutral-400 transition-colors hover:bg-black/5 hover:text-neutral-600 dark:text-neutral-500 dark:hover:bg-white/5 dark:hover:text-neutral-300";
+  "rounded-md p-1 text-neutral-400 hover:bg-black/5 hover:text-neutral-600 dark:text-neutral-500 dark:hover:bg-white/5 dark:hover:text-neutral-300";
 
 export function SortableWidget({ entry, definition, onToggleWide }: SortableWidgetProps) {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({

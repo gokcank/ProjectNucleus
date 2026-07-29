@@ -11,8 +11,7 @@ import {
   type Operator,
 } from "./calculator-logic";
 
-const keyClass =
-  "flex h-10 items-center justify-center rounded-[10px] text-sm font-medium transition-colors";
+const keyClass = "flex h-10 items-center justify-center rounded-[10px] text-sm font-medium";
 const digitKeyClass = `${keyClass} bg-black/5 text-neutral-900 hover:bg-black/10 dark:bg-white/5 dark:text-neutral-100 dark:hover:bg-white/10`;
 const operatorKeyClass = `${keyClass} bg-neutral-900 text-neutral-100 hover:bg-neutral-700 dark:bg-neutral-100 dark:text-neutral-900 dark:hover:bg-neutral-300`;
 
