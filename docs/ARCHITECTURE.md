@@ -182,7 +182,7 @@ Examples:
 - Dashboard
 - Settings
 - Clipboard
-- Screenshot
+- Color Picker
 
 Features should remain isolated.
 
@@ -195,7 +195,7 @@ Handles communication with Rust.
 Examples:
 
 - Clipboard Service
-- Screenshot Service
+- Color Picker Service
 - Settings Service
 
 ---

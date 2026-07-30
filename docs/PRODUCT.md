@@ -116,24 +116,25 @@ Every feature is implemented as an independent widget whenever practical.
 Examples:
 
 - Clipboard History
-- Calculator
 - Notes
 - Timer
-- Calendar
+- Stopwatch
+- Quick Links
+- Todo
+- Pomodoro
 
 ---
 
 ## System Controls
 
-Examples:
+Most of this category was built, then removed: Wi-Fi, Bluetooth, Volume,
+Brightness, Night Light, and Power Menu each duplicated a control already one
+click away in GNOME's own quick settings panel, so keeping them in Nucleus
+only added a slower second path to the same action. See `docs/DECISIONS.md`
+(ADR-016) for the reasoning.
 
-- Wi-Fi
-- Bluetooth
-- Volume
-- Brightness
-- Night Light
-- Battery
-- Power Menu
+Battery is the one exception: it also surfaces peripheral batteries — a
+wireless mouse or headset — which the quick settings panel does not show.
 
 ---
 
@@ -141,11 +142,8 @@ Examples:
 
 Examples:
 
-- Screenshot
-- Screen Recorder
 - Color Picker
-- QR Generator
-- QR Scanner
+- QR Scanner *(not yet built — deferred, see `docs/ROADMAP.md` Phase 8)*
 
 ---
 
