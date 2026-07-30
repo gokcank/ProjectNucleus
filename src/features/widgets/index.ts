@@ -25,24 +25,24 @@ export function registerBuiltinWidgets() {
   if (registered) return;
   registered = true;
   [
-    clockWidget,
     cpuWidget,
     ramWidget,
-    calculatorWidget,
     clipboardWidget,
     notesWidget,
+    colorPickerWidget,
+    networkWidget,
+    quickLinksWidget,
+    todoWidget,
+    clockWidget,
+    calculatorWidget,
+    screenshotWidget,
     timerWidget,
     stopwatchWidget,
-    screenshotWidget,
     volumeWidget,
     bluetoothWidget,
     nightLightWidget,
     powerProfileWidget,
     powerWidget,
-    colorPickerWidget,
-    quickLinksWidget,
-    todoWidget,
-    networkWidget,
   ].forEach(registerWidget);
 }
 

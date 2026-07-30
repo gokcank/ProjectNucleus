@@ -104,6 +104,6 @@ export const todoWidget: WidgetDefinition = {
   id: "todo",
   title: "Todo",
   icon: ListTodo,
-  defaultWide: true,
+  defaultWide: false,
   component: TodoContent,
 };

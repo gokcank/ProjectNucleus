@@ -130,6 +130,6 @@ export const quickLinksWidget: WidgetDefinition = {
   id: "quickLinks",
   title: "Quick Links",
   icon: Link2,
-  defaultWide: true,
+  defaultWide: false,
   component: QuickLinksContent,
 };
