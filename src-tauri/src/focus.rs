@@ -32,9 +32,16 @@ pub fn claim(window: &tauri::WebviewWindow) {
         }
     };
 
-    // Only exists once the window has been realized, which showing it does.
+    // Normally exists once the window has been shown, but the panel starts
+    // hidden (see anchor_to_top_right in lib.rs) so its very first show can
+    // race this: `show()` has been called but GTK hasn't realized the
+    // underlying window yet. Realizing explicitly, rather than giving up and
+    // falling back, is what makes that first summon claim focus too.
+    if gtk_window.window().is_none() {
+        gtk_window.realize();
+    }
     let Some(gdk_window) = gtk_window.window() else {
-        log::warn!("The panel has no underlying window yet; falling back to a plain focus request");
+        log::warn!("The panel has no underlying window even after realizing; falling back to a plain focus request");
         fallback(window);
         return;
     };
