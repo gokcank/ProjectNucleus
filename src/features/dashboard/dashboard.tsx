@@ -119,7 +119,7 @@ export function Dashboard({ layout: dashboardLayout, onOpenSettings }: Dashboard
         </button>
       </header>
 
-      <div className="flex-1 overflow-y-auto p-4">
+      <div className="flex-1 overflow-x-hidden overflow-y-auto p-4">
         {entries.length === 0 ? (
           searching ? (
             <NoMatches query={trimmedQuery} />
@@ -131,6 +131,11 @@ export function Dashboard({ layout: dashboardLayout, onOpenSettings }: Dashboard
             sensors={sensors}
             collisionDetection={closestCenter}
             onDragEnd={handleDragEnd}
+            // The grid always fits within the panel -- there's nothing to
+            // scroll to reveal. Without this, dragging a card near the edge
+            // made dnd-kit auto-scroll the dashboard sideways, exposing
+            // blank space the fixed 4-column grid doesn't actually have.
+            autoScroll={false}
           >
             <SortableContext
               items={entries.map((item) => item.entry.id)}
