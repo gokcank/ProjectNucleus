@@ -81,14 +81,21 @@ export function Dashboard({ layout: dashboardLayout, onOpenSettings }: Dashboard
   const trimmedQuery = query.trim();
   const searching = trimmedQuery !== "";
 
+  // Always includes every non-hidden card, matching the search or not --
+  // cards are never filtered out of this list, only hidden via CSS (see
+  // SortableWidget's `hidden` prop). Removing a non-matching card from here
+  // would unmount it, discarding any in-progress state it keeps only in
+  // memory (a running Timer, Pomodoro, or Stopwatch).
   const entries = layout
     .filter((entry) => !entry.hidden)
     .map((entry) => ({ entry, definition: getWidget(entry.id) }))
     .filter(
       (item): item is { entry: (typeof layout)[number]; definition: WidgetDefinition } =>
         item.definition !== undefined,
-    )
-    .filter((item) => matchesQuery(item.definition, trimmedQuery));
+    );
+
+  const matchCount = entries.filter((item) => matchesQuery(item.definition, trimmedQuery)).length;
+  const noMatches = searching && entries.length > 0 && matchCount === 0;
 
   return (
     <div className="flex h-full flex-col">
@@ -120,13 +127,9 @@ export function Dashboard({ layout: dashboardLayout, onOpenSettings }: Dashboard
       </header>
 
       <div className="flex-1 overflow-x-hidden overflow-y-auto p-4">
-        {entries.length === 0 ? (
-          searching ? (
-            <NoMatches query={trimmedQuery} />
-          ) : (
-            <EmptyState />
-          )
-        ) : (
+        {entries.length === 0 && <EmptyState />}
+        {noMatches && <NoMatches query={trimmedQuery} />}
+        {entries.length > 0 && (
           <DndContext
             sensors={sensors}
             collisionDetection={closestCenter}
@@ -141,13 +144,14 @@ export function Dashboard({ layout: dashboardLayout, onOpenSettings }: Dashboard
               items={entries.map((item) => item.entry.id)}
               strategy={rectSortingStrategy}
             >
-              <div className="grid grid-cols-4 gap-3">
+              <div className={`grid grid-cols-4 gap-3 ${noMatches ? "hidden" : ""}`}>
                 {entries.map((item) => (
                   <SortableWidget
                     key={item.entry.id}
                     entry={item.entry}
                     definition={item.definition}
                     onToggleWide={toggleWide}
+                    hidden={searching && !matchesQuery(item.definition, trimmedQuery)}
                   />
                 ))}
               </div>

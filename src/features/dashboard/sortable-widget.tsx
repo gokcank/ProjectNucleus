@@ -9,12 +9,19 @@ interface SortableWidgetProps {
   entry: WidgetLayoutEntry;
   definition: WidgetDefinition;
   onToggleWide: (id: string) => void;
+  /**
+   * Hides the card without unmounting it -- used when a dashboard search
+   * doesn't match it. Filtering non-matching cards out of the rendered list
+   * entirely would unmount them, discarding any in-progress state a card
+   * keeps only in memory (a running Timer, Pomodoro, or Stopwatch).
+   */
+  hidden?: boolean;
 }
 
 const actionButtonClass =
   "rounded-md p-1 text-neutral-400 hover:bg-black/5 hover:text-neutral-600 dark:text-neutral-500 dark:hover:bg-white/5 dark:hover:text-neutral-300";
 
-export function SortableWidget({ entry, definition, onToggleWide }: SortableWidgetProps) {
+export function SortableWidget({ entry, definition, onToggleWide, hidden }: SortableWidgetProps) {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
     id: entry.id,
   });
@@ -59,7 +66,7 @@ export function SortableWidget({ entry, definition, onToggleWide }: SortableWidg
     <div
       ref={setNodeRef}
       style={{ transform: CSS.Transform.toString(transform), transition }}
-      className={`${spanClass} ${isDragging ? "z-10 opacity-80" : ""}`}
+      className={`${spanClass} ${isDragging ? "z-10 opacity-80" : ""} ${hidden ? "hidden" : ""}`}
     >
       <Card
         icon={definition.icon}
