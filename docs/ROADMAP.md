@@ -233,7 +233,7 @@ Examples
 - ✅ Screenshot
 - Screen Recorder
 - ✅ Color Picker
-- QR Generator
+- ✅ QR Generator
 - QR Scanner
 - File Search
 

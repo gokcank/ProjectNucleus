@@ -146,6 +146,7 @@ Do not add these speculatively. Add a widget that needs the capability first, th
 | Night Light | `src/features/widgets/night-light/night-light-widget.tsx` | Reads and writes a desktop setting through `gsettings`; parses GVariant literals in Rust |
 | Power Profile | `src/features/widgets/power-profile/power-profile-widget.tsx` | Offers only the profiles the daemon advertises, and validates the chosen one against that list before applying it |
 | Power | `src/features/widgets/power/power-widget.tsx` | Destructive actions behind an explicit confirmation step; only offers what logind reports as permitted |
+| QR Code | `src/features/widgets/qr-code/qr-code-widget.tsx` | Pure computation kept in the frontend, like Calculator — no Rust command, since encoding is neither privileged nor platform-specific. Draws the grid as one SVG path rather than a rect per module, and stays dark-on-white in both themes because an inverted code stops some readers |
 | Color Picker | `src/features/widgets/color-picker/color-picker-widget.tsx` | Another XDG portal action (same technique as Screenshot); `quarterWidth: true` since there's nothing to show at a larger size; `keywords` so search finds it under its longer common name |
 | Quick Links | `src/features/widgets/quick-links/quick-links-widget.tsx` | An array stored via `useWidgetSetting` (not just a single value) — add/remove are discrete clicks, so no debounce is needed |
 | Todo | `src/features/widgets/todo/todo-widget.tsx` | Same array-via-`useWidgetSetting` pattern as Quick Links, applied to a checklist |

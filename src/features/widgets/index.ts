@@ -13,6 +13,7 @@ import { notesWidget } from "./notes/notes-widget";
 import { pomodoroWidget } from "./pomodoro/pomodoro-widget";
 import { powerProfileWidget } from "./power-profile/power-profile-widget";
 import { powerWidget } from "./power/power-widget";
+import { qrCodeWidget } from "./qr-code/qr-code-widget";
 import { quickLinksWidget } from "./quick-links/quick-links-widget";
 import { ramWidget } from "./ram/ram-widget";
 import { registerWidget } from "./registry";
@@ -53,6 +54,7 @@ export function registerBuiltinWidgets() {
     brightnessWidget,
     batteryWidget,
     wifiWidget,
+    qrCodeWidget,
   ].forEach(registerWidget);
 }
 
