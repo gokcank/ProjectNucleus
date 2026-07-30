@@ -21,6 +21,7 @@ import { stopwatchWidget } from "./stopwatch/stopwatch-widget";
 import { timerWidget } from "./timer/timer-widget";
 import { todoWidget } from "./todo/todo-widget";
 import { volumeWidget } from "./volume/volume-widget";
+import { wifiWidget } from "./wifi/wifi-widget";
 
 let registered = false;
 
@@ -51,6 +52,7 @@ export function registerBuiltinWidgets() {
     calendarWidget,
     brightnessWidget,
     batteryWidget,
+    wifiWidget,
   ].forEach(registerWidget);
 }
 

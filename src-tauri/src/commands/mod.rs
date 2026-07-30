@@ -9,3 +9,4 @@ pub mod night_light;
 pub mod power;
 pub mod screenshot;
 pub mod system;
+pub mod wifi;

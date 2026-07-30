@@ -215,7 +215,7 @@ Examples
 
 Examples
 
-- Wi-Fi
+- ✅ Wi-Fi *(lists networks and switches between saved ones; joining a new network needs a password prompt, which is a separate security design)*
 - ✅ Bluetooth
 - ✅ Volume
 - ✅ Brightness

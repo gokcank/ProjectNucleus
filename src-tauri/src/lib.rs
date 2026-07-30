@@ -121,6 +121,9 @@ pub fn run() {
             commands::color_picker::pick_color,
             commands::network::network_status,
             commands::network::public_ip,
+            commands::wifi::wifi_status,
+            commands::wifi::set_wifi_enabled,
+            commands::wifi::connect_wifi,
             commands::appearance::color_scheme
         ])
         // Injected before the page's own scripts so the first render already
