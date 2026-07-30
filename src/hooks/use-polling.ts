@@ -4,8 +4,14 @@ import { logWarn } from "../services/logger-service";
 
 /**
  * Polls `fetcher` on an interval and folds each result into the state.
- * Skips ticks while the document is hidden and stops entirely after the
- * first failure (logged once), leaving the last known state in place.
+ * Skips ticks while the document is hidden, fetches again as soon as it
+ * becomes visible, and stops entirely after the first failure (logged once),
+ * leaving the last known state in place.
+ *
+ * Refreshing on becoming visible is what keeps a slow poll usable: the panel
+ * spends most of its life hidden, so without it a widget would show whatever
+ * it last saw -- or nothing at all -- for up to a full interval after the
+ * panel is summoned.
  *
  * `fold` receives the previous state, so callers that only care about the
  * latest value can ignore it, while callers keeping a rolling history
@@ -52,9 +58,13 @@ export function usePolling<TFetched, TState>(
 
     tick();
     const intervalId = window.setInterval(tick, intervalMs);
+    // `tick` already returns early while hidden, so this only ever does work
+    // on the transition back to visible.
+    document.addEventListener("visibilitychange", tick);
     return () => {
       active = false;
       window.clearInterval(intervalId);
+      document.removeEventListener("visibilitychange", tick);
     };
   }, [fetcher, intervalMs, label]);
 
