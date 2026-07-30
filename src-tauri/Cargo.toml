@@ -29,7 +29,6 @@ serde_json = "1"
 sysinfo = "0.33"
 tauri-plugin-clipboard-manager = "2.3.2"
 ashpd = { version = "0.13.13", features = ["screenshot", "settings"] }
-url = "2.5.8"
 zbus = "5"
 tokio = { version = "1.53.1", default-features = false, features = ["time"] }
 # Already in the dependency tree via ashpd; declared directly to consume its

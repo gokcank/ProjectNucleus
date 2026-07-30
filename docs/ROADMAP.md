@@ -25,7 +25,7 @@ Every phase must produce a stable, usable application.
 | Item | Status |
 |------|--------|
 | Project | 🚧 In Development |
-| Current Phase | Phases 6–8 complete, then narrowed — nine widgets that duplicated GNOME's own quick settings were removed (ADR-016). Three items were closed with a reason rather than built (QR Scanner, File Search, Speed Test); see each phase |
+| Current Phase | Phases 6–8 complete, then narrowed twice — thirteen widgets that duplicated what GNOME already offers were removed (ADR-016, ADR-017), leaving twelve. Three items were closed with a reason rather than built (QR Scanner, File Search, Speed Test); see each phase |
 | Public Release | Not Yet |
 | Widget Engine | Complete |
 | Plugin SDK | Planned |
@@ -133,7 +133,7 @@ Start with real implementations.
 
 ## Initial Cards
 
-- Clock
+- Clock *(removed later — see ADR-017: GNOME's top bar shows the time without any click at all)*
 - CPU
 - RAM
 
@@ -234,10 +234,10 @@ Examples
 
 Examples
 
-- ✅ Screenshot
-- ✅ Screen Recorder
 - ✅ Color Picker
-- ✅ QR Generator
+- ❌ Screenshot *(built, then removed — see ADR-017: Print Screen already does this)*
+- ❌ Screen Recorder *(built, then removed — see ADR-017: Ctrl+Alt+Shift+R already does this, and the card called that same service)*
+- ❌ QR Generator *(built, then removed — see ADR-017: the one removal in that round without a GNOME equivalent, dropped as a scope decision)*
 - QR Scanner *(deliberately deferred: the WebView layer Tauri ships does not enable camera streams at all, so the cheap route would mean reaching into internals Tauri does not support; the supported route — camera portal plus a PipeWire stream and a decoder — is the heaviest integration in this phase. Neither can be verified without a camera. Revisit on a machine that has one, or when there is a real need)*
 - File Search *(deliberately dropped: GNOME's own overview already searches the same index a card would query, so a card could only ever be the slower route — open the panel, find the card, type. Per VISION.md every feature has to justify its existence, and this one duplicates a single keystroke)*
 
@@ -318,14 +318,15 @@ Included:
 
 - Dashboard
 - Card Framework
-- Clock
 - CPU
 - RAM
-- Calculator
 - Clipboard
-- Screenshot
-- Basic System Controls
+- Notes
 - Settings
+
+> This list originally included Clock, Calculator, Screenshot and basic system
+> controls. All of them were removed in ADR-016 and ADR-017 as duplicates of
+> what GNOME already offers.
 
 Everything else belongs to future releases.
 

@@ -12,7 +12,7 @@
 
 A widget is a self-contained dashboard entry: an icon, a title, a content component, and an optional default size. The dashboard host owns everything a widget does not: the card surface, the header, resize and drag actions, and layout persistence.
 
-This document describes the widget API as it exists today. It is not a future design — it is the contract already used by the three built-in widgets (Clock, CPU, RAM). New capabilities are added to this document only when a real widget needs them, per `docs/DECISIONS.md` (ADR-005, ADR-006).
+This document describes the widget API as it exists today. It is not a future design — it is the contract every built-in widget already uses. New capabilities are added to this document only when a real widget needs them, per `docs/DECISIONS.md` (ADR-005, ADR-006).
 
 ---
 
@@ -34,13 +34,13 @@ A widget is a plain object matching `WidgetDefinition` (`src/features/widgets/ty
 Convention: one folder per widget under `src/features/widgets/<id>/`, one file `<id>-widget.tsx` exporting the definition as `<id>Widget`.
 
 ```tsx
-// src/features/widgets/clock/clock-widget.tsx
-export const clockWidget: WidgetDefinition = {
-  id: "clock",
-  title: "Clock",
-  icon: Clock,
+// src/features/widgets/notes/notes-widget.tsx
+export const notesWidget: WidgetDefinition = {
+  id: "notes",
+  title: "Notes",
+  icon: StickyNote,
   defaultWide: true,
-  component: ClockContent,
+  component: NotesContent,
 };
 ```
 
@@ -52,7 +52,7 @@ Widgets register themselves through `registerWidget` (`src/features/widgets/regi
 
 ```ts
 import { registerWidget } from "../registry";
-registerWidget(clockWidget);
+registerWidget(notesWidget);
 ```
 
 Registering a duplicate `id` is ignored with a logged warning — it does not crash the app or overwrite the existing definition.
@@ -85,7 +85,7 @@ A widget that needs its own persisted preference (distinct from dashboard layout
 
 ```ts
 const isBoolean = (value: unknown): value is boolean => typeof value === "boolean";
-const [showSeconds, setShowSeconds] = useWidgetSetting("clock", "showSeconds", true, isBoolean);
+const [sparkline, setSparkline] = useWidgetSetting("ram", "sparkline", false, isBoolean);
 ```
 
 | Parameter | Description |
@@ -95,7 +95,7 @@ const [showSeconds, setShowSeconds] = useWidgetSetting("clock", "showSeconds", t
 | `fallback` | Value used before the stored setting loads, and when nothing is stored yet. |
 | `isValid` | Type guard run against the loaded value; invalid or corrupted data falls back rather than crashing. |
 
-Storage key shape: `widget.<widgetId>.<key>`, persisted through the same Settings Service as dashboard layout and theme. There is no widget-specific settings UI yet — widgets expose their own inline controls (see the Clock widget's seconds toggle) until a dedicated per-widget settings surface exists.
+Storage key shape: `widget.<widgetId>.<key>`, persisted through the same Settings Service as dashboard layout and theme. There is no widget-specific settings UI yet — widgets expose their own inline controls (see the RAM widget's sparkline toggle) until a dedicated per-widget settings surface exists.
 
 `T` isn't limited to primitives — Quick Links and Todo each store an array of records this way (e.g. `useWidgetSetting<QuickLink[]>("quickLinks", "items", [], isQuickLinkList)`). This fits because their edits (add/remove) are discrete clicks; a widget with rapid-fire edits (continuous typing, a drag) should debounce writes directly through the Settings Service instead, like Notes does — `useWidgetSetting` always persists immediately.
 
@@ -127,7 +127,6 @@ Do not add these speculatively. Add a widget that needs the capability first, th
 
 | Widget | File | Demonstrates |
 |---|---|---|
-| Clock | `src/features/widgets/clock/clock-widget.tsx` | Local timer state, a widget-owned setting (`showSeconds`) |
 | CPU | `src/features/widgets/cpu/cpu-widget.tsx` | Polling a Rust command via the Service Layer; own poll loop (not a shared hook) since it keeps a rolling history for the optional sparkline; `compact` layout |
 | RAM | `src/features/widgets/ram/ram-widget.tsx` | Same polling/history pattern; `compact` layout, exact byte counts as a hover tooltip when narrow and as visible text when `wide` |
 | Clipboard | `src/features/widgets/clipboard/clipboard-widget.tsx` | Polling a Tauri plugin (not a custom Rust command); in-memory-only history, deliberately not persisted since clipboard content may be sensitive |
@@ -135,11 +134,8 @@ Do not add these speculatively. Add a widget that needs the capability first, th
 | Timer | `src/features/widgets/timer/timer-widget.tsx` | Pure countdown logic (`timer-logic.ts`); drift-free ticking via `Date.now()` deltas instead of assuming fixed interval steps |
 | Stopwatch | `src/features/widgets/stopwatch/stopwatch-widget.tsx` | Same drift-free ticking pattern as Timer, counting up instead of down |
 | Pomodoro | `src/features/widgets/pomodoro/pomodoro-widget.tsx` | A multi-phase state machine in pure logic (`pomodoro-logic.ts`): phase transitions, cycle counting, and a deliberate refusal to auto-start the next phase; `keywords` so search finds it under "focus" |
-| Screenshot | `src/features/widgets/screenshot/screenshot-widget.tsx` | A privileged action delegated to the desktop (XDG portal) via an async Rust command; distinguishes user cancellation from failure |
 | Battery | `src/features/widgets/battery/battery-widget.tsx` | A slow poll (30s) leaning on `usePolling`'s refresh-on-visible so the card is current the moment the panel opens. Combines UPower's composite device (the machine's own battery) with its per-device list (wireless mouse, headset, phone), told apart by `PowerSupply`; having neither is a state, not an error |
-| QR Code | `src/features/widgets/qr-code/qr-code-widget.tsx` | Pure computation kept in the frontend — no Rust command, since encoding is neither privileged nor platform-specific. Draws the grid as one SVG path rather than a rect per module, and stays dark-on-white in both themes because an inverted code stops some readers |
-| Screen Recorder | `src/features/widgets/screen-recorder/screen-recorder-widget.tsx` | Hands recording to GNOME Shell, which already captures and encodes, rather than driving a PipeWire stream and bundling an encoder. Holds one D-Bus connection open for the app's lifetime in Tauri state: GNOME ties a recording to the connection that asked for it, so the usual connect-per-command would abort it instantly. The card owns the "recording" flag, since the desktop does not report it |
-| Color Picker | `src/features/widgets/color-picker/color-picker-widget.tsx` | Another XDG portal action (same technique as Screenshot); `quarterWidth: true` since there's nothing to show at a larger size; `keywords` so search finds it under its longer common name |
+| Color Picker | `src/features/widgets/color-picker/color-picker-widget.tsx` | A privileged action delegated to the desktop through an XDG portal, distinguishing user cancellation from failure; `quarterWidth: true` since there's nothing to show at a larger size; `keywords` so search finds it under its longer common name |
 | Quick Links | `src/features/widgets/quick-links/quick-links-widget.tsx` | An array stored via `useWidgetSetting` (not just a single value) — add/remove are discrete clicks, so no debounce is needed |
 | Todo | `src/features/widgets/todo/todo-widget.tsx` | Same array-via-`useWidgetSetting` pattern as Quick Links, applied to a checklist |
 | Network | `src/features/widgets/network/network-widget.tsx` | Two reads with different costs in one card: connection state comes from D-Bus on mount and on `visibilitychange`, rather than being polled, while the public address leaves the machine and so is fetched once and then only on demand, via `useAsyncAction` |

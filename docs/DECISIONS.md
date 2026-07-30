@@ -402,6 +402,53 @@ let it.
 
 ---
 
+# ADR-017
+
+## Title
+
+Narrowing the Scope, Second Pass
+
+### Status
+
+Accepted
+
+### Decision
+
+Four more shipped widgets were removed: Clock, Screenshot, Screen Recorder and
+QR Code.
+
+### Rationale
+
+ADR-016's test applied again. Three of the four have a direct, faster
+equivalent already on the desktop:
+
+- **Clock** — the top bar shows the time permanently, with no click at all.
+  A stronger duplicate than anything in ADR-016, which at least cost a click.
+- **Screenshot** — Print Screen is bound to GNOME's own tool by default.
+- **Screen Recorder** — Ctrl+Alt+Shift+R is bound to GNOME's own recorder, and
+  the card was calling that very service anyway.
+
+**QR Code is the exception, and it is worth being clear about it.** GNOME ships
+no built-in way to turn text into a QR code, so it does not fail the duplication
+test the way the others do. It was removed as a deliberate scope decision by the
+project owner, not because the desktop already covered it. If the scope ever
+widens again, this is the one from these two rounds worth reconsidering first.
+
+### Consequences
+
+- Phase 8 (Utility Widgets) is left with Color Picker alone.
+- Phase 3's original trio (Clock, CPU, RAM) is down to CPU and RAM. The MVP
+  list in `ROADMAP.md` was rewritten to match, since most of what it named no
+  longer exists.
+- Two dependencies became unused and were dropped: `url` (Cargo) and
+  `qrcode-generator` (npm). `ashpd`'s `screenshot` feature was **kept** —
+  Color Picker's `Color::pick` sits behind that same flag, which was confirmed
+  by removing it and watching the build fail.
+- Twelve widgets remain. Together with ADR-016 this removed thirteen of
+  twenty-five, and the frontend bundle went from 110 KB to 94 KB gzipped.
+
+---
+
 # Adding New Decisions
 
 New ADRs should follow this template:

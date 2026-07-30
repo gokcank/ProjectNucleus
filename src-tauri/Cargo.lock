@@ -2853,7 +2853,6 @@ dependencies = [
  "tauri-plugin-opener",
  "tauri-plugin-store",
  "tokio",
- "url",
  "zbus",
 ]
 

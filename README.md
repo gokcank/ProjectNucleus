@@ -32,7 +32,7 @@ It isn't a desktop environment or a system monitor replacement; it's a fast, foc
 - **Floating Panel:** A borderless, glass-styled panel toggled with a global shortcut or the tray icon, anchored to the top-right corner of your primary screen.
 - **Card Dashboard:** A responsive, searchable grid of cards you can reorder, resize, and show or hide from Settings.
 - **Productivity:** Clipboard History, Notes, Timer, Stopwatch, Pomodoro, Quick Links, Todo.
-- **Utilities:** Screenshot, Screen Recorder, Color Picker, QR Code generator.
+- **Utilities:** Colour Picker — pick any colour on screen and copy it.
 - **Battery:** Charge level for the machine and for peripherals — a wireless mouse or headset.
 - **Network:** Connection type/SSID plus local and public IP at a glance.
 - **At-a-Glance Monitoring:** CPU and RAM cards for a quick status check — not a full monitoring suite.
@@ -43,7 +43,7 @@ It isn't a desktop environment or a system monitor replacement; it's a fast, foc
 - **Backend:** Rust, Tauri v2
 - **Frontend:** React, TypeScript, Vite
 - **Styling:** Tailwind CSS v4
-- **System Integration:** zbus (D-Bus / NetworkManager, UPower, GNOME Shell), ashpd (XDG Desktop Portals — Screenshot, Color Picker, Settings)
+- **System Integration:** zbus (D-Bus / NetworkManager, UPower), ashpd (XDG Desktop Portals — Colour Picker, Settings)
 - **Platform:** Linux (GNOME first), X11 today with Wayland support planned
 
 ### Architecture & Philosophy
@@ -52,7 +52,7 @@ Nucleus follows a **cards-before-widgets** approach: real, concrete cards were b
 
 ### Security
 
-The frontend never executes arbitrary system commands — all privileged operations (screenshots, D-Bus calls, color scheme reads) are handled by the Rust backend and exposed only through explicit, narrow Tauri commands. Every window capability is opted into individually in `src-tauri/capabilities/`, rather than granted broadly.
+The frontend never executes arbitrary system commands — all privileged operations (D-Bus calls, portal requests, colour scheme reads) are handled by the Rust backend and exposed only through explicit, narrow Tauri commands. Every window capability is opted into individually in `src-tauri/capabilities/`, rather than granted broadly.
 
 ### Status
 
@@ -73,7 +73,7 @@ Bir masaüstü ortamı ya da sistem izleme aracı değildir; mevcut Linux masaü
 - **Kayan Panel:** Genel bir kısayol veya tepsi simgesiyle açılıp kapanan, çerçevesiz, cam görünümlü, birincil ekranın sağ üst köşesine sabitlenmiş panel.
 - **Kart Panosu:** Ayarlar'dan yeniden sıralanabilen, boyutlandırılabilen, gösterilip gizlenebilen, aranabilir duyarlı kart ızgarası.
 - **Üretkenlik:** Pano Geçmişi, Notlar, Zamanlayıcı, Kronometre, Pomodoro, Hızlı Bağlantılar, Yapılacaklar.
-- **Yardımcı Programlar:** Ekran Görüntüsü, Ekran Kaydedici, Renk Seçici, QR Kod üreteci.
+- **Yardımcı Programlar:** Renk Seçici — ekrandaki herhangi bir rengi seçip kopyalayın.
 - **Pil:** Makinenin ve çevre birimlerinin (kablosuz fare, kulaklık) şarj durumu.
 - **Ağ:** Bağlantı türü/SSID ile yerel ve genel IP adresi tek bakışta.
 - **Anlık Durum:** Hızlı bir bakış için CPU ve RAM kartları — tam bir izleme paketi değil.
@@ -84,7 +84,7 @@ Bir masaüstü ortamı ya da sistem izleme aracı değildir; mevcut Linux masaü
 - **Arka Uç:** Rust, Tauri v2
 - **Ön Yüz:** React, TypeScript, Vite
 - **Stil:** Tailwind CSS v4
-- **Sistem Entegrasyonu:** zbus (D-Bus / NetworkManager, UPower, GNOME Shell), ashpd (XDG Desktop Portals — Ekran Görüntüsü, Renk Seçici, Ayarlar)
+- **Sistem Entegrasyonu:** zbus (D-Bus / NetworkManager, UPower), ashpd (XDG Desktop Portals — Renk Seçici, Ayarlar)
 - **Platform:** Linux (öncelik GNOME), şu an X11, Wayland desteği planlanıyor
 
 ### Mimari & Felsefe
@@ -93,7 +93,7 @@ Nucleus, **önce kart, sonra widget** yaklaşımını izler: önce gerçek, somu
 
 ### Güvenlik
 
-Ön yüz asla rastgele sistem komutu çalıştırmaz — tüm yetkili işlemler (ekran görüntüsü, D-Bus çağrıları, renk şeması okuma) Rust arka ucu tarafından yönetilir ve yalnızca açıkça tanımlanmış, dar kapsamlı Tauri komutlarıyla dışa açılır. Her pencere yetkisi, geniş kapsamlı değil, `src-tauri/capabilities/` içinde tek tek onaylanır.
+Ön yüz asla rastgele sistem komutu çalıştırmaz — tüm yetkili işlemler (D-Bus çağrıları, portal istekleri, renk şeması okuma) Rust arka ucu tarafından yönetilir ve yalnızca açıkça tanımlanmış, dar kapsamlı Tauri komutlarıyla dışa açılır. Her pencere yetkisi, geniş kapsamlı değil, `src-tauri/capabilities/` içinde tek tek onaylanır.
 
 ### Durum
 
