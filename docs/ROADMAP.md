@@ -25,7 +25,7 @@ Every phase must produce a stable, usable application.
 | Item | Status |
 |------|--------|
 | Project | 🚧 In Development |
-| Current Phase | Phases 6–8 — Productivity, System & Utility Widgets (all three in progress in parallel; see each phase for exact status) |
+| Current Phase | Phases 6–8 complete — Productivity, System & Utility Widgets. Two items closed with a reason rather than built (QR Scanner, File Search); see each phase |
 | Public Release | Not Yet |
 | Widget Engine | Complete |
 | Plugin SDK | Planned |
@@ -235,7 +235,7 @@ Examples
 - ✅ Color Picker
 - ✅ QR Generator
 - QR Scanner *(deliberately deferred: the WebView layer Tauri ships does not enable camera streams at all, so the cheap route would mean reaching into internals Tauri does not support; the supported route — camera portal plus a PipeWire stream and a decoder — is the heaviest integration in this phase. Neither can be verified without a camera. Revisit on a machine that has one, or when there is a real need)*
-- File Search
+- File Search *(deliberately dropped: GNOME's own overview already searches the same index a card would query, so a card could only ever be the slower route — open the panel, find the card, type. Per VISION.md every feature has to justify its existence, and this one duplicates a single keystroke)*
 
 ---
 
