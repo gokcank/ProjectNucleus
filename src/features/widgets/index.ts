@@ -1,5 +1,6 @@
 import { bluetoothWidget } from "./bluetooth/bluetooth-widget";
 import { calculatorWidget } from "./calculator/calculator-widget";
+import { calendarWidget } from "./calendar/calendar-widget";
 import { clipboardWidget } from "./clipboard/clipboard-widget";
 import { clockWidget } from "./clock/clock-widget";
 import { colorPickerWidget } from "./color-picker/color-picker-widget";
@@ -45,6 +46,7 @@ export function registerBuiltinWidgets() {
     powerProfileWidget,
     powerWidget,
     pomodoroWidget,
+    calendarWidget,
   ].forEach(registerWidget);
 }
 

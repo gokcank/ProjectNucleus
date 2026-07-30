@@ -207,7 +207,7 @@ Examples
 - ✅ Quick Links
 - ✅ Todo
 - ✅ Pomodoro
-- Calendar
+- ✅ Calendar *(month view only — showing appointments would mean hooking into the desktop's calendar service, beyond the at-a-glance goal)*
 
 ---
 
