@@ -36,3 +36,10 @@ tokio = { version = "1.53.1", default-features = false, features = ["time"] }
 # Settings-portal change stream (StreamExt::next).
 futures-util = { version = "0.3", default-features = false, features = ["std"] }
 
+# Both already in the dependency tree via Tauri's own GTK backend; declared
+# directly to reach the panel's underlying X11 window when claiming focus
+# (see src/focus.rs).
+[target.'cfg(target_os = "linux")'.dependencies]
+gtk = "0.18"
+gdkx11 = "0.18"
+

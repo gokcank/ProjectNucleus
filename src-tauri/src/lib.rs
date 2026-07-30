@@ -1,4 +1,5 @@
 mod commands;
+mod focus;
 
 use tauri::menu::{Menu, MenuItem};
 use tauri::tray::TrayIconBuilder;
@@ -25,22 +26,23 @@ fn toggle_panel(app: &tauri::AppHandle) {
         return;
     };
     let visible = window.is_visible().unwrap_or(false);
-    let result = if visible {
-        window.hide()
-    } else {
-        // Reasserting always-on-top on every show, not just at window
-        // creation, matters: some window managers (Mutter included) can drop
-        // or ignore that state across a hide/show cycle, which otherwise
-        // left the panel appearing behind whatever window already had focus
-        // (e.g. Firefox) instead of above it.
-        window
-            .show()
-            .and_then(|()| window.set_always_on_top(true))
-            .and_then(|()| window.set_focus())
-    };
-    if let Err(err) = result {
-        log::warn!("Failed to toggle panel: {err}");
+    if visible {
+        if let Err(err) = window.hide() {
+            log::warn!("Failed to hide panel: {err}");
+        }
+        return;
     }
+
+    // Reasserting always-on-top on every show, not just at window creation,
+    // matters: some window managers (Mutter included) can drop or ignore that
+    // state across a hide/show cycle, which otherwise left the panel appearing
+    // behind whatever window already had focus (e.g. Firefox) instead of
+    // above it.
+    if let Err(err) = window.show().and_then(|()| window.set_always_on_top(true)) {
+        log::warn!("Failed to show panel: {err}");
+        return;
+    }
+    focus::claim(&window);
 }
 
 /// Anchors the panel to the primary monitor's top-right corner. Run once at

@@ -2839,6 +2839,8 @@ version = "0.1.0"
 dependencies = [
  "ashpd",
  "futures-util",
+ "gdkx11",
+ "gtk",
  "log",
  "serde",
  "serde_json",
