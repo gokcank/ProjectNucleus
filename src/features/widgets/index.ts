@@ -1,18 +1,11 @@
 import { batteryWidget } from "./battery/battery-widget";
-import { bluetoothWidget } from "./bluetooth/bluetooth-widget";
-import { brightnessWidget } from "./brightness/brightness-widget";
-import { calculatorWidget } from "./calculator/calculator-widget";
-import { calendarWidget } from "./calendar/calendar-widget";
 import { clipboardWidget } from "./clipboard/clipboard-widget";
 import { clockWidget } from "./clock/clock-widget";
 import { colorPickerWidget } from "./color-picker/color-picker-widget";
 import { cpuWidget } from "./cpu/cpu-widget";
 import { networkWidget } from "./network/network-widget";
-import { nightLightWidget } from "./night-light/night-light-widget";
 import { notesWidget } from "./notes/notes-widget";
 import { pomodoroWidget } from "./pomodoro/pomodoro-widget";
-import { powerProfileWidget } from "./power-profile/power-profile-widget";
-import { powerWidget } from "./power/power-widget";
 import { qrCodeWidget } from "./qr-code/qr-code-widget";
 import { quickLinksWidget } from "./quick-links/quick-links-widget";
 import { ramWidget } from "./ram/ram-widget";
@@ -22,8 +15,6 @@ import { screenshotWidget } from "./screenshot/screenshot-widget";
 import { stopwatchWidget } from "./stopwatch/stopwatch-widget";
 import { timerWidget } from "./timer/timer-widget";
 import { todoWidget } from "./todo/todo-widget";
-import { volumeWidget } from "./volume/volume-widget";
-import { wifiWidget } from "./wifi/wifi-widget";
 
 let registered = false;
 
@@ -41,20 +32,11 @@ export function registerBuiltinWidgets() {
     quickLinksWidget,
     todoWidget,
     clockWidget,
-    calculatorWidget,
     screenshotWidget,
     timerWidget,
     stopwatchWidget,
-    volumeWidget,
-    bluetoothWidget,
-    nightLightWidget,
-    powerProfileWidget,
-    powerWidget,
     pomodoroWidget,
-    calendarWidget,
-    brightnessWidget,
     batteryWidget,
-    wifiWidget,
     qrCodeWidget,
     screenRecorderWidget,
   ].forEach(registerWidget);

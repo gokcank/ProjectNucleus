@@ -23,7 +23,7 @@
 
 ### Overview
 
-**Project Nucleus** is a modular, customizable control center for Linux, built with Tauri and React. Instead of scattering everyday tools across multiple applications, menus, and keyboard shortcuts, Nucleus brings them together into a single floating panel — productivity tools, system controls, and utilities, all one shortcut away.
+**Project Nucleus** is a modular, customizable control center for Linux, built with Tauri and React. Instead of scattering everyday tools across multiple applications, menus, and keyboard shortcuts, Nucleus brings them together into a single floating panel — productivity tools and utilities, all one shortcut away.
 
 It isn't a desktop environment or a system monitor replacement; it's a fast, focused companion that sits on top of your existing Linux desktop (GNOME first) and stays out of the way until you need it.
 
@@ -31,9 +31,9 @@ It isn't a desktop environment or a system monitor replacement; it's a fast, foc
 
 - **Floating Panel:** A borderless, glass-styled panel toggled with a global shortcut or the tray icon, anchored to the top-right corner of your primary screen.
 - **Card Dashboard:** A responsive, searchable grid of cards you can reorder, resize, and show or hide from Settings.
-- **Productivity:** Clipboard History, Calculator, Notes, Timer, Stopwatch, Quick Links, Todo.
-- **System Controls:** Bluetooth, Volume, Night Light, Power Menu, Power Profile.
-- **Utilities:** Screenshot, Color Picker.
+- **Productivity:** Clipboard History, Notes, Timer, Stopwatch, Pomodoro, Quick Links, Todo.
+- **Utilities:** Screenshot, Screen Recorder, Color Picker, QR Code generator.
+- **Battery:** Charge level for the machine and for peripherals — a wireless mouse or headset.
 - **Network:** Connection type/SSID plus local and public IP at a glance.
 - **At-a-Glance Monitoring:** CPU and RAM cards for a quick status check — not a full monitoring suite.
 - **Theming:** Light, Dark, or System — tracked live from the actual desktop color scheme via the XDG Settings portal, not guessed.
@@ -43,7 +43,7 @@ It isn't a desktop environment or a system monitor replacement; it's a fast, foc
 - **Backend:** Rust, Tauri v2
 - **Frontend:** React, TypeScript, Vite
 - **Styling:** Tailwind CSS v4
-- **System Integration:** zbus (D-Bus / NetworkManager, BlueZ), ashpd (XDG Desktop Portals — Screenshot, Color Picker, Settings)
+- **System Integration:** zbus (D-Bus / NetworkManager, UPower, GNOME Shell), ashpd (XDG Desktop Portals — Screenshot, Color Picker, Settings)
 - **Platform:** Linux (GNOME first), X11 today with Wayland support planned
 
 ### Architecture & Philosophy
@@ -64,7 +64,7 @@ Project Nucleus is in **early, active development** (see [`docs/ROADMAP.md`](doc
 
 ### Genel Bakış
 
-**Project Nucleus**, Tauri ve React ile geliştirilmiş, modüler ve özelleştirilebilir bir Linux kontrol merkezidir. Günlük kullanılan araçları birden fazla uygulama, menü ve klavye kısayoluna dağıtmak yerine, tek bir kayan panelde bir araya getirir — üretkenlik araçları, sistem kontrolleri ve yardımcı programlar, tek bir kısayol uzağınızda.
+**Project Nucleus**, Tauri ve React ile geliştirilmiş, modüler ve özelleştirilebilir bir Linux kontrol merkezidir. Günlük kullanılan araçları birden fazla uygulama, menü ve klavye kısayoluna dağıtmak yerine, tek bir kayan panelde bir araya getirir — üretkenlik araçları ve yardımcı programlar, tek bir kısayol uzağınızda.
 
 Bir masaüstü ortamı ya da sistem izleme aracı değildir; mevcut Linux masaüstünüzün (öncelik GNOME) üzerinde duran, hızlı ve odaklı bir yardımcıdır — ihtiyaç duyulmadığında görünmez.
 
@@ -72,9 +72,9 @@ Bir masaüstü ortamı ya da sistem izleme aracı değildir; mevcut Linux masaü
 
 - **Kayan Panel:** Genel bir kısayol veya tepsi simgesiyle açılıp kapanan, çerçevesiz, cam görünümlü, birincil ekranın sağ üst köşesine sabitlenmiş panel.
 - **Kart Panosu:** Ayarlar'dan yeniden sıralanabilen, boyutlandırılabilen, gösterilip gizlenebilen, aranabilir duyarlı kart ızgarası.
-- **Üretkenlik:** Pano Geçmişi, Hesap Makinesi, Notlar, Zamanlayıcı, Kronometre, Hızlı Bağlantılar, Yapılacaklar.
-- **Sistem Kontrolleri:** Bluetooth, Ses, Gece Işığı, Güç Menüsü, Güç Profili.
-- **Yardımcı Programlar:** Ekran Görüntüsü, Renk Seçici.
+- **Üretkenlik:** Pano Geçmişi, Notlar, Zamanlayıcı, Kronometre, Pomodoro, Hızlı Bağlantılar, Yapılacaklar.
+- **Yardımcı Programlar:** Ekran Görüntüsü, Ekran Kaydedici, Renk Seçici, QR Kod üreteci.
+- **Pil:** Makinenin ve çevre birimlerinin (kablosuz fare, kulaklık) şarj durumu.
 - **Ağ:** Bağlantı türü/SSID ile yerel ve genel IP adresi tek bakışta.
 - **Anlık Durum:** Hızlı bir bakış için CPU ve RAM kartları — tam bir izleme paketi değil.
 - **Tema:** Açık, Koyu veya Sistem — tahmin edilerek değil, XDG Settings portalı üzerinden masaüstünün gerçek renk şemasından canlı olarak takip edilir.
@@ -84,7 +84,7 @@ Bir masaüstü ortamı ya da sistem izleme aracı değildir; mevcut Linux masaü
 - **Arka Uç:** Rust, Tauri v2
 - **Ön Yüz:** React, TypeScript, Vite
 - **Stil:** Tailwind CSS v4
-- **Sistem Entegrasyonu:** zbus (D-Bus / NetworkManager, BlueZ), ashpd (XDG Desktop Portals — Ekran Görüntüsü, Renk Seçici, Ayarlar)
+- **Sistem Entegrasyonu:** zbus (D-Bus / NetworkManager, UPower, GNOME Shell), ashpd (XDG Desktop Portals — Ekran Görüntüsü, Renk Seçici, Ayarlar)
 - **Platform:** Linux (öncelik GNOME), şu an X11, Wayland desteği planlanıyor
 
 ### Mimari & Felsefe

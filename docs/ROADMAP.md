@@ -25,7 +25,7 @@ Every phase must produce a stable, usable application.
 | Item | Status |
 |------|--------|
 | Project | 🚧 In Development |
-| Current Phase | Phases 6–8 complete — Productivity, System & Utility Widgets. Two items closed with a reason rather than built (QR Scanner, File Search); see each phase |
+| Current Phase | Phases 6–8 complete, then narrowed — nine widgets that duplicated GNOME's own quick settings were removed (ADR-016). Three items were closed with a reason rather than built (QR Scanner, File Search, Speed Test); see each phase |
 | Public Release | Not Yet |
 | Widget Engine | Complete |
 | Plugin SDK | Planned |
@@ -200,14 +200,14 @@ New functionality can be added without modifying the core dashboard.
 Examples
 
 - ✅ Clipboard
-- ✅ Calculator
 - ✅ Notes
 - ✅ Timer
 - ✅ Stopwatch
 - ✅ Quick Links
 - ✅ Todo
 - ✅ Pomodoro
-- ✅ Calendar *(month view only — showing appointments would mean hooking into the desktop's calendar service, beyond the at-a-glance goal)*
+- ❌ Calculator *(built, then removed — see ADR-016: GNOME's own calculator is one keystroke away in the overview)*
+- ❌ Calendar *(built, then removed — see ADR-016: clicking the top bar clock already opens the same month view)*
 
 ---
 
@@ -215,14 +215,18 @@ Examples
 
 Examples
 
-- ✅ Wi-Fi *(lists networks and switches between saved ones; joining a new network needs a password prompt, which is a separate security design)*
-- ✅ Bluetooth
-- ✅ Volume
-- ✅ Brightness
-- ✅ Battery
-- ✅ Night Light
-- ✅ Power Menu
-- ✅ Power Profile *(not in the original example list — added once it shipped, per ADR-015)*
+- ✅ Battery *(kept: shows charge for peripherals too — a wireless mouse or headset — which the quick settings panel does not)*
+- ❌ Wi-Fi *(built, then removed — see ADR-016)*
+- ❌ Bluetooth *(built, then removed — see ADR-016)*
+- ❌ Volume *(built, then removed — see ADR-016)*
+- ❌ Brightness *(built, then removed — see ADR-016)*
+- ❌ Night Light *(built, then removed — see ADR-016)*
+- ❌ Power Menu *(built, then removed — see ADR-016)*
+- ❌ Power Profile *(built, then removed — see ADR-016)*
+
+> Almost all of this phase turned out to duplicate GNOME's own quick settings
+> panel, which is already one click away in the top bar. See ADR-016 for the
+> reasoning and what was kept.
 
 ---
 

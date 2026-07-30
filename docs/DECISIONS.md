@@ -358,6 +358,50 @@ Documentation should remain synchronized with implementation to improve maintain
 
 ---
 
+# ADR-016
+
+## Title
+
+Remove Widgets That Duplicate the Desktop
+
+### Status
+
+Accepted
+
+### Decision
+
+Nine shipped widgets were removed: Wi-Fi, Bluetooth, Volume, Brightness, Night
+Light, Power Menu, Power Profile, Calendar, and Calculator.
+
+### Rationale
+
+Each of them already exists one click or one keystroke away in GNOME itself —
+the first seven in the quick settings panel in the top bar, Calendar behind the
+top bar clock, Calculator in the overview. Reaching the same control through
+Nucleus is strictly slower: open the panel, find the card, then act.
+
+`VISION.md` asks every feature to justify its existence, and these could not:
+they were not filling a gap, they were adding a second, longer path to
+something the desktop already does well. That is the definition of the feature
+creep ADR-014 warns about, and it had accumulated without anyone deciding to
+let it.
+
+### Consequences
+
+- Phase 7 (System Widgets) is almost entirely gone. Battery is the exception,
+  and only because it reports peripheral batteries — a wireless mouse or
+  headset — which the quick settings panel does not show.
+- The dashboard is smaller and its remaining cards share a clearer theme:
+  things the desktop does *not* already surface (CPU, RAM, Clipboard history,
+  Notes, Quick Links, Todo, Pomodoro, Network detail, Colour Picker, QR
+  Generator, Screenshot, Screen Recorder).
+- Stored layouts referencing a removed widget are dropped automatically by
+  `reconcile()` in `use-dashboard-layout.ts`; no migration was needed.
+- This test — "does the desktop already do this in fewer steps?" — should be
+  applied to new widget proposals before they are built, not after.
+
+---
+
 # Adding New Decisions
 
 New ADRs should follow this template:
