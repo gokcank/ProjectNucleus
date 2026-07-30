@@ -135,6 +135,7 @@ Do not add these speculatively. Add a widget that needs the capability first, th
 | Notes | `src/features/widgets/notes/notes-widget.tsx` | Debounced writes straight through the Settings Service; bypasses `useWidgetSetting` since that hook always persists immediately |
 | Timer | `src/features/widgets/timer/timer-widget.tsx` | Pure countdown logic (`timer-logic.ts`); drift-free ticking via `Date.now()` deltas instead of assuming fixed interval steps |
 | Stopwatch | `src/features/widgets/stopwatch/stopwatch-widget.tsx` | Same drift-free ticking pattern as Timer, counting up instead of down |
+| Pomodoro | `src/features/widgets/pomodoro/pomodoro-widget.tsx` | A multi-phase state machine in pure logic (`pomodoro-logic.ts`): phase transitions, cycle counting, and a deliberate refusal to auto-start the next phase; `keywords` so search finds it under "focus" |
 | Screenshot | `src/features/widgets/screenshot/screenshot-widget.tsx` | A privileged action delegated to the desktop (XDG portal) via an async Rust command; distinguishes user cancellation from failure |
 | Volume | `src/features/widgets/volume/volume-widget.tsx` | Two-way system control: reads on mount and on `visibilitychange` instead of polling, because each read costs a process spawn |
 | Bluetooth | `src/features/widgets/bluetooth/bluetooth-widget.tsx` | Talks to a system D-Bus service (BlueZ) directly from Rust; models "no adapter present" as a state rather than an error |

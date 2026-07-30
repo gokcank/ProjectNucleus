@@ -7,6 +7,7 @@ import { cpuWidget } from "./cpu/cpu-widget";
 import { networkWidget } from "./network/network-widget";
 import { nightLightWidget } from "./night-light/night-light-widget";
 import { notesWidget } from "./notes/notes-widget";
+import { pomodoroWidget } from "./pomodoro/pomodoro-widget";
 import { powerProfileWidget } from "./power-profile/power-profile-widget";
 import { powerWidget } from "./power/power-widget";
 import { quickLinksWidget } from "./quick-links/quick-links-widget";
@@ -43,6 +44,7 @@ export function registerBuiltinWidgets() {
     nightLightWidget,
     powerProfileWidget,
     powerWidget,
+    pomodoroWidget,
   ].forEach(registerWidget);
 }
 

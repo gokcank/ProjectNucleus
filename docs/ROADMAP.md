@@ -206,7 +206,7 @@ Examples
 - ✅ Stopwatch
 - ✅ Quick Links
 - ✅ Todo
-- Pomodoro
+- ✅ Pomodoro
 - Calendar
 
 ---
