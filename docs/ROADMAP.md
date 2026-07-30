@@ -219,7 +219,7 @@ Examples
 - ✅ Bluetooth
 - ✅ Volume
 - ✅ Brightness
-- Battery
+- ✅ Battery
 - ✅ Night Light
 - ✅ Power Menu
 - ✅ Power Profile *(not in the original example list — added once it shipped, per ADR-015)*

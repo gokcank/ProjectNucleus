@@ -1,5 +1,6 @@
 pub mod appearance;
 pub mod audio;
+pub mod battery;
 pub mod bluetooth;
 pub mod brightness;
 pub mod color_picker;

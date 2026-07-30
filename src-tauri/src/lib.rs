@@ -105,6 +105,7 @@ pub fn run() {
             commands::audio::volume_status,
             commands::audio::set_volume,
             commands::audio::toggle_mute,
+            commands::battery::battery_status,
             commands::bluetooth::bluetooth_status,
             commands::bluetooth::set_bluetooth_powered,
             commands::bluetooth::set_device_connected,
