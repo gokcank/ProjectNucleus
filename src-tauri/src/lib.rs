@@ -108,6 +108,8 @@ pub fn run() {
             commands::bluetooth::bluetooth_status,
             commands::bluetooth::set_bluetooth_powered,
             commands::bluetooth::set_device_connected,
+            commands::brightness::brightness_status,
+            commands::brightness::set_brightness,
             commands::night_light::night_light_status,
             commands::night_light::set_night_light_enabled,
             commands::night_light::set_night_light_temperature,

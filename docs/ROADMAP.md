@@ -218,7 +218,7 @@ Examples
 - Wi-Fi
 - ✅ Bluetooth
 - ✅ Volume
-- Brightness
+- ✅ Brightness
 - Battery
 - ✅ Night Light
 - ✅ Power Menu

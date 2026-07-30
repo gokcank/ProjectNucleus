@@ -1,4 +1,5 @@
 import { bluetoothWidget } from "./bluetooth/bluetooth-widget";
+import { brightnessWidget } from "./brightness/brightness-widget";
 import { calculatorWidget } from "./calculator/calculator-widget";
 import { calendarWidget } from "./calendar/calendar-widget";
 import { clipboardWidget } from "./clipboard/clipboard-widget";
@@ -47,6 +48,7 @@ export function registerBuiltinWidgets() {
     powerWidget,
     pomodoroWidget,
     calendarWidget,
+    brightnessWidget,
   ].forEach(registerWidget);
 }
 
