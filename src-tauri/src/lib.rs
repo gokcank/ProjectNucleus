@@ -98,10 +98,14 @@ pub fn run() {
 
     tauri::Builder::default()
         .manage(SystemMonitor::new())
+        .manage(commands::screen_recorder::RecorderConnection::default())
         .invoke_handler(tauri::generate_handler![
             commands::system::cpu_status,
             commands::system::memory_status,
             commands::screenshot::take_screenshot,
+            commands::screen_recorder::recorder_status,
+            commands::screen_recorder::start_recording,
+            commands::screen_recorder::stop_recording,
             commands::audio::volume_status,
             commands::audio::set_volume,
             commands::audio::toggle_mute,

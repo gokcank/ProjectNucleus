@@ -231,7 +231,7 @@ Examples
 Examples
 
 - ✅ Screenshot
-- Screen Recorder
+- ✅ Screen Recorder
 - ✅ Color Picker
 - ✅ QR Generator
 - QR Scanner *(deliberately deferred: the WebView layer Tauri ships does not enable camera streams at all, so the cheap route would mean reaching into internals Tauri does not support; the supported route — camera portal plus a PipeWire stream and a decoder — is the heaviest integration in this phase. Neither can be verified without a camera. Revisit on a machine that has one, or when there is a real need)*

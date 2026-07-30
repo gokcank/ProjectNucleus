@@ -17,6 +17,7 @@ import { qrCodeWidget } from "./qr-code/qr-code-widget";
 import { quickLinksWidget } from "./quick-links/quick-links-widget";
 import { ramWidget } from "./ram/ram-widget";
 import { registerWidget } from "./registry";
+import { screenRecorderWidget } from "./screen-recorder/screen-recorder-widget";
 import { screenshotWidget } from "./screenshot/screenshot-widget";
 import { stopwatchWidget } from "./stopwatch/stopwatch-widget";
 import { timerWidget } from "./timer/timer-widget";
@@ -55,6 +56,7 @@ export function registerBuiltinWidgets() {
     batteryWidget,
     wifiWidget,
     qrCodeWidget,
+    screenRecorderWidget,
   ].forEach(registerWidget);
 }
 

@@ -7,6 +7,7 @@ pub mod color_picker;
 pub mod network;
 pub mod night_light;
 pub mod power;
+pub mod screen_recorder;
 pub mod screenshot;
 pub mod system;
 pub mod wifi;
