@@ -102,12 +102,20 @@ function NetworkContent() {
 
       <dl className="mt-2 space-y-1 text-xs">
         {status?.connected && speed?.available && (
-          <div className="flex items-baseline gap-2">
-            <dt className="w-12 shrink-0 text-neutral-500 dark:text-neutral-400">Speed</dt>
-            <dd className="min-w-0 flex-1 truncate tabular-nums text-neutral-700 dark:text-neutral-200">
-              ↓ {formatMbps(speed.downMbps)} · ↑ {formatMbps(speed.upMbps)}
-            </dd>
-          </div>
+          <>
+            <div className="flex items-baseline gap-2">
+              <dt className="w-12 shrink-0 text-neutral-500 dark:text-neutral-400">Down</dt>
+              <dd className="min-w-0 flex-1 truncate tabular-nums text-neutral-700 dark:text-neutral-200">
+                {formatMbps(speed.downMbps)}
+              </dd>
+            </div>
+            <div className="flex items-baseline gap-2">
+              <dt className="w-12 shrink-0 text-neutral-500 dark:text-neutral-400">Up</dt>
+              <dd className="min-w-0 flex-1 truncate tabular-nums text-neutral-700 dark:text-neutral-200">
+                {formatMbps(speed.upMbps)}
+              </dd>
+            </div>
+          </>
         )}
         <div className="flex items-baseline gap-2">
           <dt className="w-12 shrink-0 text-neutral-500 dark:text-neutral-400">Local</dt>
