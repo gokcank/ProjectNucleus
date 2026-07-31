@@ -19,8 +19,9 @@ function keepLatestSpeed(_previous: NetworkSpeedStatus | null, next: NetworkSpee
   return next;
 }
 
+/** The unit is stated once by the row label, not per number, to stay short enough for the narrow card. */
 function formatMbps(value: number): string {
-  return `${value.toFixed(1)} Mb/s`;
+  return value.toFixed(1);
 }
 
 /** Icon and headline for each connection type the backend reports. */
@@ -102,42 +103,39 @@ function NetworkContent() {
 
       <dl className="mt-2 space-y-1 text-xs">
         {status?.connected && speed?.available && (
-          <>
-            <div className="flex items-baseline gap-2">
-              <dt className="w-12 shrink-0 text-neutral-500 dark:text-neutral-400">Down</dt>
-              <dd className="min-w-0 flex-1 truncate tabular-nums text-neutral-700 dark:text-neutral-200">
-                {formatMbps(speed.downMbps)}
-              </dd>
-            </div>
-            <div className="flex items-baseline gap-2">
-              <dt className="w-12 shrink-0 text-neutral-500 dark:text-neutral-400">Up</dt>
-              <dd className="min-w-0 flex-1 truncate tabular-nums text-neutral-700 dark:text-neutral-200">
-                {formatMbps(speed.upMbps)}
-              </dd>
-            </div>
-          </>
+          <div className="flex items-baseline gap-2">
+            <dt className="w-16 shrink-0 text-neutral-500 dark:text-neutral-400">Mb/s</dt>
+            <dd className="min-w-0 flex-1 truncate tabular-nums text-neutral-700 dark:text-neutral-200">
+              ↓{formatMbps(speed.downMbps)} ↑{formatMbps(speed.upMbps)}
+            </dd>
+          </div>
         )}
         <div className="flex items-baseline gap-2">
-          <dt className="w-12 shrink-0 text-neutral-500 dark:text-neutral-400">Local</dt>
+          <dt className="w-16 shrink-0 text-neutral-500 dark:text-neutral-400">Local</dt>
           <dd className="min-w-0 flex-1 truncate tabular-nums text-neutral-700 dark:text-neutral-200">
             {status?.localIp ?? "—"}
           </dd>
         </div>
         <div className="flex items-baseline gap-2">
-          <dt className="w-12 shrink-0 text-neutral-500 dark:text-neutral-400">Public</dt>
+          <dt className="flex w-16 shrink-0 items-baseline gap-0.5 text-neutral-500 dark:text-neutral-400">
+            Public
+            {/* Sitting next to the label instead of after the value keeps
+                the value column the same width as every other row's --
+                the value here can run just as long as Local's. */}
+            <button
+              type="button"
+              onClick={lookUpPublicIp}
+              disabled={fetchingIp}
+              aria-label="Look up public address again"
+              title="Check again"
+              className="shrink-0 rounded-md text-neutral-400 hover:text-neutral-600 disabled:opacity-40 dark:hover:text-neutral-300"
+            >
+              <RefreshCw size={10} className={fetchingIp ? "animate-spin" : undefined} />
+            </button>
+          </dt>
           <dd className="min-w-0 flex-1 truncate tabular-nums text-neutral-700 dark:text-neutral-200">
             {publicIp ?? (fetchingIp ? "…" : "—")}
           </dd>
-          <button
-            type="button"
-            onClick={lookUpPublicIp}
-            disabled={fetchingIp}
-            aria-label="Look up public address again"
-            title="Check again"
-            className="shrink-0 rounded-md p-1 text-neutral-400 hover:bg-black/5 hover:text-neutral-600 disabled:opacity-40 dark:hover:bg-white/5 dark:hover:text-neutral-300"
-          >
-            <RefreshCw size={12} className={fetchingIp ? "animate-spin" : undefined} />
-          </button>
         </div>
       </dl>
 
