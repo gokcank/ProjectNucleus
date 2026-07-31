@@ -98,12 +98,14 @@ pub fn run() {
 
     tauri::Builder::default()
         .manage(SystemMonitor::new())
+        .manage(commands::network::NetworkSpeedMonitor::default())
         .invoke_handler(tauri::generate_handler![
             commands::system::cpu_status,
             commands::system::memory_status,
             commands::battery::battery_status,
             commands::color_picker::pick_color,
             commands::network::network_status,
+            commands::network::network_speed,
             commands::network::public_ip,
             commands::appearance::color_scheme
         ])

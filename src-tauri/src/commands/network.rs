@@ -1,7 +1,10 @@
 use std::collections::HashMap;
 use std::process::Command;
+use std::sync::Mutex;
+use std::time::Instant;
 
 use serde::Serialize;
+use sysinfo::Networks;
 use zbus::zvariant::{OwnedObjectPath, OwnedValue};
 use zbus::{proxy, Connection};
 
@@ -73,6 +76,18 @@ trait AccessPoint {
     /// Raw bytes: an SSID is not required to be valid UTF-8.
     #[zbus(property)]
     fn ssid(&self) -> zbus::Result<Vec<u8>>;
+}
+
+#[proxy(
+    interface = "org.freedesktop.NetworkManager.Device",
+    default_service = "org.freedesktop.NetworkManager"
+)]
+trait Device {
+    /// The kernel interface name (e.g. "wlan0"), which is how `sysinfo`
+    /// identifies interfaces too -- the join key between NetworkManager and
+    /// the throughput counters.
+    #[zbus(property)]
+    fn interface(&self) -> zbus::Result<String>;
 }
 
 #[derive(Serialize)]
@@ -147,6 +162,109 @@ async fn read_ssid(connection: &Connection, active: &ActiveConnectionProxy<'_>) 
 
     let raw = access_point.ssid().await.ok()?;
     String::from_utf8(raw).ok()
+}
+
+/// The kernel interface name behind the currently active connection, if any.
+/// Shared by the speed command; the identity command (`network_status`)
+/// doesn't need it, since it never talks to `sysinfo`.
+async fn primary_interface(connection: &Connection) -> Option<String> {
+    let manager = NetworkManagerProxy::new(connection).await.ok()?;
+    let primary = manager.primary_connection().await.ok()?;
+    if primary.as_str() == UNSET_PATH {
+        return None;
+    }
+
+    let active = ActiveConnectionProxy::builder(connection)
+        .path(primary)
+        .ok()?
+        .build()
+        .await
+        .ok()?;
+
+    let device_path = active.devices().await.ok()?.into_iter().next()?;
+    let device = DeviceProxy::builder(connection)
+        .path(device_path)
+        .ok()?
+        .build()
+        .await
+        .ok()?;
+
+    device.interface().await.ok()
+}
+
+/// Shared `sysinfo::Networks` handle. Throughput is the delta between two
+/// refreshes, so reusing one instance across calls -- and tracking real
+/// elapsed time ourselves -- is what keeps the rate honest across the
+/// irregular gaps polling leaves whenever the panel is hidden.
+pub struct NetworkSpeedMonitor(Mutex<NetworkSpeedState>);
+
+struct NetworkSpeedState {
+    networks: Networks,
+    last_refresh: Instant,
+}
+
+impl Default for NetworkSpeedMonitor {
+    fn default() -> Self {
+        Self(Mutex::new(NetworkSpeedState {
+            networks: Networks::new_with_refreshed_list(),
+            last_refresh: Instant::now(),
+        }))
+    }
+}
+
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct NetworkSpeedStatus {
+    /// False while there is no active connection to measure.
+    available: bool,
+    down_mbps: f64,
+    up_mbps: f64,
+}
+
+const UNAVAILABLE_SPEED: NetworkSpeedStatus = NetworkSpeedStatus {
+    available: false,
+    down_mbps: 0.0,
+    up_mbps: 0.0,
+};
+
+#[tauri::command]
+pub async fn network_speed(
+    monitor: tauri::State<'_, NetworkSpeedMonitor>,
+) -> Result<NetworkSpeedStatus, String> {
+    let connection = Connection::system()
+        .await
+        .map_err(|err| format!("System bus unavailable: {err}"))?;
+
+    let Some(interface) = primary_interface(&connection).await else {
+        return Ok(UNAVAILABLE_SPEED);
+    };
+
+    // `refresh` itself is synchronous, so the lock is never held across an
+    // `.await` -- the same shape as the CPU monitor's `refresh_cpu_usage`.
+    let mut state = monitor.0.lock().map_err(|err| err.to_string())?;
+    state.networks.refresh(true);
+    let elapsed_secs = state.last_refresh.elapsed().as_secs_f64();
+    state.last_refresh = Instant::now();
+
+    let Some(data) = state.networks.get(interface.as_str()) else {
+        return Ok(UNAVAILABLE_SPEED);
+    };
+
+    // The very first refresh has no real baseline to measure a rate against.
+    if elapsed_secs <= 0.0 {
+        return Ok(NetworkSpeedStatus {
+            available: true,
+            down_mbps: 0.0,
+            up_mbps: 0.0,
+        });
+    }
+
+    const BYTES_TO_MEGABITS: f64 = 8.0 / 1_000_000.0;
+    Ok(NetworkSpeedStatus {
+        available: true,
+        down_mbps: (data.received() as f64 * BYTES_TO_MEGABITS) / elapsed_secs,
+        up_mbps: (data.transmitted() as f64 * BYTES_TO_MEGABITS) / elapsed_secs,
+    })
 }
 
 #[tauri::command]

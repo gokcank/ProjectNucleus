@@ -1,13 +1,27 @@
 import { Cable, Globe, RefreshCw, Wifi, WifiOff } from "lucide-react";
 import { useEffect, useState } from "react";
+import { usePolling } from "../../../hooks/use-polling";
 import { logWarn } from "../../../services/logger-service";
 import {
+  getNetworkSpeed,
   getNetworkStatus,
   getPublicIp,
+  type NetworkSpeedStatus,
   type NetworkStatus,
 } from "../../../services/network-service";
 import type { WidgetDefinition } from "../types";
 import { useAsyncAction } from "../use-async-action";
+
+/** Matches CPU/RAM's poll rate -- throughput is only meaningful measured often. */
+const SPEED_POLL_INTERVAL_MS = 2000;
+
+function keepLatestSpeed(_previous: NetworkSpeedStatus | null, next: NetworkSpeedStatus) {
+  return next;
+}
+
+function formatMbps(value: number): string {
+  return `${value.toFixed(1)} Mb/s`;
+}
 
 /** Icon and headline for each connection type the backend reports. */
 function describe(status: NetworkStatus | null) {
@@ -26,6 +40,17 @@ function describe(status: NetworkStatus | null) {
 function NetworkContent() {
   const [status, setStatus] = useState<NetworkStatus | null>(null);
   const { result: publicIp, busy: fetchingIp, error: ipError, run } = useAsyncAction<string>();
+
+  // A genuine rate, not point-in-time state -- unlike the rest of this card,
+  // it has to be measured repeatedly to mean anything, so it gets CPU/RAM's
+  // polling treatment instead of the visibility-triggered read below.
+  const [speed] = usePolling<NetworkSpeedStatus, NetworkSpeedStatus | null>(
+    getNetworkSpeed,
+    SPEED_POLL_INTERVAL_MS,
+    "Network speed",
+    keepLatestSpeed,
+    null,
+  );
 
   // Reads once on mount and again whenever the panel becomes visible.
   // Deliberately not polled: this is a D-Bus read of state that only changes
@@ -76,6 +101,14 @@ function NetworkContent() {
       </div>
 
       <dl className="mt-2 space-y-1 text-xs">
+        {status?.connected && speed?.available && (
+          <div className="flex items-baseline gap-2">
+            <dt className="w-12 shrink-0 text-neutral-500 dark:text-neutral-400">Speed</dt>
+            <dd className="min-w-0 flex-1 truncate tabular-nums text-neutral-700 dark:text-neutral-200">
+              ↓ {formatMbps(speed.downMbps)} · ↑ {formatMbps(speed.upMbps)}
+            </dd>
+          </div>
+        )}
         <div className="flex items-baseline gap-2">
           <dt className="w-12 shrink-0 text-neutral-500 dark:text-neutral-400">Local</dt>
           <dd className="min-w-0 flex-1 truncate tabular-nums text-neutral-700 dark:text-neutral-200">

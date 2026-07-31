@@ -260,7 +260,7 @@ Examples
 
 Examples
 
-- ✅ Network Status *(shipped together with IP Information as one "Network" widget — connection type, SSID, local and public address answer the same question)*
+- ✅ Network Status *(shipped together with IP Information as one "Network" widget — connection type, SSID, local and public address answer the same question; live throughput added later, since GNOME's quick settings shows neither speed nor total usage)*
 - VPN
 - Hotspot
 - DNS
