@@ -13,8 +13,8 @@
 [![React](https://img.shields.io/badge/REACT-61DAFB?style=for-the-badge&logo=react&logoColor=black)](https://react.dev/)
 [![TypeScript](https://img.shields.io/badge/TYPESCRIPT-3178C6?style=for-the-badge&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
 [![Tailwind CSS](https://img.shields.io/badge/TAILWIND%20CSS-06B6D4?style=for-the-badge&logo=tailwindcss&logoColor=white)](https://tailwindcss.com/)<br>
-[![License](https://img.shields.io/badge/LICENSE-MIT-4c1?style=for-the-badge)](LICENSE)
 [![Version](https://img.shields.io/badge/VERSION-V0.1.0-007EC6?style=for-the-badge)](https://github.com/gokcank/ProjectNucleus)
+[![License](https://img.shields.io/badge/LICENSE-MIT-4c1?style=for-the-badge)](LICENSE)
 </div>
 
 ---
@@ -31,15 +31,15 @@ It isn't a desktop environment or a system monitor replacement; it's a fast, foc
 
 - **Floating Panel:** A borderless, glass-styled panel toggled with a global shortcut or the tray icon, anchored to the top-right corner of your primary screen.
 - **Card Dashboard:** A responsive, searchable grid of cards you can reorder, resize, and show or hide from Settings.
+- **At-a-Glance Monitoring:** CPU and RAM cards for a quick status check — not a full monitoring suite.
 - **Productivity:** Clipboard History, Notes, Timer, Stopwatch, Pomodoro, Quick Links, Todo.
 - **Utilities:** Colour Picker — pick any colour on screen and copy it.
-- **Weather:** Current conditions for a city you choose. The only widget that reaches the internet, and only once you ask it to — no account, no location permission.
 - **Battery:** Charge level for the machine and for peripherals — a wireless mouse or headset.
-- **Network:** Connection type/SSID plus local and public IP at a glance.
+- **Network:** Connection type/SSID, live throughput, and local/public IP at a glance.
 - **Temperature:** Processor, graphics and drive temperatures — the one reading GNOME surfaces nowhere.
 - **Disk:** Free and total space for every mounted volume, in one place.
+- **Weather:** Current conditions for a city you choose. The only widget that reaches the internet, and only once you ask it to — no account, no location permission.
 - **Hardware:** Board, processor, graphics, memory, OS and kernel — read once, selectable text.
-- **At-a-Glance Monitoring:** CPU and RAM cards for a quick status check — not a full monitoring suite.
 - **Theming:** Light, Dark, or System — tracked live from the actual desktop color scheme via the XDG Settings portal, not guessed.
 
 ### Tech Stack
@@ -47,7 +47,7 @@ It isn't a desktop environment or a system monitor replacement; it's a fast, foc
 - **Backend:** Rust, Tauri v2
 - **Frontend:** React, TypeScript, Vite
 - **Styling:** Tailwind CSS v4
-- **System Integration:** zbus (D-Bus / NetworkManager, UPower), ashpd (XDG Desktop Portals — Colour Picker, Settings)
+- **System Integration:** zbus (D-Bus / NetworkManager, UPower), ashpd (XDG Desktop Portals — Colour Picker, Settings), sysinfo (CPU, RAM, disks, network), `/sys` and `lspci` (temperature, hardware)
 - **Platform:** Linux (GNOME first), X11 today with Wayland support planned
 
 ### Architecture & Philosophy
@@ -56,7 +56,7 @@ Nucleus follows a **cards-before-widgets** approach: real, concrete cards were b
 
 ### Security
 
-The frontend never executes arbitrary system commands — all privileged operations (D-Bus calls, portal requests, colour scheme reads) are handled by the Rust backend and exposed only through explicit, narrow Tauri commands. Every window capability is opted into individually in `src-tauri/capabilities/`, rather than granted broadly.
+The frontend never executes arbitrary system commands — all privileged operations (D-Bus calls, portal requests, colour scheme reads) are handled by the Rust backend and exposed only through explicit, narrow Tauri commands. Every window capability is opted into individually in `src-tauri/capabilities/`, rather than granted broadly. The two commands that leave the machine (Weather, the Network card's public address) run a fixed, non-shell process invocation — user input is never interpolated into a command line, and city names are percent-encoded before reaching the request URL.
 
 ### Status
 
@@ -76,15 +76,15 @@ Bir masaüstü ortamı ya da sistem izleme aracı değildir; mevcut Linux masaü
 
 - **Kayan Panel:** Genel bir kısayol veya tepsi simgesiyle açılıp kapanan, çerçevesiz, cam görünümlü, birincil ekranın sağ üst köşesine sabitlenmiş panel.
 - **Kart Panosu:** Ayarlar'dan yeniden sıralanabilen, boyutlandırılabilen, gösterilip gizlenebilen, aranabilir duyarlı kart ızgarası.
+- **Anlık Durum:** Hızlı bir bakış için CPU ve RAM kartları — tam bir izleme paketi değil.
 - **Üretkenlik:** Pano Geçmişi, Notlar, Zamanlayıcı, Kronometre, Pomodoro, Hızlı Bağlantılar, Yapılacaklar.
 - **Yardımcı Programlar:** Renk Seçici — ekrandaki herhangi bir rengi seçip kopyalayın.
-- **Hava Durumu:** Seçtiğiniz şehrin şu anki havası. İnternete çıkan tek widget, o da yalnızca siz isteyince — hesap yok, konum izni yok.
 - **Pil:** Makinenin ve çevre birimlerinin (kablosuz fare, kulaklık) şarj durumu.
-- **Ağ:** Bağlantı türü/SSID ile yerel ve genel IP adresi tek bakışta.
+- **Ağ:** Bağlantı türü/SSID, canlı hız ve yerel/genel IP adresi tek bakışta.
 - **Sıcaklık:** İşlemci, ekran kartı ve disk sıcaklıkları — GNOME'un hiçbir yerde göstermediği tek veri.
 - **Disk:** Bağlı her birimin boş ve toplam alanı, tek yerde.
+- **Hava Durumu:** Seçtiğiniz şehrin şu anki havası. İnternete çıkan tek widget, o da yalnızca siz isteyince — hesap yok, konum izni yok.
 - **Donanım:** Anakart, işlemci, ekran kartı, bellek, işletim sistemi ve çekirdek — bir kez okunur, metin seçilebilir.
-- **Anlık Durum:** Hızlı bir bakış için CPU ve RAM kartları — tam bir izleme paketi değil.
 - **Tema:** Açık, Koyu veya Sistem — tahmin edilerek değil, XDG Settings portalı üzerinden masaüstünün gerçek renk şemasından canlı olarak takip edilir.
 
 ### Kullanılan Teknolojiler
@@ -92,7 +92,7 @@ Bir masaüstü ortamı ya da sistem izleme aracı değildir; mevcut Linux masaü
 - **Arka Uç:** Rust, Tauri v2
 - **Ön Yüz:** React, TypeScript, Vite
 - **Stil:** Tailwind CSS v4
-- **Sistem Entegrasyonu:** zbus (D-Bus / NetworkManager, UPower), ashpd (XDG Desktop Portals — Renk Seçici, Ayarlar)
+- **Sistem Entegrasyonu:** zbus (D-Bus / NetworkManager, UPower), ashpd (XDG Desktop Portals — Renk Seçici, Ayarlar), sysinfo (CPU, RAM, disk, ağ), `/sys` ve `lspci` (sıcaklık, donanım)
 - **Platform:** Linux (öncelik GNOME), şu an X11, Wayland desteği planlanıyor
 
 ### Mimari & Felsefe
@@ -101,7 +101,7 @@ Nucleus, **önce kart, sonra widget** yaklaşımını izler: önce gerçek, somu
 
 ### Güvenlik
 
-Ön yüz asla rastgele sistem komutu çalıştırmaz — tüm yetkili işlemler (D-Bus çağrıları, portal istekleri, renk şeması okuma) Rust arka ucu tarafından yönetilir ve yalnızca açıkça tanımlanmış, dar kapsamlı Tauri komutlarıyla dışa açılır. Her pencere yetkisi, geniş kapsamlı değil, `src-tauri/capabilities/` içinde tek tek onaylanır.
+Ön yüz asla rastgele sistem komutu çalıştırmaz — tüm yetkili işlemler (D-Bus çağrıları, portal istekleri, renk şeması okuma) Rust arka ucu tarafından yönetilir ve yalnızca açıkça tanımlanmış, dar kapsamlı Tauri komutlarıyla dışa açılır. Her pencere yetkisi, geniş kapsamlı değil, `src-tauri/capabilities/` içinde tek tek onaylanır. Makineden dışarı çıkan iki komut (Hava Durumu, Ağ kartının genel IP okuması) sabit, kabuk kullanmayan bir süreç çağrısıyla çalışır — kullanıcı girdisi hiçbir zaman bir komut satırına eklenmez, şehir adları istek adresine ulaşmadan önce kodlanır.
 
 ### Durum
 
