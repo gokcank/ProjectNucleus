@@ -50,6 +50,23 @@ It isn't a desktop environment or a system monitor replacement; it's a fast, foc
 - **System Integration:** zbus (D-Bus / NetworkManager, UPower), ashpd (XDG Desktop Portals — Colour Picker, Settings), sysinfo (CPU, RAM, disks, network), `/sys` and `lspci` (temperature, hardware)
 - **Platform:** Linux (GNOME first), X11 today with Wayland support planned
 
+### Getting Started
+
+Requires Rust, Node.js, and Tauri's Linux system dependencies:
+
+```bash
+sudo apt update
+sudo apt install libwebkit2gtk-4.1-dev build-essential curl wget file \
+  libxdo-dev libssl-dev libayatana-appindicator3-dev librsvg2-dev
+```
+
+Then, from the project root:
+
+```bash
+npm install
+npm run tauri dev
+```
+
 ### Architecture & Philosophy
 
 Nucleus follows a **cards-before-widgets** approach: real, concrete cards were built first (Phase 3), and the shared Widget Engine (Phase 5) was only extracted once common patterns emerged — not designed upfront. The frontend never talks to the system directly; every privileged operation goes through a Rust command, keeping platform access on one side and presentation on the other. See [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) and [`docs/DECISIONS.md`](docs/DECISIONS.md) for the full reasoning behind these choices.
@@ -94,6 +111,23 @@ Bir masaüstü ortamı ya da sistem izleme aracı değildir; mevcut Linux masaü
 - **Stil:** Tailwind CSS v4
 - **Sistem Entegrasyonu:** zbus (D-Bus / NetworkManager, UPower), ashpd (XDG Desktop Portals — Renk Seçici, Ayarlar), sysinfo (CPU, RAM, disk, ağ), `/sys` ve `lspci` (sıcaklık, donanım)
 - **Platform:** Linux (öncelik GNOME), şu an X11, Wayland desteği planlanıyor
+
+### Başlarken
+
+Rust, Node.js ve Tauri'nin Linux sistem bağımlılıklarını gerektirir:
+
+```bash
+sudo apt update
+sudo apt install libwebkit2gtk-4.1-dev build-essential curl wget file \
+  libxdo-dev libssl-dev libayatana-appindicator3-dev librsvg2-dev
+```
+
+Ardından, proje kök dizininden:
+
+```bash
+npm install
+npm run tauri dev
+```
 
 ### Mimari & Felsefe
 
