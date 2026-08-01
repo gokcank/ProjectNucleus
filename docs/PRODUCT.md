@@ -140,6 +140,8 @@ not answer at all:
   headset — which the quick settings panel does not show.
 - **Temperature** reports processor, graphics and drive temperatures, which
   GNOME surfaces nowhere.
+- **Disk** shows free and total space for every mounted volume at once.
+  Reading it elsewhere means opening a file manager window per drive.
 
 ---
 

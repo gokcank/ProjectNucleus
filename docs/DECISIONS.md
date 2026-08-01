@@ -449,6 +449,63 @@ widens again, this is the one from these two rounds worth reconsidering first.
 
 ---
 
+# ADR-018
+
+## Title
+
+Disk Widget Stays Read-Only
+
+### Status
+
+Accepted
+
+### Decision
+
+The Disk widget reports free and total space per mounted volume only. Mount
+and unmount actions were requested during implementation and turned down.
+
+### Rationale
+
+This is the first time the ADR-016 test — "does the desktop already do this
+in fewer steps?" — was applied to a proposed *action* rather than to an
+entire widget, so it is worth recording on its own.
+
+Unmount looked cheap enough to keep at first: it needs no authentication for
+a volume the user already has mounted, and there is nowhere for it to fail
+loudly. Mount is a different matter, and checking it against the running
+machine surfaced three problems together:
+
+- Every unmounted drive on this machine is flagged a system disk, so
+  mounting one asks for an administrator password every session — not a
+  one-time grant.
+- The password prompt is a separate window. Focusing it defocuses the panel,
+  and the panel hides itself on focus loss (by design — see the panel's
+  focus-changed handler). The result is the panel closing on top of its own
+  password prompt, which is worse than doing nothing.
+- GNOME Files already lists every drive udisks2 knows about in its sidebar
+  and mounts on a single click, with the same password prompt but without
+  the self-closing panel fighting it.
+
+That third point is the ADR-016 test, and a mount button fails it plainly:
+Nucleus would be a strictly slower path to the same permission dialog Files
+already shows in one click. Unmount does not fail the test the same way —
+it is the one direction that stays fast and silent — but was dropped anyway
+in this round for consistency with mount rather than shipped alone.
+
+### Consequences
+
+- The Disk widget lists only mounted volumes. A drive the user has configured
+  to auto-mount is already mounted by the time the panel opens, so it appears
+  without any action from Nucleus; a drive deliberately left unmounted stays
+  off the card, matching its "auto-mount" and "show in file manager" flags.
+- If mounting is reconsidered later, the panel's focus-loss auto-hide would
+  need to tolerate a child authentication dialog first — that is the actual
+  blocker, not the widget code.
+- Unlike ADR-016 and ADR-017, nothing here was built and then removed; the
+  action was scoped out before being written.
+
+---
+
 # Adding New Decisions
 
 New ADRs should follow this template:
