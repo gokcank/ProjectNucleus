@@ -25,7 +25,7 @@ Every phase must produce a stable, usable application.
 | Item | Status |
 |------|--------|
 | Project | 🚧 In Development |
-| Current Phase | Phases 6–8 complete, then narrowed twice — thirteen widgets that duplicated what GNOME already offers were removed (ADR-016, ADR-017), leaving twelve. Three items were closed with a reason rather than built (QR Scanner, File Search, Speed Test); see each phase |
+| Current Phase | Phases 6–8 complete, then narrowed twice — thirteen widgets that duplicated what GNOME already offers were removed (ADR-016, ADR-017), leaving twelve. Growing again since, one widget at a time, each tested against ADR-016 first: Network throughput, then Temperature — thirteen now. Four items were closed with a reason rather than built (QR Scanner, File Search, Speed Test, Fan); see each phase |
 | Public Release | Not Yet |
 | Widget Engine | Complete |
 | Plugin SDK | Planned |
@@ -216,6 +216,8 @@ Examples
 Examples
 
 - ✅ Battery *(kept: shows charge for peripherals too — a wireless mouse or headset — which the quick settings panel does not)*
+- ✅ Temperature *(processor, graphics and drives. Passes the ADR-016 test outright: GNOME surfaces temperature nowhere, so there is no faster path to duplicate)*
+- Fan *(deliberately deferred: on the development machine the kernel publishes no fan readings at all. The fans hang off the motherboard's own controller chip, whose I/O addresses the firmware reserves, so the kernel refuses to let its driver bind by default. Making them readable is a machine configuration change — an out-of-tree driver, a boot parameter, or both — not something an unprivileged app can do; Nucleus can only read what the kernel already publishes. The card code would be the same either way, so revisit on a setup where fan readings actually appear)*
 - ❌ Wi-Fi *(built, then removed — see ADR-016)*
 - ❌ Bluetooth *(built, then removed — see ADR-016)*
 - ❌ Volume *(built, then removed — see ADR-016)*
@@ -226,7 +228,9 @@ Examples
 
 > Almost all of this phase turned out to duplicate GNOME's own quick settings
 > panel, which is already one click away in the top bar. See ADR-016 for the
-> reasoning and what was kept.
+> reasoning and what was kept. Battery and Temperature are what remain, and
+> both are here for the same reason: they answer something the desktop does
+> not answer at all.
 
 ---
 

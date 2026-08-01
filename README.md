@@ -35,6 +35,7 @@ It isn't a desktop environment or a system monitor replacement; it's a fast, foc
 - **Utilities:** Colour Picker — pick any colour on screen and copy it.
 - **Battery:** Charge level for the machine and for peripherals — a wireless mouse or headset.
 - **Network:** Connection type/SSID plus local and public IP at a glance.
+- **Temperature:** Processor, graphics and drive temperatures — the one reading GNOME surfaces nowhere.
 - **At-a-Glance Monitoring:** CPU and RAM cards for a quick status check — not a full monitoring suite.
 - **Theming:** Light, Dark, or System — tracked live from the actual desktop color scheme via the XDG Settings portal, not guessed.
 
@@ -76,6 +77,7 @@ Bir masaüstü ortamı ya da sistem izleme aracı değildir; mevcut Linux masaü
 - **Yardımcı Programlar:** Renk Seçici — ekrandaki herhangi bir rengi seçip kopyalayın.
 - **Pil:** Makinenin ve çevre birimlerinin (kablosuz fare, kulaklık) şarj durumu.
 - **Ağ:** Bağlantı türü/SSID ile yerel ve genel IP adresi tek bakışta.
+- **Sıcaklık:** İşlemci, ekran kartı ve disk sıcaklıkları — GNOME'un hiçbir yerde göstermediği tek veri.
 - **Anlık Durum:** Hızlı bir bakış için CPU ve RAM kartları — tam bir izleme paketi değil.
 - **Tema:** Açık, Koyu veya Sistem — tahmin edilerek değil, XDG Settings portalı üzerinden masaüstünün gerçek renk şemasından canlı olarak takip edilir.
 

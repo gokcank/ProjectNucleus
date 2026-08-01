@@ -8,6 +8,7 @@ import { pomodoroWidget } from "./pomodoro/pomodoro-widget";
 import { quickLinksWidget } from "./quick-links/quick-links-widget";
 import { ramWidget } from "./ram/ram-widget";
 import { registerWidget } from "./registry";
+import { sensorsWidget } from "./sensors/sensors-widget";
 import { stopwatchWidget } from "./stopwatch/stopwatch-widget";
 import { timerWidget } from "./timer/timer-widget";
 import { todoWidget } from "./todo/todo-widget";
@@ -31,6 +32,7 @@ export function registerBuiltinWidgets() {
     stopwatchWidget,
     pomodoroWidget,
     batteryWidget,
+    sensorsWidget,
   ].forEach(registerWidget);
 }
 

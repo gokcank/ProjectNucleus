@@ -133,8 +133,13 @@ click away in GNOME's own quick settings panel, so keeping them in Nucleus
 only added a slower second path to the same action. See `docs/DECISIONS.md`
 (ADR-016) for the reasoning.
 
-Battery is the one exception: it also surfaces peripheral batteries — a
-wireless mouse or headset — which the quick settings panel does not show.
+Two exceptions remain, both because they answer something the desktop does
+not answer at all:
+
+- **Battery** also surfaces peripheral batteries — a wireless mouse or
+  headset — which the quick settings panel does not show.
+- **Temperature** reports processor, graphics and drive temperatures, which
+  GNOME surfaces nowhere.
 
 ---
 

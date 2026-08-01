@@ -17,3 +17,15 @@ export function statusForCharge(percent: number): Status {
   if (percent < 20) return "warn";
   return "ok";
 }
+
+/**
+ * Thresholds for a component temperature in degrees Celsius. One scale is
+ * used for processors, graphics and drives alike: their safe ceilings differ,
+ * but not by enough to justify three sets of numbers on a card that only
+ * needs to answer "is anything running hot?".
+ */
+export function statusForTemperature(celsius: number): Status {
+  if (celsius >= 85) return "critical";
+  if (celsius >= 70) return "warn";
+  return "ok";
+}
