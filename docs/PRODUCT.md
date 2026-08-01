@@ -279,7 +279,10 @@ Every product decision should follow these principles:
 - Linux-first
 - Native experience
 - Modular architecture
-- Offline-first
+- Offline-first — the application and every widget in it works with no
+  network. A widget may *additionally* reach out when the user has asked it
+  to, needs no account to do so, and fails quietly rather than breaking the
+  panel (Weather, and the Network card's public address).
 - Fast over flashy
 - Useful over feature-rich
 - Customizable without complexity

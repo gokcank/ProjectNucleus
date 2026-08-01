@@ -25,7 +25,7 @@ Every phase must produce a stable, usable application.
 | Item | Status |
 |------|--------|
 | Project | 🚧 In Development |
-| Current Phase | Phases 6–8 complete, then narrowed twice — thirteen widgets that duplicated what GNOME already offers were removed (ADR-016, ADR-017), leaving twelve. Growing again since, one widget at a time, each tested against ADR-016 first: Network throughput, then Temperature, then Disk — fourteen now. Four items were closed with a reason rather than built (QR Scanner, File Search, Speed Test, Fan); see each phase |
+| Current Phase | Phases 6–8 complete, then narrowed twice — thirteen widgets that duplicated what GNOME already offers were removed (ADR-016, ADR-017), leaving twelve. Growing again since, one widget at a time, each tested against ADR-016 first: Network throughput, then Temperature, then Disk, then Weather — fifteen now. Four items were closed with a reason rather than built (QR Scanner, File Search, Speed Test, Fan); see each phase |
 | Public Release | Not Yet |
 | Widget Engine | Complete |
 | Plugin SDK | Planned |
@@ -240,6 +240,7 @@ Examples
 Examples
 
 - ✅ Color Picker
+- ✅ Weather *(current conditions for a city the user types in. The one widget that reaches the internet on purpose — see the note under "Out of Scope" and ADR-019. Automatic location was asked for and dropped: the permission dialog would defocus and so hide the panel, exactly the ADR-018 problem, and on a machine without Wi-Fi it could only ever guess a city from the IP address anyway. Forecast is out of scope; the card answers "what is it doing now")*
 - ❌ Screenshot *(built, then removed — see ADR-017: Print Screen already does this)*
 - ❌ Screen Recorder *(built, then removed — see ADR-017: Ctrl+Alt+Shift+R already does this, and the card called that same service)*
 - ❌ QR Generator *(built, then removed — see ADR-017: the one removal in that round without a GNOME equivalent, dropped as a scope decision)*
@@ -344,12 +345,18 @@ The following features are intentionally postponed:
 - AI assistants
 - Cloud synchronization
 - User accounts
-- Online services
 - Widget marketplace
 - Windows support
 - macOS support
 
 These may be considered after a stable Linux release.
+
+> **"Online services" used to be on this list and no longer is.** The Weather
+> widget crossed it, and the Network card's public address lookup had already
+> been crossing it quietly for longer. What replaced the blanket ban is a
+> narrower test: a widget may reach the network if the user opted into it, it
+> needs no account, and the rest of Nucleus works unchanged when it is
+> offline. Everything else on this list stands.
 
 ---
 

@@ -506,6 +506,70 @@ in this round for consistency with mount rather than shipped alone.
 
 ---
 
+# ADR-019
+
+## Title
+
+Offline-First, Not Offline-Only
+
+### Status
+
+Accepted
+
+### Decision
+
+"Online services" is removed from the postponed list in `ROADMAP.md`, and the
+"Offline-first" principle in `PRODUCT.md` is qualified rather than dropped.
+
+A widget may reach the network when all three hold:
+
+1. The user opted into it — nothing goes out on its own.
+2. It needs no account, key, or credential.
+3. Nucleus works unchanged when it is offline, and the widget itself degrades
+   quietly rather than failing loudly.
+
+### Rationale
+
+The Weather widget forced the question, but it did not create it: the Network
+card's public address lookup has been calling an outside service since it was
+built, so the blanket ban was already untrue. Writing a second widget under a
+rule the codebase does not follow would have made the documentation worse, not
+safer.
+
+The three conditions are what actually mattered in both cases, and they are
+narrow on purpose:
+
+- **Opt-in** is the difference between a control centre and a client. Weather
+  sends nothing until a city is typed; the public address is fetched on a
+  button press.
+- **No account** keeps `local.properties`, key handling and the whole class of
+  credential mistakes out of the project. Open-Meteo was chosen over better
+  known weather services for exactly this reason.
+- **Degrades quietly** is what protects the panel. A card that shows its last
+  reading on a dead connection costs nothing; one that throws would take the
+  dashboard with it.
+
+Everything else on the postponed list — cloud sync, accounts, AI, the
+marketplace — fails at least one of these and stays postponed. The change is
+not "Nucleus is online now"; it is that offline-first describes the floor
+rather than the ceiling.
+
+### Consequences
+
+- Weather ships, and the Network card's existing behaviour is now covered by a
+  written rule instead of being an unexamined exception.
+- Location was *not* unlocked by this. Weather asks for a typed city because
+  the permission dialog would defocus and hide the panel — the ADR-018
+  problem — so the automatic-location half was dropped before it was written.
+- New widgets that want the network are measured against the three conditions.
+  A widget needing an API key does not qualify, which keeps the security rules
+  in `CLAUDE.md` from ever coming into play.
+- The frontend bundle grew from 95.5 KB to 97.7 KB gzipped. No new
+  dependency: the request path is the same external `curl` call the Network
+  card already used, and percent-encoding is a dozen lines rather than a crate.
+
+---
+
 # Adding New Decisions
 
 New ADRs should follow this template:

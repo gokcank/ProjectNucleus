@@ -5,3 +5,4 @@ pub mod disk;
 pub mod network;
 pub mod sensors;
 pub mod system;
+pub mod weather;

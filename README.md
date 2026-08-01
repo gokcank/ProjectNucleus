@@ -33,6 +33,7 @@ It isn't a desktop environment or a system monitor replacement; it's a fast, foc
 - **Card Dashboard:** A responsive, searchable grid of cards you can reorder, resize, and show or hide from Settings.
 - **Productivity:** Clipboard History, Notes, Timer, Stopwatch, Pomodoro, Quick Links, Todo.
 - **Utilities:** Colour Picker — pick any colour on screen and copy it.
+- **Weather:** Current conditions for a city you choose. The only widget that reaches the internet, and only once you ask it to — no account, no location permission.
 - **Battery:** Charge level for the machine and for peripherals — a wireless mouse or headset.
 - **Network:** Connection type/SSID plus local and public IP at a glance.
 - **Temperature:** Processor, graphics and drive temperatures — the one reading GNOME surfaces nowhere.
@@ -76,6 +77,7 @@ Bir masaüstü ortamı ya da sistem izleme aracı değildir; mevcut Linux masaü
 - **Kart Panosu:** Ayarlar'dan yeniden sıralanabilen, boyutlandırılabilen, gösterilip gizlenebilen, aranabilir duyarlı kart ızgarası.
 - **Üretkenlik:** Pano Geçmişi, Notlar, Zamanlayıcı, Kronometre, Pomodoro, Hızlı Bağlantılar, Yapılacaklar.
 - **Yardımcı Programlar:** Renk Seçici — ekrandaki herhangi bir rengi seçip kopyalayın.
+- **Hava Durumu:** Seçtiğiniz şehrin şu anki havası. İnternete çıkan tek widget, o da yalnızca siz isteyince — hesap yok, konum izni yok.
 - **Pil:** Makinenin ve çevre birimlerinin (kablosuz fare, kulaklık) şarj durumu.
 - **Ağ:** Bağlantı türü/SSID ile yerel ve genel IP adresi tek bakışta.
 - **Sıcaklık:** İşlemci, ekran kartı ve disk sıcaklıkları — GNOME'un hiçbir yerde göstermediği tek veri.

@@ -13,6 +13,7 @@ import { sensorsWidget } from "./sensors/sensors-widget";
 import { stopwatchWidget } from "./stopwatch/stopwatch-widget";
 import { timerWidget } from "./timer/timer-widget";
 import { todoWidget } from "./todo/todo-widget";
+import { weatherWidget } from "./weather/weather-widget";
 
 let registered = false;
 
@@ -35,6 +36,7 @@ export function registerBuiltinWidgets() {
     batteryWidget,
     sensorsWidget,
     diskWidget,
+    weatherWidget,
   ].forEach(registerWidget);
 }
 

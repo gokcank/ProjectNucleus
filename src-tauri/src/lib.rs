@@ -109,6 +109,8 @@ pub fn run() {
             commands::network::public_ip,
             commands::sensors::sensor_status,
             commands::disk::disk_status,
+            commands::weather::search_cities,
+            commands::weather::current_weather,
             commands::appearance::color_scheme
         ])
         // Injected before the page's own scripts so the first render already
