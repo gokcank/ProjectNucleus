@@ -1,8 +1,10 @@
 [package]
 name = "project-nucleus"
 version = "0.1.0"
-description = "A Tauri App"
-authors = ["you"]
+description = "A modular, floating control center for Linux"
+authors = ["gokcank"]
+license = "MIT"
+repository = "https://github.com/gokcank/ProjectNucleus"
 edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html

@@ -31,10 +31,14 @@
   "bundle": {
     "active": true,
     "targets": "all",
+    "category": "Utility",
+    "shortDescription": "A modular, floating control center for Linux",
+    "longDescription": "Project Nucleus brings everyday desktop tools — clipboard history, notes, network and hardware status, weather, and more — into a single floating panel, one shortcut away.",
     "icon": [
       "icons/32x32.png",
       "icons/128x128.png",
       "icons/128x128@2x.png",
+      "icons/icon.png",
       "icons/icon.icns",
       "icons/icon.ico"
     ]
