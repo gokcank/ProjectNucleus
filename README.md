@@ -1,4 +1,6 @@
 <div align="center">
+  <img src="Assets/Logo.png" alt="Project Nucleus logo" width="160">
+
   <h1>Project Nucleus 🧩</h1>
   <p><strong>A Modular Control Center for Linux</strong><br><em>Linux için Modüler Kontrol Merkezi</em></p>
   <br>
@@ -140,9 +142,3 @@ Nucleus, **önce kart, sonra widget** yaklaşımını izler: önce gerçek, somu
 ### Durum
 
 Project Nucleus **erken ve aktif geliştirme** aşamasındadır (bkz. [`docs/ROADMAP.md`](docs/ROADMAP.md)) ve henüz paketlenmiş bir sürüm olarak yayınlanmamıştır. Kırılgan değişiklikler olabilir.
-
----
-
-<div align="center">
-  <!-- Logo goes here -->
-</div>
