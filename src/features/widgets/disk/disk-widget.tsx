@@ -17,6 +17,19 @@ function formatSize(bytes: number): string {
   return gib >= GIB_PER_TIB ? `${(gib / GIB_PER_TIB).toFixed(1)} TiB` : `${Math.round(gib)} GiB`;
 }
 
+/**
+ * "351 / 457 GiB free". The unit is written once when both sides share it,
+ * which is most of the time and is worth the four characters: volume names
+ * run long, and every character this gives back is one the name keeps.
+ */
+function formatPair(availableBytes: number, totalBytes: number): string {
+  const available = formatSize(availableBytes);
+  const total = formatSize(totalBytes);
+  const [availableValue, availableUnit] = available.split(" ");
+  const sharesUnit = availableUnit === total.split(" ")[1];
+  return `${sharesUnit ? availableValue : available} / ${total} free`;
+}
+
 function keepLatest(_previous: Volume[] | null, next: Volume[]) {
   return next;
 }
@@ -42,8 +55,9 @@ function VolumeRow({ volume, wide }: { volume: Volume; wide: boolean }) {
       </span>
       <StatusDot status={statusForCharge(freePercent)} />
       <span className={`shrink-0 text-sm whitespace-nowrap tabular-nums ${text}`}>
-        {formatSize(volume.availableBytes)} free
-        {wide && ` / ${formatSize(volume.totalBytes)}`}
+        {wide
+          ? formatPair(volume.availableBytes, volume.totalBytes)
+          : `${formatSize(volume.availableBytes)} free`}
       </span>
     </li>
   );
