@@ -142,6 +142,10 @@ not answer at all:
   GNOME surfaces nowhere.
 - **Disk** shows free and total space for every mounted volume at once.
   Reading it elsewhere means opening a file manager window per drive.
+- **Hardware** lists what this machine is made of. The one card here that
+  overlaps something the desktop already offers (Settings → About); kept
+  because it is reachable without leaving the panel, and switched off in
+  Settings by anyone who disagrees.
 
 ---
 

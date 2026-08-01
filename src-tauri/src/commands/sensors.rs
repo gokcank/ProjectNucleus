@@ -100,43 +100,12 @@ fn maker(model: &str) -> Option<&str> {
     looks_like_a_name.then_some(first)
 }
 
-static CPU_MODEL: OnceLock<Option<String>> = OnceLock::new();
-
-/// Drops the core count vendors tack onto the end -- "AMD Ryzen 9 5900X
-/// 12-Core Processor" is a row's worth of text before it says anything the
-/// name has not already said.
-fn without_core_count(name: &str) -> String {
-    let trimmed = name.strip_suffix(" Processor").unwrap_or(name);
-    match trimmed.rsplit_once(' ') {
-        Some((head, tail)) if tail.ends_with("-Core") => head.to_owned(),
-        _ => trimmed.to_owned(),
-    }
-}
-
-/// The processor's marketing name, read once -- it cannot change while the
-/// machine is running. `(R)` and `(TM)` come off with it: legal furniture,
-/// not something anyone reads on a dashboard row.
-fn cpu_model() -> Option<String> {
-    CPU_MODEL
-        .get_or_init(|| {
-            let cpuinfo = fs::read_to_string("/proc/cpuinfo").ok()?;
-            let (_, name) = cpuinfo
-                .lines()
-                .find(|line| line.starts_with("model name"))?
-                .split_once(':')?;
-            let stripped = name.replace("(R)", "").replace("(TM)", "");
-            // Removing those can leave doubled spaces behind.
-            let collapsed = stripped.split_whitespace().collect::<Vec<_>>().join(" ");
-            let cleaned = without_core_count(&collapsed);
-            (!cleaned.is_empty()).then_some(cleaned)
-        })
-        .clone()
-}
-
 fn cpu_reading(celsius: f32) -> Reading {
     Reading {
         label: "CPU".to_owned(),
-        detail: cpu_model(),
+        // Which processor this is belongs to the hardware card; this one only
+        // borrows it for the tooltip.
+        detail: super::hardware::cpu_model(),
         celsius,
     }
 }

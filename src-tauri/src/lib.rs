@@ -109,6 +109,7 @@ pub fn run() {
             commands::network::public_ip,
             commands::sensors::sensor_status,
             commands::disk::disk_status,
+            commands::hardware::hardware_info,
             commands::weather::search_cities,
             commands::weather::current_weather,
             commands::appearance::color_scheme

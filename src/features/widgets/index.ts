@@ -3,6 +3,7 @@ import { clipboardWidget } from "./clipboard/clipboard-widget";
 import { colorPickerWidget } from "./color-picker/color-picker-widget";
 import { cpuWidget } from "./cpu/cpu-widget";
 import { diskWidget } from "./disk/disk-widget";
+import { hardwareWidget } from "./hardware/hardware-widget";
 import { networkWidget } from "./network/network-widget";
 import { notesWidget } from "./notes/notes-widget";
 import { pomodoroWidget } from "./pomodoro/pomodoro-widget";
@@ -37,6 +38,7 @@ export function registerBuiltinWidgets() {
     sensorsWidget,
     diskWidget,
     weatherWidget,
+    hardwareWidget,
   ].forEach(registerWidget);
 }
 

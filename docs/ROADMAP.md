@@ -25,7 +25,7 @@ Every phase must produce a stable, usable application.
 | Item | Status |
 |------|--------|
 | Project | 🚧 In Development |
-| Current Phase | Phases 6–8 complete, then narrowed twice — thirteen widgets that duplicated what GNOME already offers were removed (ADR-016, ADR-017), leaving twelve. Growing again since, one widget at a time, each tested against ADR-016 first: Network throughput, then Temperature, then Disk, then Weather — fifteen now. Four items were closed with a reason rather than built (QR Scanner, File Search, Speed Test, Fan); see each phase |
+| Current Phase | Phases 6–8 complete, then narrowed twice — thirteen widgets that duplicated what GNOME already offers were removed (ADR-016, ADR-017), leaving twelve. Growing again since, one widget at a time, each tested against ADR-016 first: Network throughput, then Temperature, then Disk, then Weather, then Hardware — sixteen now. Four items were closed with a reason rather than built (QR Scanner, File Search, Speed Test, Fan); see each phase |
 | Public Release | Not Yet |
 | Widget Engine | Complete |
 | Plugin SDK | Planned |
@@ -218,6 +218,7 @@ Examples
 - ✅ Battery *(kept: shows charge for peripherals too — a wireless mouse or headset — which the quick settings panel does not)*
 - ✅ Temperature *(processor, graphics and drives. Passes the ADR-016 test outright: GNOME surfaces temperature nowhere, so there is no faster path to duplicate)*
 - ✅ Disk *(free and total space per mounted volume. Read-only by decision — see ADR-018 for why mount and unmount buttons were turned down. Network shares are filtered out; so is the firmware boot partition. Only mounted volumes are listed, since a drive set to mount at startup is already mounted by the time the panel opens — the one case this misses is a drive that was meant to mount and failed, accepted to keep the card small)*
+- ✅ Hardware *(board, processor, graphics, memory, OS, kernel and host name, read once — none of it changes while the machine runs. The one widget in this round that does **not** pass the ADR-016 test cleanly: GNOME Settings → About shows the same facts, and Temperature and RAM already carry the processor, graphics and memory inside Nucleus itself. Built anyway, as the project owner's call: the panel is a faster path than Settings for them, and a widget nobody wants can be switched off in Settings, which a duplicated system control could not be)*
 - Fan *(deliberately deferred: on the development machine the kernel publishes no fan readings at all. The fans hang off the motherboard's own controller chip, whose I/O addresses the firmware reserves, so the kernel refuses to let its driver bind by default. Making them readable is a machine configuration change — an out-of-tree driver, a boot parameter, or both — not something an unprivileged app can do; Nucleus can only read what the kernel already publishes. The card code would be the same either way, so revisit on a setup where fan readings actually appear)*
 - ❌ Wi-Fi *(built, then removed — see ADR-016)*
 - ❌ Bluetooth *(built, then removed — see ADR-016)*
@@ -229,9 +230,10 @@ Examples
 
 > Almost all of this phase turned out to duplicate GNOME's own quick settings
 > panel, which is already one click away in the top bar. See ADR-016 for the
-> reasoning and what was kept. Battery, Temperature and Disk are what remain,
-> and all three are here for the same reason: they answer something the
-> desktop does not answer at a glance.
+> reasoning and what was kept. Battery, Temperature and Disk are here for the
+> same reason: they answer something the desktop does not answer at a glance.
+> Hardware is the one exception, kept as an explicit owner's call rather than
+> because it passed the test — see its entry above.
 
 ---
 
