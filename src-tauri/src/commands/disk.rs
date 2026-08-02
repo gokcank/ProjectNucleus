@@ -44,9 +44,17 @@ pub struct Volume {
 /// is already mounted by the time anyone opens the panel, so it arrives here
 /// on its own; one left unmounted on purpose is one the owner has told the
 /// desktop not to surface, and the card follows that.
-fn is_listable(mount_point: &str, file_system: &str) -> bool {
+fn is_listable(mount_point: &str, file_system: &str, read_only: bool) -> bool {
     if mount_point == BOOT_MOUNT_PREFIX || mount_point.starts_with(&format!("{BOOT_MOUNT_PREFIX}/"))
     {
+        return false;
+    }
+    // Free space on something you cannot write to is not a number anyone acts
+    // on, and every self-mounting application bundle lands here: a running
+    // AppImage mounts its own read-only image under /tmp and reports itself
+    // 100% full, which the card would otherwise flag as a drive about to run
+    // out. Nucleus's own AppImage will do exactly this once it ships.
+    if read_only {
         return false;
     }
     !NETWORK_FILESYSTEMS
@@ -83,7 +91,9 @@ pub fn disk_status() -> Result<Vec<Volume>, String> {
             let file_system = disk.file_system().to_string_lossy();
 
             // A volume reporting no size at all has nothing to say.
-            if disk.total_space() == 0 || !is_listable(&mount_point, &file_system) {
+            if disk.total_space() == 0
+                || !is_listable(&mount_point, &file_system, disk.is_read_only())
+            {
                 return None;
             }
 
