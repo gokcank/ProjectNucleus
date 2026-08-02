@@ -1,0 +1,98 @@
+name: nucleus
+base: core24
+adopt-info: nucleus
+summary: A modular, floating control center for Linux
+description: |
+  Project Nucleus brings everyday desktop tools into a single floating panel,
+  one shortcut away: clipboard history, notes, todo, timers, quick links,
+  colour picker, plus at-a-glance CPU, memory, battery, network, temperature,
+  disk and hardware readings, and current weather for a city you choose.
+
+  It is not a desktop environment or a system monitor replacement — it sits on
+  top of your existing desktop (GNOME first) and stays out of the way until
+  you need it.
+
+  Several cards read system state that strict confinement does not hand out
+  automatically. Until those are connected they show as empty rather than
+  failing:
+
+    snap connect nucleus:hardware-observe
+    snap connect nucleus:mount-observe
+    snap connect nucleus:system-observe
+    snap connect nucleus:upower-observe
+    snap connect nucleus:network-manager-observe
+
+grade: stable
+confinement: strict
+license: MIT
+website: https://github.com/gokcank/ProjectNucleus
+issues: https://github.com/gokcank/ProjectNucleus/issues
+
+platforms:
+  amd64:
+
+apps:
+  nucleus:
+    command: usr/bin/project-nucleus
+    desktop: usr/share/applications/Nucleus.desktop
+    extensions: [gnome]
+    plugs:
+      # Weather and the Network card's public address lookup.
+      - network
+      # Temperature (/sys/class/hwmon) and Hardware (DMI, lspci).
+      - hardware-observe
+      # Disk: the mount table. Inside a snap only the entries under
+      # /var/lib/snapd/hostfs describe the real machine, which is what
+      # commands/disk.rs reads through — see host_filesystem_prefix().
+      - mount-observe
+      # Hardware: /proc/cpuinfo and the process/system view around it.
+      - system-observe
+      # Battery, including peripheral batteries (wireless mouse, headset).
+      - upower-observe
+      # Network: connection type, SSID and addresses. The read-only variant
+      # on purpose — the card never changes a connection.
+      - network-manager-observe
+
+parts:
+  nucleus:
+    plugin: nil
+    source: .
+    build-snaps:
+      - node/22/stable
+      - rustup/latest/stable
+    build-packages:
+      - libwebkit2gtk-4.1-dev
+      - libayatana-appindicator3-dev
+      - librsvg2-dev
+      - libxdo-dev
+      - libssl-dev
+      - build-essential
+      - curl
+      - wget
+      - file
+      - pkg-config
+    stage-packages:
+      # Runtime halves of the build dependencies above. The gnome extension
+      # supplies GTK itself; these are what it does not carry.
+      - libwebkit2gtk-4.1-0
+      - libayatana-appindicator3-1
+      - librsvg2-2
+      # The Hardware card shells out to lspci, and reads friendly device
+      # names out of the pci.ids database that ships beside it.
+      - pciutils
+      # Weather and the public address lookup shell out to curl.
+      - curl
+    override-build: |
+      set -eu
+      rustup default stable
+      npm ci
+      npm run tauri build -- --bundles deb
+      # Unpack our own .deb rather than re-deriving the layout: it already
+      # places the binary, desktop entry and every icon size correctly.
+      dpkg -x src-tauri/target/release/bundle/deb/Nucleus_*_amd64.deb "$CRAFT_PART_INSTALL"
+      # The desktop entry names a themed icon, which resolves under a snap
+      # only as an absolute path.
+      sed -i 's|^Icon=.*|Icon=${SNAP}/usr/share/icons/hicolor/128x128/apps/project-nucleus.png|' \
+        "$CRAFT_PART_INSTALL"/usr/share/applications/Nucleus.desktop
+      # One version, taken from the source of truth rather than repeated here.
+      craftctl set version="$(node -p "require('./package.json').version")"

@@ -76,18 +76,39 @@ fn volume_name(mount_point: &str) -> String {
         .to_owned()
 }
 
+/// The path this mount has on the machine itself.
+///
+/// Unconfined, that is the mount point as reported. Inside a snap, only the
+/// mounts sitting under the host prefix describe the real machine -- the rest
+/// is the sandbox's own scaffolding -- so anything outside it is dropped and
+/// the prefix is taken off what remains. The prefix root is the host's `/`.
+fn host_path(mount_point: &str, host_prefix: Option<&str>) -> Option<String> {
+    let Some(prefix) = host_prefix else {
+        return Some(mount_point.to_owned());
+    };
+    if mount_point == prefix {
+        return Some("/".to_owned());
+    }
+    mount_point
+        .strip_prefix(prefix)
+        .filter(|rest| rest.starts_with('/'))
+        .map(str::to_owned)
+}
+
 #[tauri::command]
 pub fn disk_status() -> Result<Vec<Volume>, String> {
     // sysinfo already drops the noise: loop devices behind snap packages,
     // in-memory filesystems, and the firmware's own variable store. On this
     // machine that is twenty-five entries down to three.
     let disks = Disks::new_with_refreshed_list();
+    let host_prefix = super::runtime::host_filesystem_prefix();
 
     let mut volumes: Vec<Volume> = disks
         .list()
         .iter()
         .filter_map(|disk| {
-            let mount_point = disk.mount_point().to_string_lossy().into_owned();
+            let raw_mount = disk.mount_point().to_string_lossy();
+            let mount_point = host_path(&raw_mount, host_prefix)?;
             let file_system = disk.file_system().to_string_lossy();
 
             // A volume reporting no size at all has nothing to say.
