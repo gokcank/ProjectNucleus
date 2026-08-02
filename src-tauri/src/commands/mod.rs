@@ -4,6 +4,7 @@ pub mod color_picker;
 pub mod disk;
 pub mod hardware;
 pub mod network;
+pub mod runtime;
 pub mod sensors;
 pub mod system;
 pub mod weather;

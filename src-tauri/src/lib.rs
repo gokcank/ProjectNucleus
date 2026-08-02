@@ -121,6 +121,13 @@ pub fn run() {
                 .js_init_script(commands::appearance::startup_init_script())
                 .build(),
         )
+        // Likewise injected before the page's scripts: widget registration is
+        // synchronous, so anything it needs to branch on has to already be there.
+        .plugin(
+            tauri::plugin::Builder::<tauri::Wry, ()>::new("runtime")
+                .js_init_script(commands::runtime::startup_init_script())
+                .build(),
+        )
         .plugin(tauri_plugin_opener::init())
         .plugin(tauri_plugin_store::Builder::new().build())
         .plugin(tauri_plugin_global_shortcut::Builder::new().build())

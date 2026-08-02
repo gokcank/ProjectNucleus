@@ -18,11 +18,23 @@ import { weatherWidget } from "./weather/weather-widget";
 
 let registered = false;
 
+/**
+ * Set by the backend before this script runs (see `commands/runtime.rs`).
+ * Undefined outside Tauri — a browser preview, for instance — which reads as
+ * "not sandboxed", the right default everywhere except Flatpak itself.
+ */
+declare global {
+  interface Window {
+    __NUCLEUS_FLATPAK__?: boolean;
+  }
+}
+
 /** Registers every built-in widget. Called once at application startup. */
 export function registerBuiltinWidgets() {
   if (registered) return;
   registered = true;
-  [
+
+  const widgets = [
     cpuWidget,
     ramWidget,
     clipboardWidget,
@@ -39,7 +51,16 @@ export function registerBuiltinWidgets() {
     diskWidget,
     weatherWidget,
     hardwareWidget,
-  ].forEach(registerWidget);
+  ];
+
+  // Inside Flatpak the kernel's mount table describes the sandbox, not the
+  // machine: the root filesystem reads as the container's own temporary one
+  // and a dozen container-internal mounts sit alongside it. No permission
+  // fixes that -- the host's mount table simply is not reachable -- so the
+  // card is left out there rather than shown reporting the wrong drives.
+  const usable = window.__NUCLEUS_FLATPAK__ ? widgets.filter((w) => w !== diskWidget) : widgets;
+
+  usable.forEach(registerWidget);
 }
 
 export { getWidget, listWidgets, registerWidget } from "./registry";
