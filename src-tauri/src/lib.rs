@@ -77,7 +77,7 @@ fn setup_tray(app: &tauri::App) -> tauri::Result<()> {
 
     let mut tray = TrayIconBuilder::with_id("main")
         .menu(&menu)
-        .tooltip("Project Nucleus")
+        .tooltip("Nucleus")
         .on_menu_event(|app, event| match event.id.as_ref() {
             "toggle" => toggle_panel(app),
             "quit" => app.exit(0),
