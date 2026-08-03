@@ -13,6 +13,13 @@ finish-args:
   - --socket=fallback-x11
   - --socket=wayland
   - --device=dri
+  # WebKitGTK's DMA-BUF path fails to allocate a GBM buffer for this window
+  # under the proprietary NVIDIA driver + Flatpak combination ("Failed to
+  # create GBM buffer of size 480x600"), leaving the panel invisible though
+  # the process runs. Falling back to the older renderer avoids it; cost is
+  # unmeasured on this machine but the panel is a small, largely static
+  # surface, not a video-heavy page.
+  - --env=WEBKIT_DISABLE_DMABUF_RENDERER=1
 
   # Weather and the Network card's public address lookup.
   - --share=network
@@ -137,7 +144,13 @@ modules:
       # CARGO_HOME above.
       - npm ci --offline --cache=flatpak-node/npm-cache
       - npm run build
+      # `tauri/custom-protocol` is what switches the binary from loading
+      # devUrl (a dev server that doesn't exist here) to the assets embedded
+      # from frontendDist -- normally added automatically by `tauri build`,
+      # which invoking cargo directly bypasses. Without it the packaged app
+      # opens to "Could not connect to localhost:1420".
       - cargo build --release --offline --manifest-path src-tauri/Cargo.toml
+        --features tauri/custom-protocol
       - install -Dm755 src-tauri/target/release/project-nucleus /app/bin/project-nucleus
       - install -Dm644 flatpak/com.gokcank.project-nucleus.desktop
         /app/share/applications/com.gokcank.project-nucleus.desktop
