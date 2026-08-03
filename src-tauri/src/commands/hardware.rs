@@ -168,6 +168,40 @@ pub struct HardwareInfo {
     host_name: Option<String>,
 }
 
+/// The `PRETTY_NAME` line out of an `os-release` file: `Ubuntu 24.04.4 LTS`.
+fn pretty_name(os_release: &str) -> Option<String> {
+    let value = os_release
+        .lines()
+        .find_map(|line| line.strip_prefix("PRETTY_NAME="))?
+        .trim()
+        .trim_matches('"');
+    (!value.is_empty()).then(|| value.to_owned())
+}
+
+/// Which distribution this is.
+///
+/// Read from `os-release` rather than through `sysinfo`, because inside a snap
+/// `sysinfo` answers for the base the snap runs on -- "Ubuntu Core 24" on a
+/// machine actually running Ubuntu 24.04. The host's own file is reachable
+/// under the confinement prefix, so that is preferred when there is one.
+fn distribution() -> Option<String> {
+    let host_file = super::runtime::host_filesystem_prefix()
+        .map(|prefix| format!("{prefix}/etc/os-release"))
+        .and_then(|path| fs::read_to_string(path).ok())
+        .and_then(|contents| pretty_name(&contents));
+    if host_file.is_some() {
+        return host_file;
+    }
+
+    fs::read_to_string("/etc/os-release")
+        .ok()
+        .and_then(|contents| pretty_name(&contents))
+        .or_else(|| match (System::name(), System::os_version()) {
+            (Some(name), Some(version)) => Some(format!("{name} {version}")),
+            (name, version) => name.or(version),
+        })
+}
+
 /// Nothing here changes while the machine is running, so the card reads it
 /// once instead of polling.
 #[tauri::command]
@@ -191,10 +225,7 @@ pub fn hardware_info() -> Result<HardwareInfo, String> {
         (vendor, product) => vendor.or(product),
     };
 
-    let operating_system = match (System::name(), System::os_version()) {
-        (Some(name), Some(version)) => Some(format!("{name} {version}")),
-        (name, version) => name.or(version),
-    };
+    let operating_system = distribution();
 
     Ok(HardwareInfo {
         model,

@@ -15,6 +15,13 @@ dist-ssr
 # Local scratch notes (manual verification checklist, not part of the product)
 scratch_list.md
 
+# Snap build output. The .deb and AppImage land under src-tauri/target/,
+# which Cargo's own ignore file already covers; snapcraft writes here instead.
+*.snap
+/parts/
+/stage/
+/prime/
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json

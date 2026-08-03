@@ -1,4 +1,5 @@
 name: nucleus
+title: Nucleus
 base: core24
 adopt-info: nucleus
 summary: A modular, floating control center for Linux
@@ -26,7 +27,9 @@ grade: stable
 confinement: strict
 license: MIT
 website: https://github.com/gokcank/ProjectNucleus
+source-code: https://github.com/gokcank/ProjectNucleus
 issues: https://github.com/gokcank/ProjectNucleus/issues
+contact: https://github.com/gokcank/ProjectNucleus/issues
 
 platforms:
   amd64:
@@ -76,7 +79,9 @@ parts:
       # supplies GTK itself; these are what it does not carry.
       - libwebkit2gtk-4.1-0
       - libayatana-appindicator3-1
-      - librsvg2-2
+      # librsvg is deliberately not staged: the gnome extension already ships
+      # it, and a second copy makes gdk-pixbuf load our loader against the
+      # platform's library ("undefined symbol: rsvg_handle_get_pixbuf_and_error").
       # The Hardware card shells out to lspci, and reads friendly device
       # names out of the pci.ids database that ships beside it.
       - pciutils
@@ -84,6 +89,13 @@ parts:
       - curl
     override-build: |
       set -eu
+      # The gnome extension puts its own SDK ahead of the container's
+      # libraries, which the build tools cannot survive: rustup and cargo are
+      # linked against the container's C library and abort on the SDK's
+      # ("undefined symbol: __nptl_change_stack_perm"). That path matters for
+      # what the finished snap loads at runtime, not for compiling, so it is
+      # dropped here and left alone everywhere else.
+      unset LD_LIBRARY_PATH
       rustup default stable
       npm ci
       npm run tauri build -- --bundles deb
@@ -95,4 +107,6 @@ parts:
       sed -i 's|^Icon=.*|Icon=${SNAP}/usr/share/icons/hicolor/128x128/apps/project-nucleus.png|' \
         "$CRAFT_PART_INSTALL"/usr/share/applications/Nucleus.desktop
       # One version, taken from the source of truth rather than repeated here.
+      # craftctl allows this once per lifecycle, so a repeat local build needs
+      # `snapcraft clean nucleus` first. CI builds start clean and never hit it.
       craftctl set version="$(node -p "require('./package.json').version")"
