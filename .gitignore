@@ -22,6 +22,13 @@ scratch_list.md
 /stage/
 /prime/
 
+# Flatpak build output. These stay inside the project on purpose: running the
+# builder from its own flatpak means paths under different mounts are separate
+# filesystems to it, and hardlinking between them fails.
+/.flatpak-builder/
+/.flatpak-build/
+/.flatpak-repo/
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json

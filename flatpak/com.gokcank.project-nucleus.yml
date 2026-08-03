@@ -1,0 +1,156 @@
+app-id: com.gokcank.project-nucleus
+runtime: org.gnome.Platform
+runtime-version: "50"
+sdk: org.gnome.Sdk
+sdk-extensions:
+  - org.freedesktop.Sdk.Extension.rust-stable
+  - org.freedesktop.Sdk.Extension.node22
+command: project-nucleus
+
+finish-args:
+  # Window and rendering.
+  - --share=ipc
+  - --socket=fallback-x11
+  - --socket=wayland
+  - --device=dri
+
+  # Weather and the Network card's public address lookup.
+  - --share=network
+
+  # Battery, including peripheral batteries (wireless mouse, headset).
+  - --system-talk-name=org.freedesktop.UPower
+  # Network: connection type, SSID and addresses.
+  - --system-talk-name=org.freedesktop.NetworkManager
+  # The tray icon, which is how the panel is reached without the shortcut.
+  - --talk-name=org.kde.StatusNotifierWatcher
+
+  # Temperature reads /sys/class/hwmon and Hardware reads /sys/class/dmi;
+  # both are already visible in the sandbox, so no filesystem access is
+  # requested. The Disk card is not registered under Flatpak at all — the
+  # host's mount table is unreachable here, so it would describe the
+  # container rather than the machine (see commands/runtime.rs).
+
+modules:
+  # dlopen'd by the tray at runtime, so its absence costs the tray icon
+  # rather than startup — but the tray is how this app is opened, so it is
+  # built rather than skipped. The GNOME runtime carries neither this nor
+  # the dbusmenu libraries it needs.
+  # libdbusmenu is from 2016 and its configure step still wants intltool,
+  # which modern SDKs dropped. Built here purely so that check passes, then
+  # removed from the result.
+  - name: intltool
+    cleanup:
+      - "*"
+    sources:
+      - type: archive
+        url: https://launchpad.net/intltool/trunk/0.51.0/+download/intltool-0.51.0.tar.gz
+        sha256: 67c74d94196b153b774ab9f89b2fa6c6ba79352407037c8c14d5aeb334e959cd
+
+  - name: libdbusmenu-glib
+    buildsystem: autotools
+    build-options:
+      # The release ships -Werror, and a decade of new compiler warnings now
+      # trips it on its own code.
+      cflags: -Wno-error
+    config-opts:
+      - --disable-static
+      - --disable-tests
+      - --disable-gtk-doc
+      - --disable-dumper
+      - --disable-vala
+      - --enable-introspection=no
+    sources:
+      - type: archive
+        url: https://launchpad.net/libdbusmenu/16.04/16.04.0/+download/libdbusmenu-16.04.0.tar.gz
+        sha256: b9cc4a2acd74509435892823607d966d424bd9ad5d0b00938f27240a1bfa878a
+      - type: shell
+        commands:
+          # This release defines its valgrind conditional inside the tests
+          # block, so --disable-tests leaves it undefined and configure aborts
+          # on its own consistency check. Marking it defined-and-false lets
+          # that check pass without pulling the test suite in.
+          - sed -i 's|^if test -z "${HAVE_VALGRIND_TRUE}"|HAVE_VALGRIND_TRUE="#"\n&|' configure
+    cleanup:
+      - /include
+      - /lib/pkgconfig
+      - "*.la"
+
+  # Provides libayatana-ido3-0.4, which libayatana-indicator requires. The
+  # repository drops the "lib" prefix even though the library keeps it.
+  - name: ayatana-ido
+    buildsystem: cmake-ninja
+    config-opts:
+      - -DCMAKE_BUILD_TYPE=Release
+      - -DENABLE_TESTS=OFF
+    sources:
+      - type: archive
+        url: https://github.com/AyatanaIndicators/ayatana-ido/archive/refs/tags/0.10.4.tar.gz
+        sha256: bd59abd5f1314e411d0d55ce3643e91cef633271f58126be529de5fb71c5ab38
+    cleanup:
+      - /include
+      - /lib/pkgconfig
+
+  - name: libayatana-indicator
+    buildsystem: cmake-ninja
+    config-opts:
+      - -DCMAKE_BUILD_TYPE=Release
+      - -DENABLE_TESTS=OFF
+    sources:
+      - type: archive
+        url: https://github.com/AyatanaIndicators/libayatana-indicator/archive/refs/tags/0.9.4.tar.gz
+        sha256: a18d3c682e29afd77db24366f8475b26bda22b0e16ff569a2ec71cd6eb4eac95
+    cleanup:
+      - /include
+      - /lib/pkgconfig
+
+  - name: libayatana-appindicator
+    buildsystem: cmake-ninja
+    config-opts:
+      - -DCMAKE_BUILD_TYPE=Release
+      - -DENABLE_BINDINGS_MONO=OFF
+      - -DENABLE_BINDINGS_VALA=OFF
+      - -DENABLE_TESTS=OFF
+      # On by default, and it links a probe program without /app/lib on its
+      # search path, so it fails against the libraries built just above it.
+      # Nothing here ships documentation anyway.
+      - -DENABLE_GTKDOC=OFF
+    sources:
+      - type: archive
+        url: https://github.com/AyatanaIndicators/libayatana-appindicator/archive/refs/tags/0.5.94.tar.gz
+        sha256: 884a6bc77994c0b58c961613ca4c4b974dc91aa0f804e70e92f38a542d0d0f90
+    cleanup:
+      - /include
+      - /lib/pkgconfig
+
+  - name: nucleus
+    buildsystem: simple
+    build-options:
+      append-path: /usr/lib/sdk/rust-stable/bin:/usr/lib/sdk/node22/bin
+      env:
+        # Where the generated cargo sources put the vendored crates and the
+        # config that points at them.
+        CARGO_HOME: /run/build/nucleus/cargo
+    build-commands:
+      # Both toolchains work entirely from the vendored sources below —
+      # Flathub builds have no network. The npm half needs pointing at the
+      # cache the generated sources unpack into; cargo finds its own through
+      # CARGO_HOME above.
+      - npm ci --offline --cache=flatpak-node/npm-cache
+      - npm run build
+      - cargo build --release --offline --manifest-path src-tauri/Cargo.toml
+      - install -Dm755 src-tauri/target/release/project-nucleus /app/bin/project-nucleus
+      - install -Dm644 flatpak/com.gokcank.project-nucleus.desktop
+        /app/share/applications/com.gokcank.project-nucleus.desktop
+      - install -Dm644 flatpak/com.gokcank.project-nucleus.metainfo.xml
+        /app/share/metainfo/com.gokcank.project-nucleus.metainfo.xml
+      - install -Dm644 src-tauri/icons/128x128.png
+        /app/share/icons/hicolor/128x128/apps/com.gokcank.project-nucleus.png
+      - install -Dm644 src-tauri/icons/icon.png
+        /app/share/icons/hicolor/512x512/apps/com.gokcank.project-nucleus.png
+    sources:
+      # Flathub takes a tagged git revision instead; a local directory is
+      # what makes the manifest testable before anything is released.
+      - type: dir
+        path: ..
+      - cargo-sources.json
+      - node-sources.json

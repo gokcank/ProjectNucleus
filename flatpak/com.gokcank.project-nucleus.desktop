@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Application
+Name=Nucleus
+Comment=A modular, floating control center for Linux
+Categories=Utility;
+Exec=project-nucleus
+Icon=com.gokcank.project-nucleus
+StartupWMClass=Nucleus
+Terminal=false

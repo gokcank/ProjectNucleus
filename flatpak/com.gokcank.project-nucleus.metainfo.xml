@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component type="desktop-application">
+  <id>com.gokcank.project-nucleus</id>
+
+  <name>Nucleus</name>
+  <summary>A modular, floating control center for Linux</summary>
+
+  <metadata_license>CC0-1.0</metadata_license>
+  <project_license>MIT</project_license>
+
+  <developer id="com.gokcank">
+    <name>gokcank</name>
+  </developer>
+
+  <description>
+    <p>
+      Nucleus brings everyday desktop tools into a single floating panel, one
+      shortcut away. It is not a desktop environment or a system monitor
+      replacement — it sits on top of your existing desktop and stays out of
+      the way until you need it.
+    </p>
+    <p>Included cards:</p>
+    <ul>
+      <li>Clipboard history, notes, todo, timer, stopwatch, pomodoro and quick links</li>
+      <li>Colour picker, for any colour on screen</li>
+      <li>CPU and memory, at a glance</li>
+      <li>Battery, including wireless mice and headsets</li>
+      <li>Network: connection type, throughput and addresses</li>
+      <li>Temperature for the processor and drives</li>
+      <li>Hardware: board, processor, graphics, memory, OS and kernel</li>
+      <li>Weather for a city you choose</li>
+    </ul>
+    <p>
+      Two cards behave differently inside a Flatpak sandbox: disk usage is not
+      shown, because the container's mount table describes the container
+      rather than the machine, and graphics temperature is unavailable on
+      NVIDIA hardware, whose reading comes from a vendor tool the runtime does
+      not carry.
+    </p>
+  </description>
+
+  <launchable type="desktop-id">com.gokcank.project-nucleus.desktop</launchable>
+
+  <url type="homepage">https://github.com/gokcank/ProjectNucleus</url>
+  <url type="bugtracker">https://github.com/gokcank/ProjectNucleus/issues</url>
+
+  <content_rating type="oars-1.1" />
+
+  <releases>
+    <release version="0.1.0" date="2026-08-03">
+      <description>
+        <p>First packaged release.</p>
+      </description>
+    </release>
+  </releases>
+</component>
