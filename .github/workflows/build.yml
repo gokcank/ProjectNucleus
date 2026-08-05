@@ -1,0 +1,104 @@
+name: Build packages
+
+# Builds all four package formats and keeps them as workflow artifacts.
+# Nothing here publishes anywhere (Snap Store, GitHub Releases, Flathub) --
+# that stays a manual, approved step. See docs/DECISIONS.md and state.md for
+# the reasoning behind each package's shape.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch: {}
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  deb-appimage:
+    name: .deb / AppImage
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install system dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            libwebkit2gtk-4.1-dev \
+            libayatana-appindicator3-dev \
+            librsvg2-dev \
+            libxdo-dev \
+            libssl-dev \
+            build-essential \
+            curl \
+            wget \
+            file \
+            pkg-config
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - uses: dtolnay/rust-toolchain@stable
+
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: src-tauri
+
+      - run: npm ci
+
+      - name: Build .deb and AppImage
+        run: npm run tauri build -- --bundles deb,appimage
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: deb
+          path: src-tauri/target/release/bundle/deb/*.deb
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: appimage
+          path: src-tauri/target/release/bundle/appimage/*.AppImage
+
+  snap:
+    name: Snap
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+
+      # Handles the LXD-backed build for us -- doing this by hand in Adım 4
+      # needed `sg lxd -c "snapcraft ..."`; the action already runs as a
+      # member of the lxd group.
+      - uses: snapcore/action-build@v1
+        id: build
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: snap
+          path: ${{ steps.build.outputs.snap }}
+
+  flatpak:
+    name: Flatpak
+    runs-on: ubuntu-24.04
+    container:
+      # Ships flatpak-builder plus the GNOME 50 SDK already installed, which
+      # is what the manifest's runtime-version pins to. If GNOME 50 has no
+      # published tag yet under this image, the closest available gnome-4x
+      # tag needs the SDK/Platform installed as an extra step instead.
+      image: bilelmoussaoui/flatpak-github-actions:gnome-50
+      options: --privileged
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: flatpak/flatpak-github-actions/flatpak-builder@v6
+        with:
+          bundle: nucleus.flatpak
+          manifest-path: flatpak/com.gokcank.project-nucleus.yml
+          # cargo-sources.json / node-sources.json already vendor everything
+          # the nucleus module itself needs; the tray dependency chain's own
+          # archives (intltool, ayatana-ido, ...) still come from the network
+          # during the build, same as a local flatpak-builder run.
+          cache-key: flatpak-builder-${{ github.sha }}
