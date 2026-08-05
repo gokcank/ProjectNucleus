@@ -83,22 +83,37 @@ jobs:
   flatpak:
     name: Flatpak
     runs-on: ubuntu-24.04
-    container:
-      # Ships flatpak-builder plus the GNOME 50 SDK already installed, which
-      # is what the manifest's runtime-version pins to. If GNOME 50 has no
-      # published tag yet under this image, the closest available gnome-4x
-      # tag needs the SDK/Platform installed as an extra step instead.
-      image: bilelmoussaoui/flatpak-github-actions:gnome-50
-      options: --privileged
     steps:
       - uses: actions/checkout@v4
 
-      - uses: flatpak/flatpak-github-actions/flatpak-builder@v6
+      # The community flatpak-github-actions container images only go up to
+      # gnome-47 (checked against the image's own tag list) -- GNOME 50 is
+      # newer than that image's release cadence, though already on Flathub
+      # itself (confirmed locally in Adım 5). Installing flatpak-builder
+      # directly and pulling the runtime from Flathub sidesteps the image's
+      # lag entirely, and matches the exact steps used for the local build.
+      - name: Install flatpak-builder
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y flatpak flatpak-builder
+          sudo flatpak remote-add --if-not-exists flathub \
+            https://flathub.org/repo/flathub.flatpakrepo
+
+      - name: Install GNOME 50 runtime and SDK
+        run: |
+          sudo flatpak install --system -y flathub \
+            org.gnome.Platform//50 org.gnome.Sdk//50 \
+            org.freedesktop.Sdk.Extension.rust-stable//50 \
+            org.freedesktop.Sdk.Extension.node22//50
+
+      - name: Build Flatpak
+        run: |
+          flatpak-builder --force-clean --repo=flatpak-repo \
+            build-dir flatpak/com.gokcank.project-nucleus.yml
+          flatpak build-bundle flatpak-repo nucleus.flatpak \
+            com.gokcank.project-nucleus
+
+      - uses: actions/upload-artifact@v4
         with:
-          bundle: nucleus.flatpak
-          manifest-path: flatpak/com.gokcank.project-nucleus.yml
-          # cargo-sources.json / node-sources.json already vendor everything
-          # the nucleus module itself needs; the tray dependency chain's own
-          # archives (intltool, ayatana-ido, ...) still come from the network
-          # during the build, same as a local flatpak-builder run.
-          cache-key: flatpak-builder-${{ github.sha }}
+          name: flatpak
+          path: nucleus.flatpak
