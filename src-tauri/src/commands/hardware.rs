@@ -180,13 +180,14 @@ fn pretty_name(os_release: &str) -> Option<String> {
 
 /// Which distribution this is.
 ///
-/// Read from `os-release` rather than through `sysinfo`, because inside a snap
-/// `sysinfo` answers for the base the snap runs on -- "Ubuntu Core 24" on a
-/// machine actually running Ubuntu 24.04. The host's own file is reachable
-/// under the confinement prefix, so that is preferred when there is one.
+/// Read from `os-release` rather than through `sysinfo`, because inside a
+/// container both `sysinfo` and the plain `/etc/os-release` answer for the
+/// container instead of the machine -- "Ubuntu Core 24" in a snap, "GNOME 50
+/// (Flatpak runtime)" in a flatpak, on a machine actually running Ubuntu
+/// 24.04. Each container puts the real file somewhere of its own, which is
+/// what the runtime module resolves.
 fn distribution() -> Option<String> {
-    let host_file = super::runtime::host_filesystem_prefix()
-        .map(|prefix| format!("{prefix}/etc/os-release"))
+    let host_file = super::runtime::host_os_release_path()
         .and_then(|path| fs::read_to_string(path).ok())
         .and_then(|contents| pretty_name(&contents));
     if host_file.is_some() {

@@ -32,6 +32,28 @@ pub fn host_filesystem_prefix() -> Option<&'static str> {
     confined.then_some(SNAP_HOST_PREFIX)
 }
 
+/// The single host file Flatpak hands every sandbox, named by the os-release
+/// specification itself.
+const FLATPAK_HOST_OS_RELEASE: &str = "/run/host/os-release";
+
+/// Where the machine's own `os-release` is readable from in here, when it is
+/// somewhere other than the usual place.
+///
+/// The two containers differ in shape, which is why this is not just the
+/// prefix above with a path glued on. Flatpak exposes no host tree at all, but
+/// it does mount this one file for every sandbox unconditionally -- no
+/// permission is asked for, and denying filesystem access outright does not
+/// remove it. Snap exposes the whole tree instead, so the ordinary path works
+/// once it is read through the prefix.
+///
+/// `None` means the ordinary `/etc/os-release` already describes this machine.
+pub fn host_os_release_path() -> Option<String> {
+    if is_flatpak() {
+        return Some(FLATPAK_HOST_OS_RELEASE.to_owned());
+    }
+    host_filesystem_prefix().map(|prefix| format!("{prefix}/etc/os-release"))
+}
+
 pub fn startup_init_script() -> String {
     format!("window.__NUCLEUS_FLATPAK__ = {};", is_flatpak())
 }
