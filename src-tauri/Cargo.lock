@@ -2835,7 +2835,7 @@ dependencies = [
 
 [[package]]
 name = "project-nucleus"
-version = "0.1.0"
+version = "1.0.0"
 dependencies = [
  "ashpd",
  "futures-util",
