@@ -4,6 +4,6 @@ Name=Nucleus
 Comment=A modular, floating control center for Linux
 Categories=Utility;
 Exec=project-nucleus
-Icon=com.gokcank.project-nucleus
+Icon=io.github.gokcank.ProjectNucleus
 StartupWMClass=Nucleus
 Terminal=false

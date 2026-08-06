@@ -1,4 +1,4 @@
-app-id: com.gokcank.project-nucleus
+app-id: io.github.gokcank.ProjectNucleus
 runtime: org.gnome.Platform
 runtime-version: "50"
 sdk: org.gnome.Sdk
@@ -160,14 +160,14 @@ modules:
       - cargo build --release --offline --manifest-path src-tauri/Cargo.toml
         --features tauri/custom-protocol
       - install -Dm755 src-tauri/target/release/project-nucleus /app/bin/project-nucleus
-      - install -Dm644 flatpak/com.gokcank.project-nucleus.desktop
-        /app/share/applications/com.gokcank.project-nucleus.desktop
-      - install -Dm644 flatpak/com.gokcank.project-nucleus.metainfo.xml
-        /app/share/metainfo/com.gokcank.project-nucleus.metainfo.xml
+      - install -Dm644 flatpak/io.github.gokcank.ProjectNucleus.desktop
+        /app/share/applications/io.github.gokcank.ProjectNucleus.desktop
+      - install -Dm644 flatpak/io.github.gokcank.ProjectNucleus.metainfo.xml
+        /app/share/metainfo/io.github.gokcank.ProjectNucleus.metainfo.xml
       - install -Dm644 src-tauri/icons/128x128.png
-        /app/share/icons/hicolor/128x128/apps/com.gokcank.project-nucleus.png
+        /app/share/icons/hicolor/128x128/apps/io.github.gokcank.ProjectNucleus.png
       - install -Dm644 src-tauri/icons/icon.png
-        /app/share/icons/hicolor/512x512/apps/com.gokcank.project-nucleus.png
+        /app/share/icons/hicolor/512x512/apps/io.github.gokcank.ProjectNucleus.png
     sources:
       # Flathub takes a tagged git revision instead; a local directory is
       # what makes the manifest testable before anything is released.

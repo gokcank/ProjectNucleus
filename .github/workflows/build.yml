@@ -113,9 +113,9 @@ jobs:
           # doesn't exist under the extensions' own numbering.
           sudo flatpak-builder --force-clean --install-deps-from=flathub \
             --repo=flatpak-repo build-dir \
-            flatpak/com.gokcank.project-nucleus.yml
+            flatpak/io.github.gokcank.ProjectNucleus.yml
           flatpak build-bundle flatpak-repo nucleus.flatpak \
-            com.gokcank.project-nucleus
+            io.github.gokcank.ProjectNucleus
 
       - uses: actions/upload-artifact@v4
         with:
