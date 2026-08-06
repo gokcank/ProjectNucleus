@@ -89,6 +89,12 @@ modules:
     config-opts:
       - -DCMAKE_BUILD_TYPE=Release
       - -DENABLE_TESTS=OFF
+      # GNUInstallDirs' own guess for the library directory isn't consistent
+      # across build environments -- it chose lib64 here, which left
+      # libayatana-indicator unable to find this package's .pc file under
+      # the /app/lib/pkgconfig path flatpak-builder searches. Pinning it
+      # keeps every module in this chain installing to the same place.
+      - -DCMAKE_INSTALL_LIBDIR=lib
     sources:
       - type: archive
         url: https://github.com/AyatanaIndicators/ayatana-ido/archive/refs/tags/0.10.4.tar.gz
@@ -102,6 +108,7 @@ modules:
     config-opts:
       - -DCMAKE_BUILD_TYPE=Release
       - -DENABLE_TESTS=OFF
+      - -DCMAKE_INSTALL_LIBDIR=lib
     sources:
       - type: archive
         url: https://github.com/AyatanaIndicators/libayatana-indicator/archive/refs/tags/0.9.4.tar.gz
@@ -117,6 +124,7 @@ modules:
       - -DENABLE_BINDINGS_MONO=OFF
       - -DENABLE_BINDINGS_VALA=OFF
       - -DENABLE_TESTS=OFF
+      - -DCMAKE_INSTALL_LIBDIR=lib
       # On by default, and it links a probe program without /app/lib on its
       # search path, so it fails against the libraries built just above it.
       # Nothing here ships documentation anyway.
