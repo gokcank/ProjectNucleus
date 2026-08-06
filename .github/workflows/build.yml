@@ -102,14 +102,18 @@ jobs:
       - name: Install GNOME 50 runtime and SDK
         run: |
           sudo flatpak install --system -y flathub \
-            org.gnome.Platform//50 org.gnome.Sdk//50 \
-            org.freedesktop.Sdk.Extension.rust-stable//50 \
-            org.freedesktop.Sdk.Extension.node22//50
+            org.gnome.Platform//50 org.gnome.Sdk//50
 
       - name: Build Flatpak
         run: |
-          flatpak-builder --force-clean --repo=flatpak-repo \
-            build-dir flatpak/com.gokcank.project-nucleus.yml
+          # The rust-stable / node22 SDK extensions branch off the
+          # underlying freedesktop runtime version (e.g. "25.08"), not off
+          # "50" -- letting flatpak-builder resolve and fetch them itself,
+          # same as the local build, avoids hardcoding a branch name that
+          # doesn't exist under the extensions' own numbering.
+          sudo flatpak-builder --force-clean --install-deps-from=flathub \
+            --repo=flatpak-repo build-dir \
+            flatpak/com.gokcank.project-nucleus.yml
           flatpak build-bundle flatpak-repo nucleus.flatpak \
             com.gokcank.project-nucleus
 
