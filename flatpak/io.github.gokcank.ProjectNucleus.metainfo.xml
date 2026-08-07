@@ -41,6 +41,24 @@
 
   <launchable type="desktop-id">io.github.gokcank.ProjectNucleus.desktop</launchable>
 
+  <!-- Pinned to the release tag rather than to a branch: Flathub mirrors
+       these once, and a branch URL would let a later commit change what an
+       already-published release appears to look like. -->
+  <screenshots>
+    <screenshot type="default">
+      <image>https://raw.githubusercontent.com/gokcank/ProjectNucleus/v1.0.0/Assets/screenshots/01-dashboard.png</image>
+      <caption>The panel, with clipboard history, notes and at-a-glance CPU and memory</caption>
+    </screenshot>
+    <screenshot>
+      <image>https://raw.githubusercontent.com/gokcank/ProjectNucleus/v1.0.0/Assets/screenshots/02-system.png</image>
+      <caption>Disk space, current weather, and what the machine is made of</caption>
+    </screenshot>
+    <screenshot>
+      <image>https://raw.githubusercontent.com/gokcank/ProjectNucleus/v1.0.0/Assets/screenshots/03-settings.png</image>
+      <caption>Settings: theme, and every card switched on or off individually</caption>
+    </screenshot>
+  </screenshots>
+
   <url type="homepage">https://github.com/gokcank/ProjectNucleus</url>
   <url type="bugtracker">https://github.com/gokcank/ProjectNucleus/issues</url>
 

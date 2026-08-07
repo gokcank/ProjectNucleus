@@ -169,9 +169,12 @@ modules:
       - install -Dm644 src-tauri/icons/icon.png
         /app/share/icons/hicolor/512x512/apps/io.github.gokcank.ProjectNucleus.png
     sources:
-      # Flathub takes a tagged git revision instead; a local directory is
-      # what makes the manifest testable before anything is released.
-      - type: dir
-        path: ..
+      # The release tag. The copy submitted to Flathub additionally pins the
+      # commit the tag resolves to, so that retagging cannot silently change
+      # what they ship; here the tag alone keeps this file self-consistent
+      # inside the very commit it is tagged at.
+      - type: git
+        url: https://github.com/gokcank/ProjectNucleus.git
+        tag: v1.0.0
       - cargo-sources.json
       - node-sources.json
