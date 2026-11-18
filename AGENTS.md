@@ -38,6 +38,7 @@ Modular control center for Linux: a floating panel (global shortcut `ctrl+alt+n`
 - Publishing (Flathub, Snap Store, GitHub Releases) is manual and needs the user's approval each time.
 
 ## Status (as of 2026-11-07)
+- Project status: **archived** (set 2026-11-18; source of truth: the brain page).
 - Version 1.0.0, tag `v1.0.0` on `main`; 16 widgets; all four packages build in CI.
 - Not published anywhere yet. No work since 2026-08-07; a native GTK rewrite exists as a separate project.
 
