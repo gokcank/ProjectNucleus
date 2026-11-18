@@ -43,6 +43,7 @@ Modular control center for Linux: a floating panel (global shortcut `ctrl+alt+n`
 - Not published anywhere yet. No work since 2026-08-07; a native GTK rewrite exists as a separate project.
 
 ## Open items
+- CI 2026-11-18: the Snap job failed twice on snap store downloads (`gnome-46-2404`, then `snapcraft` itself; network errors on the runner); Flatpak and .deb/AppImage green. Likely transient; re-run the Snap job later. Not verified.
 - Flathub submission, Snap Store upload, GitHub Release with `.deb`/AppImage (each needs approval).
 - README badge and "not yet published" texts disagree with the 1.0.0 tag.
 - Deferred widgets: Fan, QR Scanner, Speed Test; media widgets (Phase 9) not started.
